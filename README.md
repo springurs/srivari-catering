@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Srivari Catering
 
-## Getting Started
+A responsive catering website built with Next.js, React, TypeScript, and Tailwind CSS. The homepage follows the supplied mockup with a left navigation sidebar, wide buffet hero, five occasion cards, and the Pleasanton address in the footer.
 
-First, run the development server:
+Selecting Weddings, Birthday Parties, Corporate Events, Housewarming, or Festive Catering reveals relevant sample packages. Visitors can inspect the included dishes and open an event planner prefilled with their occasion and package. About Us and Gallery open accessible dialogs.
 
-```bash
+## Development
+
+```sh
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npm run lint
+npm run build
+```
 
-## Learn More
+The project uses `output: "export"`; deploy the generated `out/` directory to a static host. Use a static file server to preview `out/` locally rather than `next start`.
 
-To learn more about Next.js, take a look at the following resources:
+## Content and enquiries
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Menu names and dishes are sample content to be confirmed with the business. The footer uses the supplied address: 3180 Santa Rita Rd, Pleasanton CA 94566. Package pricing is shown as available upon enquiry; no phone number, email address, prices, or customer testimonials have been invented.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The event planner validates required fields and creates a brief that visitors can download or copy. It does not transmit personal details or confirm bookings. Add the business's verified contact details and an enquiry delivery service before accepting enquiries online.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The locally stored hero and occasion photographs are generated illustrative imagery. Generation prompts and provenance are recorded in [docs/hero-image.md](docs/hero-image.md).

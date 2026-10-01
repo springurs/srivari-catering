@@ -1,69 +1,48 @@
 import Image from "next/image";
+import { OccasionPackages } from "./components/catering-interactions";
+import { Icon } from "./components/catering-icons";
+import { SiteNavigation } from "./components/site-navigation";
+
+function BrandLogo() {
+  return (
+    <a className="brand-logo" href="#home" aria-label="Srivari Catering home">
+      <Image src="/images/srivari-logo.png" alt="Srivari — Pure Indian Vegetarian" width={3375} height={3375} />
+    </a>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <a className="skip-link" href="#main">Skip to content</a>
+      <div className="page-shell" id="home">
+        <aside className="sidebar" aria-label="Site sidebar">
+          <header><BrandLogo /></header>
+          <SiteNavigation />
+          <div className="sidebar-note">GOOD FOOD<br />BRINGS PEOPLE<br />TOGETHER<span /></div>
+        </aside>
+        <main id="main" className="main-content">
+          <section className="hero" aria-labelledby="hero-title">
+            <Image className="hero-image" src="/images/elegant-buffet.png" alt="An elegant vegetarian catering buffet with plated appetisers, flowers, and golden event lighting" fill sizes="(max-width: 760px) 100vw, calc(100vw - 180px)" priority />
+            <div className="hero-copy">
+              <p className="eyebrow">EXCEPTIONAL FOOD FOR<br />LIFE’S SPECIAL MOMENTS</p>
+              <span className="gold-rule" aria-hidden="true" />
+              <h1 id="hero-title">Catering<br />Made Memorable</h1>
+              <p>Delicious food. Beautiful presentation. Unforgettable experiences.<br className="desktop-break" /> From intimate gatherings to grand celebrations, bring people together over your favourite flavours.</p>
+              <a className="button" href="#occasions">EXPLORE OUR MENUS <Icon name="arrow" /></a>
+            </div>
+          </section>
+          <OccasionPackages />
+        </main>
+      </div>
+      <footer className="site-footer" id="location">
+        <div className="footer-main">
+          <BrandLogo />
+          <a className="footer-address" href="https://www.google.com/maps/search/?api=1&query=3180%20Santa%20Rita%20Rd%2C%20Pleasanton%2C%20CA%2094566" target="_blank" rel="noopener noreferrer"><Icon name="pin" /><address>3180 Santa Rita Rd, Pleasanton CA 94566</address><span className="sr-only"> (opens directions in a new tab)</span></a>
+          <nav aria-label="Footer navigation"><a href="#home">Home</a><a href="#occasions">Our Menus</a><a href="#occasions">Occasions</a><a href="#location">Contact Us</a></nav>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <div className="footer-bottom"><span>© {new Date().getFullYear()} Srivari Catering</span><span>Good food brings people together.</span></div>
+      </footer>
+    </>
   );
 }
