@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Fragment, useEffect, useRef, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Icon, type IconName } from "./catering-icons";
 
-import { menus, menuPrice } from "../data/catering-menu";
+import { menus, menuPrice, buildPackageMenu, type MenuSelection } from "../data/catering-menu";
 import { FestiveOptions } from "./festive-options";
 
 const occasions: { name: string; formValue: string; description: string; icon: IconName; image: string; menuIndices: number[] }[] = [
@@ -21,19 +21,128 @@ function reveal(element: HTMLElement | null) {
   element.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
 }
 
+type MenuChoices = Record<string, string[]>;
+type ChoicesByMenu = Record<string, MenuChoices>;
+type ChangeChoice = (menuName: string, groupName: string, dish: string, checked: boolean) => void;
+
+function MenuCheckboxes({ groups, choices, onChange }: {
+  groups: MenuSelection[];
+  choices: MenuChoices;
+  onChange: (groupName: string, dish: string, checked: boolean) => void;
+}) {
+  const id = useId();
+  const [openSection, setOpenSection] = useState<number | null>(0);
+  const sectionButtons = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const sections = groups.reduce<{ name: string; groups: MenuSelection[] }[]>((result, group) => {
+    const name = group.section ?? group.name;
+    const previous = result[result.length - 1];
+    if (previous?.name === name) previous.groups.push(group);
+    else result.push({ name, groups: [group] });
+    return result;
+  }, []);
+
+  return sections.map((section, sectionIndex) => {
+    const selectedCount = section.groups.reduce((total, group) => total + (choices[group.name]?.length ?? 0), 0);
+    const selectionLimit = section.groups.reduce((total, group) => total + group.count, 0);
+    const isOpen = openSection === sectionIndex;
+    const headerId = `${id}-${sectionIndex}-header`;
+    const panelId = `${id}-${sectionIndex}-panel`;
+
+    return (
+      <div className={`menu-accordion${isOpen ? " is-open" : ""}`} key={section.name}>
+        <h5 className="menu-accordion-heading">
+          <button className="menu-accordion-toggle" type="button" id={headerId} aria-expanded={isOpen} aria-controls={panelId} ref={(element) => { sectionButtons.current[sectionIndex] = element; }} onClick={() => setOpenSection(isOpen ? null : sectionIndex)}>
+            <span className="menu-accordion-title">{section.name}</span>
+            <span className="menu-choice-count">{selectedCount}/{selectionLimit} selected</span>
+            <span className="menu-accordion-icon" aria-hidden="true">+</span>
+          </button>
+        </h5>
+        <div className="menu-accordion-panel" id={panelId} role="region" aria-labelledby={headerId} aria-hidden={!isOpen} inert={!isOpen}>
+          <div className="menu-accordion-clip">
+            <div className="menu-accordion-body">
+              {section.groups.map((group) => {
+                const groupIndex = groups.indexOf(group);
+                const selected = choices[group.name] ?? [];
+                const atLimit = selected.length >= group.count;
+                const hintId = `${id}-${groupIndex}-hint`;
+
+                return (
+                  <fieldset className="menu-choice-group" key={group.name} data-selection-group={groupIndex} aria-describedby={hintId}>
+                    <legend><span className="menu-choice-heading"><span>{group.name} — choose {group.count}</span><span className="menu-choice-count" role="status">{selected.length}/{group.count} selected</span></span></legend>
+                    <p className="menu-choice-hint" id={hintId}>Choose {group.count}. Uncheck an item to change your selection.</p>
+                    <div className="menu-choice-grid">
+                      {group.options.map((dish) => {
+                        const checked = selected.includes(dish);
+                        const disabled = atLimit && !checked;
+                        return (
+                          <label className={`menu-choice${checked ? " is-checked" : ""}${disabled ? " is-disabled" : ""}`} key={dish}>
+                            <input type="checkbox" name={`selection-${groupIndex}`} value={dish} checked={checked} disabled={disabled} onChange={(event) => {
+                              const isChecked = event.target.checked;
+                              onChange(group.name, dish, isChecked);
+                              const nextChoices = { ...choices, [group.name]: isChecked ? [...selected, dish] : selected.filter((item) => item !== dish) };
+                              if (isChecked && section.groups.every((item) => nextChoices[item.name]?.length === item.count)) {
+                                const nextSection = [...sections.keys()].slice(sectionIndex + 1).concat([...sections.keys()].slice(0, sectionIndex))
+                                  .find((index) => sections[index].groups.some((item) => nextChoices[item.name]?.length !== item.count));
+                                setOpenSection(nextSection ?? null);
+                                sectionButtons.current[nextSection ?? sectionIndex]?.focus({ preventScroll: true });
+                              }
+                            }} />
+                            <span>{dish}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  });
+}
+
 export function OccasionPackages() {
   const [selectedOccasion, setSelectedOccasion] = useState<number | null>(null);
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
   const [showPlanner, setShowPlanner] = useState(false);
+  const [choicesByMenu, setChoicesByMenu] = useState<ChoicesByMenu>({});
+  const [menuResetCount, setMenuResetCount] = useState(0);
   const packagesHeading = useRef<HTMLHeadingElement>(null);
   const detailsHeading = useRef<HTMLHeadingElement>(null);
+  const choicesHeading = useRef<HTMLHeadingElement>(null);
   const plannerHeading = useRef<HTMLHeadingElement>(null);
   const occasion = selectedOccasion === null ? null : occasions[selectedOccasion];
   const menu = selectedMenu === null ? null : menus[selectedMenu];
 
+  const changeChoice: ChangeChoice = (menuName, groupName, dish, checked) => {
+    const group = menus.find((option) => option.name === menuName)?.selections?.find((option) => option.name === groupName);
+    if (!group?.options.includes(dish)) return;
+    setChoicesByMenu((current) => {
+      const choices = current[menuName] ?? {};
+      const selected = choices[groupName] ?? [];
+      if (checked && (selected.includes(dish) || selected.length >= group.count)) return current;
+      return { ...current, [menuName]: { ...choices, [groupName]: checked ? [...selected, dish] : selected.filter((option) => option !== dish) } };
+    });
+  };
+
+  function editPackage(menuName: string) {
+    const menuIndex = menus.findIndex((option) => option.name === menuName);
+    const occasionIndex = occasions.findIndex((option) => option.menuIndices.includes(menuIndex));
+    if (menuIndex < 0 || occasionIndex < 0) return;
+    setSelectedOccasion(occasionIndex);
+    setSelectedMenu(menuIndex);
+    requestAnimationFrame(() => reveal(menus[menuIndex].selections ? choicesHeading.current : detailsHeading.current));
+  }
+
   useEffect(() => { if (selectedOccasion !== null) reveal(packagesHeading.current); }, [selectedOccasion]);
   useEffect(() => { if (selectedMenu !== null) reveal(detailsHeading.current); }, [selectedMenu]);
   useEffect(() => { if (showPlanner) reveal(plannerHeading.current); }, [showPlanner]);
+
+  const planAfterChoices = Boolean(menu?.selections) && occasion?.name !== "Corporate Events" && occasion?.name !== "Festive Catering";
+  const planButton = <button className="button" type="button" aria-expanded={showPlanner} aria-controls="event-planner" onClick={() => { setShowPlanner(true); if (showPlanner) reveal(plannerHeading.current); }}>Plan with this package <Icon name="arrow" /></button>;
 
   return (
     <section className="occasion-section" id="occasions" aria-labelledby="occasions-title">
@@ -92,7 +201,7 @@ export function OccasionPackages() {
       </div>
       <div id="package-details" hidden={!menu}>
         {menu && occasion && <div className="package-details">
-          <div className="details-intro"><p className="eyebrow">{occasion.name.toUpperCase()} / PACKAGE DETAILS</p><h3 ref={detailsHeading} tabIndex={-1}>{menu.name}</h3><p>{menu.intro}</p>{(menu.pricePerPerson !== undefined || menu.pricePerPackage !== undefined) && <p className="combo-detail-price">{menuPrice(menu)}{menu.serves && <span>Serves {menu.serves}</span>}{menu.minimumGuests && <span>Minimum order: {menu.minimumGuests} guests</span>}</p>}<button className="button" type="button" aria-expanded={showPlanner} aria-controls="event-planner" onClick={() => { setShowPlanner(true); if (showPlanner) reveal(plannerHeading.current); }}>Plan with this package <Icon name="arrow" /></button></div>
+          <div className="details-intro"><p className="eyebrow">{occasion.name.toUpperCase()} / PACKAGE DETAILS</p><h3 ref={detailsHeading} tabIndex={-1}>{menu.name}</h3><p>{menu.intro}</p>{(menu.pricePerPerson !== undefined || menu.pricePerPackage !== undefined || menu.minimumGuests !== undefined) && <p className="combo-detail-price">{menuPrice(menu)}{menu.serves && <span>Serves {menu.serves}</span>}{menu.minimumGuests && <span>Minimum order: {menu.minimumGuests} guests</span>}</p>}{!planAfterChoices && planButton}</div>
           <div className="menu-courses">
             {menu.isSuggested && <p className="menu-suggestion-note">Suggested corporate menu. Item descriptions can be tailored with our team; final dishes and pricing are confirmed on enquiry.</p>}
             {menu.courses.map((course, index) => (
@@ -112,56 +221,70 @@ export function OccasionPackages() {
               </div>
             ))}
           </div>
-          {menu.selections && <div className="combo-options"><h4>Build your perfect menu</h4><p>Choose your favourites when planning this package.</p>{menu.selections.map((group) => <details key={group.name}><summary>{group.name} — choose {group.count}<span aria-hidden="true">+</span></summary><ul>{group.options.map((dish) => <li key={dish}>{dish}</li>)}</ul></details>)}</div>}
+          {menu.selections && <div className="combo-options">
+            <div className="combo-options-heading">
+              <h4 ref={choicesHeading} tabIndex={-1}>Build your perfect menu</h4>
+              <button className="text-link" type="button" aria-label="Reset all menu selections" onClick={() => {
+                setChoicesByMenu((current) => ({ ...current, [menu.name]: {} }));
+                setMenuResetCount((count) => count + 1);
+              }}>Reset all</button>
+            </div>
+            <p>Choose your favourites below. Your selections carry into the event planner.</p>
+            <MenuCheckboxes key={`${menu.name}-${menuResetCount}`} groups={menu.selections} choices={choicesByMenu[menu.name] ?? {}} onChange={(groupName, dish, checked) => changeChoice(menu.name, groupName, dish, checked)} />
+            {planAfterChoices && planButton}
+          </div>}
         </div>}
       </div>
       <div id="event-planner" hidden={!showPlanner}>
-        {showPlanner && occasion && menu && <div className="planner-section"><div className="planner-intro"><p className="eyebrow">LET’S PLAN YOUR OCCASION</p><h3 ref={plannerHeading} tabIndex={-1}>Make it your own.</h3><p>{occasion.name} · {menu.name}</p><p>Tell us a little about your event. Save a brief to share when discussing your menu and arrangements.</p></div><EventPlanner key={`${selectedOccasion}-${selectedMenu}`} defaultOccasion={occasion.formValue} defaultMenu={menu.name}/></div>}
+        {showPlanner && occasion && menu && <div className="planner-section"><div className="planner-intro"><p className="eyebrow">LET’S PLAN YOUR OCCASION</p><h3 ref={plannerHeading} tabIndex={-1}>Your catering plan.</h3><p>Review your package and selected dishes, then enter the number of people. Save a brief to share with our team.</p></div><EventPlanner defaultMenu={menu.name} choicesByMenu={choicesByMenu} onEditPackage={editPackage}/></div>}
       </div>
       {occasion?.name === "Festive Catering" && <FestiveOptions />}
     </section>
   );
 }
 
-export function EventPlanner({ defaultOccasion = "", defaultMenu = "Help me choose" }: { defaultOccasion?: string; defaultMenu?: string }) {
-  const [brief, setBrief] = useState("");
+function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
+  defaultMenu: string;
+  choicesByMenu: ChoicesByMenu;
+  onEditPackage: (menuName: string) => void;
+}) {
+  const [savedBrief, setBrief] = useState<{ text: string; choices: string } | null>(null);
+  const [selectionAttempted, setSelectionAttempted] = useState(false);
   const [copyStatus, setCopyStatus] = useState("");
   const [chosenMenu, setChosenMenu] = useState(defaultMenu);
   const plannedMenu = menus.find((menu) => menu.name === chosenMenu);
+  const choices = choicesByMenu[chosenMenu] ?? {};
+  const choiceSnapshot = JSON.stringify(choices);
+  const brief = savedBrief?.choices === choiceSnapshot ? savedBrief.text : "";
+  const incompleteGroup = plannedMenu?.selections?.find((group) => (choices[group.name]?.length ?? 0) !== group.count);
+  const packageGroups = plannedMenu ? buildPackageMenu(plannedMenu, choices) : [];
   const result = useRef<HTMLDivElement>(null);
+  const editButton = useRef<HTMLButtonElement>(null);
 
   function createBrief(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const selections: string[] = [];
-    for (const [groupIndex, group] of (plannedMenu?.selections ?? []).entries()) {
-      const dishes = Array.from({ length: group.count }, (_, index) => String(data.get(`selection-${groupIndex}-${index}`)));
-      if (new Set(dishes).size !== group.count) {
-        const field = event.currentTarget.querySelector<HTMLSelectElement>(`[name="selection-${groupIndex}-${group.count - 1}"]`);
-        field?.setCustomValidity(`Choose ${group.count} different ${group.name.toLowerCase()}.`);
-        field?.reportValidity();
+    for (const group of plannedMenu?.selections ?? []) {
+      const dishes = choices[group.name] ?? [];
+      if (dishes.length !== group.count || new Set(dishes).size !== group.count || dishes.some((dish) => !group.options.includes(dish))) {
+        setSelectionAttempted(true);
+        editButton.current?.focus();
         return;
       }
-      selections.push(`${group.name}: ${dishes.join(" · ")}`);
     }
-    const date = String(data.get("date"));
-    const formatted = date ? new Date(`${date}T12:00:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "To be decided";
-    setBrief([
+    setSelectionAttempted(false);
+    setBrief({ choices: choiceSnapshot, text: [
       "SRIVARI CATERING — EVENT BRIEF",
-      `Name: ${String(data.get("name")).trim()}`,
-      `Email: ${String(data.get("email")).trim()}`,
-      `Occasion: ${data.get("occasion")}`,
-      `Date: ${formatted}`,
-      `Guests: ${data.get("guests")}`,
-      `Location: ${String(data.get("location")).trim()}`,
-      `Menu: ${data.get("menu")}`,
+      `Package: ${chosenMenu}`,
+      `Number of people: ${data.get("guests")}`,
       ...(plannedMenu && (plannedMenu.pricePerPerson !== undefined || plannedMenu.pricePerPackage !== undefined) ? [`Price: ${menuPrice(plannedMenu)}`] : []),
       ...(plannedMenu?.serves ? [`Package serves: ${plannedMenu.serves}`] : []),
-      ...selections,
-      `Requests: ${String(data.get("notes")).trim() || "None specified"}`,
+      "",
+      "FULL PACKAGE MENU",
+      ...packageGroups.map((group) => `${group.name}: ${group.dishes.join(" · ")}`),
       "",
       "Planning brief only. Availability, pricing, and booking are not confirmed.",
-    ].join("\n"));
+    ].join("\n") });
     setCopyStatus("");
     requestAnimationFrame(() => result.current?.focus());
   }
@@ -182,28 +305,20 @@ export function EventPlanner({ defaultOccasion = "", defaultMenu = "Help me choo
 
   return (
     <div className="planner-card">
-      <form onSubmit={createBrief} onChange={(event) => {
-        setBrief("");
+      <form onSubmit={createBrief} onChange={() => {
+        setBrief(null);
+        setSelectionAttempted(false);
         setCopyStatus("");
-        event.currentTarget.querySelectorAll<HTMLSelectElement>("select").forEach((field) => field.setCustomValidity(""));
       }}>
         <div className="form-grid">
-          <label>Your name<input name="name" autoComplete="name" placeholder="How should we address you?" required maxLength={100}/></label>
-          <label>Email address<input name="email" type="email" autoComplete="email" placeholder="you@example.com" required maxLength={200}/></label>
-          <label>What’s the occasion?<select name="occasion" defaultValue={defaultOccasion} required><option value="" disabled>Select an occasion</option><option>Wedding or reception</option><option>Traditional Package</option><option>Combos</option><option>Family celebration</option><option>Festival or puja</option><option>Corporate event</option><option>Community gathering</option><option>Something else</option></select></label>
-          <label>Event date <span className="optional">(optional)</span><input name="date" type="date"/></label>
-          <label>Number of guests<input name="guests" type="number" min={plannedMenu?.minimumGuests ?? 1} max="100000" placeholder="e.g. 100" required/>{plannedMenu?.minimumGuests && <span className="guest-minimum">Minimum {plannedMenu.minimumGuests} guests for this combo.</span>}</label>
-          <label>Event location<input name="location" placeholder="City or venue" required maxLength={200}/></label>
-          <label className="full-width">Your menu preference<select name="menu" value={chosenMenu} onChange={(event) => setChosenMenu(event.target.value)}><option>Help me choose</option>{menus.map((menu) => <option key={menu.name}>{menu.name}</option>)}<option>A custom menu</option></select></label>
-          <label className="full-width">Anything else we should know? <span className="optional">(optional)</span><textarea name="notes" rows={3} placeholder="Preferred breads, rice, accompaniments, dietary requirements…" maxLength={2000}/></label>
+          <label className="full-width">Package<select name="menu" value={chosenMenu} onChange={(event) => { setChosenMenu(event.target.value); setSelectionAttempted(false); }}>{menus.map((menu) => <option key={menu.name}>{menu.name}</option>)}</select></label>
+          <label className="full-width">Number of people<input name="guests" type="number" min={plannedMenu?.minimumGuests ?? 1} max="100000" step="1" placeholder="e.g. 100" required/>{plannedMenu?.minimumGuests && <span className="guest-minimum">Minimum {plannedMenu.minimumGuests} people for this package.</span>}</label>
         </div>
-        {plannedMenu?.selections && <div className="combo-form-selections" key={plannedMenu.name}>
-          <h4>Choose your package favourites</h4>
-          {plannedMenu.selections.map((group, groupIndex) => <fieldset key={group.name}>
-            <legend>{group.name} — choose {group.count}</legend>
-            <div className="form-grid">{Array.from({ length: group.count }, (_, index) => <div key={index}><label htmlFor={`combo-choice-${groupIndex}-${index}`}>{group.name} {index + 1}</label><select id={`combo-choice-${groupIndex}-${index}`} name={`selection-${groupIndex}-${index}`} defaultValue="" required><option value="" disabled>Choose a selection</option>{group.options.map((dish) => <option key={dish}>{dish}</option>)}</select></div>)}</div>
-          </fieldset>)}
-        </div>}
+        <div className="selected-menu-summary">
+          <div className="selected-menu-heading"><h4>Full package menu</h4><button className="text-link" type="button" ref={editButton} onClick={() => onEditPackage(chosenMenu)}>{plannedMenu?.selections ? "Edit selections" : "View package"}</button></div>
+          {packageGroups.map((group) => <div className="selected-menu-group" key={group.name}><h5>{group.name}</h5><ul>{group.dishes.map((dish) => <li key={dish}>{dish}</li>)}</ul></div>)}
+        </div>
+        {selectionAttempted && incompleteGroup && <p className="menu-choice-error" role="alert">Choose exactly {incompleteGroup.count} {incompleteGroup.name.toLowerCase()} before creating your event brief.</p>}
         <button className="button" type="submit">Create my event brief <span aria-hidden="true">↗</span></button>
         <p className="form-note">Your details stay in your browser. Creating a brief does not send an enquiry or confirm a booking.</p>
       </form>

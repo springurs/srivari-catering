@@ -115,25 +115,48 @@ h1 { font-size: clamp(48px, 5vw, 78px); line-height: .99; letter-spacing: -2px; 
 .menu-courses, .menu-course > div { min-width: 0; }
 .menu-course h4 { font-size: 20px; margin-bottom: 8px; }
 .menu-course p { color: var(--muted); font-size: 14px; }
-.menu-course ul, .combo-options ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; line-height: 1.9; list-style: disc; }
+.menu-course ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; line-height: 1.9; list-style: disc; }
 .menu-dish-description { display: block; color: var(--muted); font-size: 14px; line-height: 1.65; margin: 3px 0 12px; }
 .menu-suggestion-note { color: #8b6b37; background: #fbf7ec; border-left: 2px solid var(--gold); padding: 12px 14px; margin-bottom: 20px; font-size: 14px; }
 .combo-detail-price { color: #8b6b37 !important; font-size: 18px !important; }
 .combo-detail-price span { display: block; color: var(--muted); font-size: 11px; margin-top: 5px; }
 .combo-options { grid-column: 1 / -1; padding-top: 20px; border-top: 1px solid var(--line); }
-.combo-options > h4, .combo-form-selections > h4 { font-size: 24px; margin-bottom: 12px; }
+.combo-options-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.combo-options-heading h4 { min-width: 0; font-size: 24px; }
+.combo-options-heading .text-link { flex-shrink: 0; font-size: 14px; }
 .combo-options > p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-.combo-options details { border-top: 1px solid var(--line); padding: 18px 0; }
-.combo-options summary { cursor: pointer; display: flex; justify-content: space-between; gap: 20px; list-style: none; font-size: 15px; }
-.combo-options summary::-webkit-details-marker { display: none; }
-.combo-options summary span { color: var(--gold); font-size: 18px; }
-.combo-options details[open] summary span { transform: rotate(45deg); }
-.combo-options details ul { margin-top: 15px; columns: 2; column-gap: 35px; }
-.combo-options li { break-inside: avoid; }
-.combo-form-selections { margin: 25px 0; border-top: 1px solid var(--line); padding-top: 25px; }
-.combo-form-selections fieldset { margin: 20px 0; padding: 0; border: 0; min-width: 0; }
-.combo-form-selections legend { font-size: 14px; color: #8b6b37; margin-bottom: 13px; }
-.combo-form-selections .form-grid { margin-bottom: 0; }
+.combo-options > .button { margin-top: 25px; }
+.menu-choice-group { min-width: 0; margin: 24px 0 0; padding: 0; border: 0; }
+.menu-accordion { margin-top: 12px; border: 1px solid var(--line); border-radius: 6px; }
+.menu-accordion-heading { margin: 0; }
+.menu-accordion-toggle { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 12px; width: 100%; padding: 18px; text-align: left; cursor: pointer; background: #faf9f6; border-radius: 6px; border-bottom: 1px solid transparent; }
+.menu-accordion-title { font: 22px/1.3 Georgia, serif; color: var(--ink); }
+.menu-accordion-icon { color: var(--gold); font-size: 24px; line-height: 1; transition: transform 320ms ease; }
+.menu-accordion.is-open .menu-accordion-toggle { border-bottom-color: var(--line); border-radius: 6px 6px 0 0; background: #fbf7ec; }
+.menu-accordion.is-open .menu-accordion-icon { transform: rotate(45deg); }
+.menu-accordion-panel { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows 320ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease, visibility 0s linear 320ms; }
+.menu-accordion.is-open .menu-accordion-panel { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s; }
+.menu-accordion-clip { min-height: 0; overflow: hidden; }
+.menu-accordion-body { padding: 20px 18px; }
+.menu-accordion-body .menu-choice-group:first-child { margin-top: 0; }
+.menu-choice-group legend { width: 100%; padding: 0; font-size: 16px; color: #8b6b37; }
+.menu-choice-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; }
+.menu-choice-count { color: var(--muted); font-size: 13px; }
+.menu-choice-hint { font-size: 13px; color: var(--muted); margin: 8px 0 14px; }
+.menu-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.menu-choice { display: flex; align-items: start; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 5px; color: #595e58; font-size: 14px; line-height: 1.5; cursor: pointer; }
+.menu-choice span { min-width: 0; overflow-wrap: anywhere; }
+.menu-choice input[type="checkbox"] { flex: none; width: 18px; height: 18px; margin: 2px 0 0; padding: 0; accent-color: var(--gold); cursor: inherit; }
+.menu-choice.is-checked { border-color: var(--gold); background: #fbf7ec; color: var(--ink); }
+.menu-choice.is-disabled { color: #858882; background: #faf9f6; cursor: not-allowed; }
+.menu-choice-error { margin-bottom: 18px; color: #9a3024; font-size: 14px; }
+.selected-menu-summary { margin: 25px 0; border-top: 1px solid var(--line); padding-top: 25px; }
+.selected-menu-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+.selected-menu-heading h4 { font-size: 24px; }
+.selected-menu-heading .text-link { font-size: 14px; }
+.selected-menu-group + .selected-menu-group { margin-top: 18px; }
+.selected-menu-group h5 { margin: 0 0 8px; font-size: 15px; font-weight: 500; color: #8b6b37; }
+.selected-menu-group ul { margin: 0; padding-left: 18px; list-style: disc; font-size: 14px; color: #595e58; line-height: 1.8; }
 .guest-minimum { display: block; margin-top: 8px; font-size: 10px; color: var(--muted); line-height: 1.5; }
 .festive-options { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--line); }
 .festive-options h3 { font-size: 30px; line-height: 1.25; margin: 10px 0 22px; }
@@ -163,6 +186,8 @@ h1 { font-size: clamp(48px, 5vw, 78px); line-height: .99; letter-spacing: -2px; 
 .planner-card { background: white; border: 1px solid var(--line); border-radius: 7px; padding: 30px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 18px; margin-bottom: 24px; }
 .form-grid label { font-size: 11px; font-weight: 500; }
+.planner-card .form-grid label { font-size: 14px; }
+.planner-card input, .planner-card select { font-size: 14px; }
 .optional { font-weight: 400; color: #83857d; font-size: 10px; }
 .full-width { grid-column: 1 / -1; }
 input, select, textarea { display: block; margin-top: 9px; width: 100%; min-width: 0; background: #fcfbf8; border: 1px solid var(--line); color: var(--ink); padding: 12px 10px; border-radius: 3px; font-size: 12px; }
@@ -324,7 +349,7 @@ textarea { resize: vertical; }
   .package-grid, .package-details, .planner-section { grid-template-columns: 1fr; }
   .package-card { padding: 25px; }
   .package-details { gap: 30px; padding: 25px; }
-  .combo-options details ul { columns: 1; }
+  .menu-choice-grid { grid-template-columns: 1fr; }
   .planner-section { gap: 25px; }
   .planner-card { padding: 24px; }
   .site-footer { padding: 25px 20px 18px; }
