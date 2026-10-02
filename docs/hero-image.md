@@ -22,7 +22,7 @@ Use case: photorealistic-natural. Asset type: wide catering website hero backgro
 
 ### Occasion photographs
 
-Saved asset: `public/images/occasion-strip.png`. Five photographs in one strip, framed with CSS background positioning on the occasion cards.
+Saved asset: `public/images/occasion-strip.png`. Original five-panel strip. The occasion cards now use the separate category photos recorded in [occasion-images.md](occasion-images.md). This earlier asset is retained for provenance.
 
 Prompt:
 
