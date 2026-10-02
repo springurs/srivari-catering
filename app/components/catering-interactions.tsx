@@ -93,7 +93,25 @@ export function OccasionPackages() {
       <div id="package-details" hidden={!menu}>
         {menu && occasion && <div className="package-details">
           <div className="details-intro"><p className="eyebrow">{occasion.name.toUpperCase()} / PACKAGE DETAILS</p><h3 ref={detailsHeading} tabIndex={-1}>{menu.name}</h3><p>{menu.intro}</p>{(menu.pricePerPerson !== undefined || menu.pricePerPackage !== undefined) && <p className="combo-detail-price">{menuPrice(menu)}{menu.serves && <span>Serves {menu.serves}</span>}{menu.minimumGuests && <span>Minimum order: {menu.minimumGuests} guests</span>}</p>}<button className="button" type="button" aria-expanded={showPlanner} aria-controls="event-planner" onClick={() => { setShowPlanner(true); if (showPlanner) reveal(plannerHeading.current); }}>Plan with this package <Icon name="arrow" /></button></div>
-          <div className="menu-courses">{menu.courses.map((course, index) => <div className="menu-course" key={course.name}><span aria-hidden="true">0{index + 1}</span><div><h4>{course.name}</h4>{Array.isArray(course.dishes) ? <ul>{course.dishes.map((dish) => <li key={dish}>{dish}</li>)}</ul> : <p>{course.dishes}</p>}</div></div>)}</div>
+          <div className="menu-courses">
+            {menu.isSuggested && <p className="menu-suggestion-note">Suggested corporate menu. Item descriptions can be tailored with our team; final dishes and pricing are confirmed on enquiry.</p>}
+            {menu.courses.map((course, index) => (
+              <div className="menu-course" key={course.name}>
+                <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <h4>{course.name}</h4>
+                  {Array.isArray(course.dishes) ? (
+                    <ul>{course.dishes.map((dish) => (
+                      <li key={dish}>
+                        {dish}
+                        {menu.dishDescriptions?.[dish] && <span className="menu-dish-description">{menu.dishDescriptions[dish]}</span>}
+                      </li>
+                    ))}</ul>
+                  ) : <p>{course.dishes}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
           {menu.selections && <div className="combo-options"><h4>Build your perfect menu</h4><p>Choose your favourites when planning this package.</p>{menu.selections.map((group) => <details key={group.name}><summary>{group.name} — choose {group.count}<span aria-hidden="true">+</span></summary><ul>{group.options.map((dish) => <li key={dish}>{dish}</li>)}</ul></details>)}</div>}
         </div>}
       </div>

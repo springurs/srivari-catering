@@ -1,27 +1,25 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Icon } from "./catering-icons";
 
 type FieldName = "name" | "phone" | "email" | "description";
 type FormErrors = Partial<Record<FieldName, string>>;
-const recipient = "srivaripleasanton@gmail.com";
-const submissionUrl = `https://formsubmit.co/ajax/${recipient}`;
 
 export function ContactForm() {
   const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
-  const inFlight = useRef(false);
+  const [result, setResult] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function sendMessage(event: React.FormEvent<HTMLFormElement>) {
+  async function validateMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (inFlight.current) return;
+    if (isSubmitting) return;
     const form = event.currentTarget;
-    const data = new FormData(form);
-    const name = String(data.get("name") ?? "").trim();
-    const phone = String(data.get("phone") ?? "").trim();
-    const email = String(data.get("email") ?? "").trim();
-    const description = String(data.get("description") ?? "").trim();
+    const formData = new FormData(form);
+    const name = String(formData.get("name") ?? "").trim();
+    const phone = String(formData.get("phone") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const description = String(formData.get("description") ?? "").trim();
     const emailInput = form.elements.namedItem("email") as HTMLInputElement;
     const nextErrors: FormErrors = {};
 
@@ -30,58 +28,54 @@ export function ContactForm() {
     if (email && emailInput.validity.typeMismatch) nextErrors.email = "Please enter a valid email address.";
     if (!description) nextErrors.description = "Please tell us how we can help.";
     setErrors(nextErrors);
+    setResult("");
 
     const firstError = Object.keys(nextErrors)[0];
     if (firstError) {
-      setStatus("idle");
       (form.elements.namedItem(firstError) as HTMLElement).focus();
       return;
     }
 
-    inFlight.current = true;
-    setStatus("sending");
+    formData.set("name", name);
+    formData.set("description", description);
+    if (phone) formData.set("phone", phone);
+    else formData.delete("phone");
+    if (email) formData.set("email", email);
+    else formData.delete("email");
+
+    setIsSubmitting(true);
+    setResult("Sending your message…");
     try {
-      const response = await fetch(submissionUrl, {
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          name,
-          ...(phone ? { phone } : {}),
-          ...(email ? { email } : {}),
-          description,
-          _subject: "New Srivari Catering contact enquiry",
-          _template: "table",
-          _captcha: "false",
-          _honey: String(data.get("_honey") ?? ""),
-        }),
+        body: formData,
         signal: AbortSignal.timeout(20000),
       });
-      const result = await response.json();
-      const needsActivation = typeof result.message === "string" && /activat|confirm.*email|verify.*email/i.test(result.message);
-      if (!response.ok || (result.success !== true && result.success !== "true") || needsActivation) {
+      const responseData = await response.json();
+      if (!response.ok || responseData.success !== true) {
         throw new Error("Submission was not confirmed.");
       }
       form.reset();
-      setStatus("success");
+      setResult("Thank you! Your message has been submitted.");
     } catch {
-      setStatus("error");
+      setResult("We couldn’t confirm your submission. Your details are still here; please try again.");
     } finally {
-      inFlight.current = false;
+      setIsSubmitting(false);
     }
   }
 
   function clearFeedback() {
     setErrors({});
-    if (!inFlight.current) setStatus("idle");
+    setResult("");
   }
 
   return (
     <section className="contact-form-section contact-card" aria-labelledby="contact-form-title">
       <h2 id="contact-form-title"><Icon name="mail" /> Send Us a Message</h2>
       <p className="contact-form-intro" id="contact-form-help">Just your name, a phone number or email, and a description.</p>
-      <form noValidate onSubmit={sendMessage} onChange={clearFeedback} aria-describedby="contact-form-help contact-form-note" aria-busy={status === "sending"}>
-        <input className="contact-honeypot" type="text" name="_honey" autoComplete="off" tabIndex={-1} aria-hidden="true" />
-        <fieldset className="contact-form-fields" disabled={status === "sending"}>
+      <form noValidate onSubmit={validateMessage} onChange={clearFeedback} aria-describedby="contact-form-help contact-form-note" aria-busy={isSubmitting}>
+        <input type="hidden" name="access_key" value="821b7b4c-e655-44a1-8aaa-1018a3fe850d"></input>
+        <fieldset className="contact-form-fields" disabled={isSubmitting}>
           <div>
             <label htmlFor="contact-name">Name <span className="contact-required">(required)</span></label>
             <input id="contact-name" name="name" autoComplete="name" required aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? "contact-name-error" : undefined} />
@@ -108,10 +102,9 @@ export function ContactForm() {
             {errors.description && <p className="contact-form-error" id="contact-description-error">{errors.description}</p>}
           </div>
         </fieldset>
-        <p className="contact-form-note" id="contact-form-note">Your message will be emailed to {recipient}.</p>
-        <button type="submit" className="button" disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send Message"} <Icon name="arrow" /></button>
-        {status === "success" && <p className="contact-form-status" role="status">Thank you! Your message has been submitted. We’ll be in touch.</p>}
-        {status === "error" && <p className="contact-form-status contact-form-error" role="alert">We couldn’t confirm your submission. Your details are still here; try again or email <a href={`mailto:${recipient}`}>{recipient}</a> directly.</p>}
+        <p className="contact-form-note" id="contact-form-note">We’ll reply using the phone number or email you provide.</p>
+        <button type="submit" className="button" disabled={isSubmitting}>{isSubmitting ? "Sending…" : "Send Message"} <Icon name="arrow" /></button>
+        {result && <p className="contact-form-note" role="status">{result}</p>}
       </form>
     </section>
   );

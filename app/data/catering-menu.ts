@@ -14,6 +14,8 @@ export type CateringMenu = {
   minimumGuests?: number;
   isCombo?: boolean;
   isTiffin?: boolean;
+  isSuggested?: boolean;
+  dishDescriptions?: Record<string, string>;
   courses: { name: string; dishes: string | string[] }[];
   selections?: MenuSelection[];
 };
@@ -33,19 +35,29 @@ export const menus: CateringMenu[] = [
     pricePerPerson: 20,
     minimumGuests: 25,
     isCombo: true,
-    courses: [{ name: "What’s included", dishes: [
-      "2 vegetarian starters",
-      "Steamed rice or jeera rice",
-      "Butter naan, roti or chapati",
-      "Vegetable dum biryani or pulao",
-      "2 vegetarian curries",
-      "Sambar or dal tadka",
-      "Rasam, shorba or kadhi",
-      "1 dessert",
-      "Raita",
-      "Salan",
-      "Roti pachadi (vegetable pickle)",
-    ] }],
+    courses: [
+      { name: "Starters", dishes: [
+        "2 vegetarian starters",
+      ] },
+      { name: "Rice & breads", dishes: [
+        "Steamed rice or jeera rice",
+        "Butter naan, roti or chapati",
+        "Vegetable dum biryani or pulao",
+      ] },
+      { name: "Curries & lentils", dishes: [
+        "2 vegetarian curries",
+        "Sambar or dal tadka",
+        "Rasam, shorba or kadhi",
+      ] },
+      { name: "Accompaniments", dishes: [
+        "Raita",
+        "Salan",
+        "Roti pachadi (vegetable pickle)",
+      ] },
+      { name: "Dessert", dishes: [
+        "1 dessert",
+      ] },
+    ],
     selections: [
       {
         name: "Vegetarian starters", count: 2,
@@ -84,13 +96,35 @@ export const menus: CateringMenu[] = [
     intro: "A comforting Andhra-style feast inspired by traditional home cooking.",
     pricePerPerson: 22.99,
     isCombo: true,
-    courses: [{ name: "What’s included", dishes: [
-      "Garelu or Alasanda Guggillu", "Kandi Podi with Ghee", "Roti Pachadi",
-      "Chapati with Kurma", "Steamed Rice", "Pappu Charu or Sambar", "Charu or Rasam",
-      "Tomato, Mango or Dosakaya Pappu", "Bendakaya or Dondakaya Palli Vepudu",
-      "Gutti Vankaya Kura", "Dosakaya Pulusu or Majjiga Pulusu", "Perugu (Curd)",
-      "Avakaya Pickle", "Payasam", "Appadam",
-    ] }],
+    courses: [
+      { name: "Starter", dishes: [
+        "Garelu or Alasanda Guggillu",
+      ] },
+      { name: "Rice & breads", dishes: [
+        "Chapati with Kurma",
+        "Steamed Rice",
+      ] },
+      { name: "Lentils & curries", dishes: [
+        "Pappu Charu or Sambar",
+        "Charu or Rasam",
+        "Tomato, Mango or Dosakaya Pappu",
+        "Gutti Vankaya Kura",
+        "Dosakaya Pulusu or Majjiga Pulusu",
+      ] },
+      { name: "Vegetable side", dishes: [
+        "Bendakaya or Dondakaya Palli Vepudu",
+      ] },
+      { name: "Accompaniments", dishes: [
+        "Kandi Podi with Ghee",
+        "Roti Pachadi",
+        "Perugu (Curd)",
+        "Avakaya Pickle",
+        "Appadam",
+      ] },
+      { name: "Dessert", dishes: [
+        "Payasam",
+      ] },
+    ],
   },
   {
     name: "Wedding Thali Combo",
@@ -98,15 +132,38 @@ export const menus: CateringMenu[] = [
     intro: "A celebratory South Indian spread with traditional accompaniments and two desserts.",
     pricePerPerson: 24.99,
     isCombo: true,
-    courses: [{ name: "What’s included", dishes: [
-      "Masala Vada, Bajji or Cut Mirchi", "Sweet Pachadi", "Paruppu Podi with Ghee",
-      "Roti or Parotta with Salan / Kurma", "Variety Rice or Biryani", "Steamed Rice",
-      "Pappu Charu or Sambar", "Charu or Rasam", "Tomato, Mango or Dosakaya Pappu",
-      "Vathal Kulambu, Mor Kuzhambu, Majjiga Pulusu or Pulusu",
-      "Kara Poriyal or Bangaladumpa Vepudu", "Thengai Poriyal or Kobbari Kura",
-      "Thogayal or Roti Pachadi", "Curd or Buttermilk", "Mango or Lemon Pickle",
-      "Shahi Tukda", "Elaneer Payasam", "Appalam or Fryums",
-    ] }],
+    courses: [
+      { name: "Starter", dishes: [
+        "Masala Vada, Bajji or Cut Mirchi",
+      ] },
+      { name: "Rice & breads", dishes: [
+        "Roti or Parotta with Salan / Kurma",
+        "Variety Rice or Biryani",
+        "Steamed Rice",
+      ] },
+      { name: "Lentils & curries", dishes: [
+        "Pappu Charu or Sambar",
+        "Charu or Rasam",
+        "Tomato, Mango or Dosakaya Pappu",
+        "Vathal Kulambu, Mor Kuzhambu, Majjiga Pulusu or Pulusu",
+      ] },
+      { name: "Vegetable sides", dishes: [
+        "Kara Poriyal or Bangaladumpa Vepudu",
+        "Thengai Poriyal or Kobbari Kura",
+      ] },
+      { name: "Accompaniments", dishes: [
+        "Sweet Pachadi",
+        "Paruppu Podi with Ghee",
+        "Thogayal or Roti Pachadi",
+        "Curd or Buttermilk",
+        "Mango or Lemon Pickle",
+        "Appalam or Fryums",
+      ] },
+      { name: "Desserts", dishes: [
+        "Shahi Tukda",
+        "Elaneer Payasam",
+      ] },
+    ],
   },
   {
     name: "Apna Ghar Ka Bhojan",
@@ -114,18 +171,38 @@ export const menus: CateringMenu[] = [
     intro: "A generous North Indian menu featuring classic breads, curries, rice and festive sweets.",
     pricePerPerson: 23.99,
     isCombo: true,
-    courses: [{ name: "What’s included", dishes: [
-      "Punjabi Samosa, Onion Pakora or Hara Bhara Kebab",
-      "Saunth-Imli Chutney", "Gur with Ghee or Rajasthani Churma",
-      "Tandoori Roti or Naan with Paneer Curry", "Vegetable Pulao or Peas Pulao",
-      "Steamed Basmati Rice", "Dal Tadka or Dal Makhani",
-      "Punjabi Kadhi or Tomato Shorba", "Rajma Masala, Chana Masala or Dal Palak",
-      "Kadhi Pakora or Sindhi Kadhi", "Jeera Aloo or Punjabi Aloo Gobi",
-      "Matar Gobi, Beans Aloo Sabzi or Vegetable Jalfrezi",
-      "Mint-Coriander Chutney", "Boondi Raita or Masala Chaas",
-      "Mango or Lemon Pickle", "Gulab Jamun or Gajar Halwa",
-      "Kesar Badam Kheer or Rice Kheer", "Roasted Papad or Masala Papad",
-    ] }],
+    courses: [
+      { name: "Starter", dishes: [
+        "Punjabi Samosa, Onion Pakora or Hara Bhara Kebab",
+      ] },
+      { name: "Rice & breads", dishes: [
+        "Tandoori Roti or Naan with Paneer Curry",
+        "Vegetable Pulao or Peas Pulao",
+        "Steamed Basmati Rice",
+      ] },
+      { name: "Dal & curries", dishes: [
+        "Dal Tadka or Dal Makhani",
+        "Punjabi Kadhi or Tomato Shorba",
+        "Rajma Masala, Chana Masala or Dal Palak",
+        "Kadhi Pakora or Sindhi Kadhi",
+      ] },
+      { name: "Vegetable sides", dishes: [
+        "Jeera Aloo or Punjabi Aloo Gobi",
+        "Matar Gobi, Beans Aloo Sabzi or Vegetable Jalfrezi",
+      ] },
+      { name: "Accompaniments", dishes: [
+        "Saunth-Imli Chutney",
+        "Mint-Coriander Chutney",
+        "Boondi Raita or Masala Chaas",
+        "Mango or Lemon Pickle",
+        "Roasted Papad or Masala Papad",
+      ] },
+      { name: "Sweets", dishes: [
+        "Gur with Ghee or Rajasthani Churma",
+        "Gulab Jamun or Gajar Halwa",
+        "Kesar Badam Kheer or Rice Kheer",
+      ] },
+    ],
   },
   {
     name: "Small Golu Package",
@@ -133,14 +210,24 @@ export const menus: CateringMenu[] = [
     intro: "A traditional spread for Navaratri Golu gatherings, pooja celebrations, and evening guests.",
     pricePerPackage: 99,
     serves: "8–10 guests",
-    courses: [{ name: "What’s included", dishes: [
-      "Sweet Panakam",
-      "Konda Kadalai Sundal / Senagalu Guggillu",
-      "Milagu Vadai / Miriyala Garelu — 10 pieces",
-      "Temple Puliyodarai / Andhra Pulihora — ¼ tray",
-      "Thengai Thuvaiyal / Kobbari Pachadi",
-      "Nei Appam / Bellam Appalu — 10 pieces",
-    ] }],
+    courses: [
+      { name: "Welcome drink", dishes: [
+        "Sweet Panakam",
+      ] },
+      { name: "Traditional bites", dishes: [
+        "Konda Kadalai Sundal / Senagalu Guggillu",
+        "Milagu Vadai / Miriyala Garelu — 10 pieces",
+      ] },
+      { name: "Temple rice", dishes: [
+        "Temple Puliyodarai / Andhra Pulihora — ¼ tray",
+      ] },
+      { name: "Accompaniment", dishes: [
+        "Thengai Thuvaiyal / Kobbari Pachadi",
+      ] },
+      { name: "Traditional sweet", dishes: [
+        "Nei Appam / Bellam Appalu — 10 pieces",
+      ] },
+    ],
   },
   {
     name: "Medium Golu Package",
@@ -203,77 +290,128 @@ export const menus: CateringMenu[] = [
     image: "/images/package-south-indian-thali.webp",
     pricePerPerson: 22.99,
     intro: "A traditional meal with Masal Vadai, rice, comforting curries, and classic accompaniments.",
-    courses: [{ name: "What’s included", dishes: [
-      "Masal Vadai/Medhu Vada",
-      "Paruppu Podi with Ghee",
-      "Roti / Parotta with Salna / Kurma",
-      "Steamed Rice",
-      "Sambar",
-      "Rasam",
-      "Kootu / Aviyal",
-      "Vathal Kulambu / Mor Kozhumbu",
-      "Kara Poriyal",
-      "Thengai Poriyal",
-      "Curd / Butter Milk",
-      "Mango / Lemon Pickle",
-      "Kesari / Payasam",
-      "Appalam",
-    ] }],
+    courses: [
+      { name: "Starter", dishes: [
+        "Masal Vadai/Medhu Vada",
+      ] },
+      { name: "Rice & breads", dishes: [
+        "Roti / Parotta with Salna / Kurma",
+        "Steamed Rice",
+      ] },
+      { name: "Curries & lentils", dishes: [
+        "Sambar",
+        "Rasam",
+        "Kootu / Aviyal",
+        "Vathal Kulambu / Mor Kozhumbu",
+      ] },
+      { name: "Vegetable sides", dishes: [
+        "Kara Poriyal",
+        "Thengai Poriyal",
+      ] },
+      { name: "Accompaniments", dishes: [
+        "Paruppu Podi with Ghee",
+        "Curd / Butter Milk",
+        "Mango / Lemon Pickle",
+        "Appalam",
+      ] },
+      { name: "Dessert", dishes: [
+        "Kesari / Payasam",
+      ] },
+    ],
   },
   {
     name: "Quick Fill Combo",
     image: "/images/occasion-combos.webp",
     intro: "A filling South Indian combo. Jain option available.",
     isTiffin: true,
-    courses: [{ name: "What’s included", dishes: [
-      "1pc Thatte Idly or 6pc Mini Idly",
-      "1pc Medhu Vada / 2 pc Kara Kuzhi Paniyaram / Punugulu",
-      "Ghee Pongal or Ghee Upma or Kichidi or Pesarattu Upma",
-      "Poori with Aloo Masala",
-      "Badam Kesari / Pineapple Kesari or Sooji Halwa",
-      "Sambar & 2 types of chutneys",
-    ] }],
+    courses: [
+      { name: "Idly & savoury bites", dishes: [
+        "1pc Thatte Idly or 6pc Mini Idly",
+        "1pc Medhu Vada / 2 pc Kara Kuzhi Paniyaram / Punugulu",
+      ] },
+      { name: "Breakfast mains", dishes: [
+        "Ghee Pongal or Ghee Upma or Kichidi or Pesarattu Upma",
+        "Poori with Aloo Masala",
+      ] },
+      { name: "Accompaniments", dishes: [
+        "Sambar & 2 types of chutneys",
+      ] },
+      { name: "Sweet finish", dishes: [
+        "Badam Kesari / Pineapple Kesari or Sooji Halwa",
+      ] },
+    ],
   },
   {
     name: "Jumbo Combo",
     image: "/images/occasion-combos.webp",
     intro: "The ultimate South Indian breakfast feast. Jain option available.",
     isTiffin: true,
-    courses: [{ name: "What’s included", dishes: [
-      "1pc Thatte Idly or 6pc Mini Idly",
-      "1pc Medhu Vada(Garelu) or 2pc Kara Kuzhi Paniyaram or Punugulu",
-      "Ghee Pongal or Ghee Upma or Pesarattu Upma",
-      "Poori Aloo Masala",
-      "Kothu Parotta/Aloo Paratha/Chapati with Kurma",
-      "Badam/Pineapple Kesari or Sooji Halwa",
-      "Sambar & 2 types of chutneys",
-      "Filter Coffee or Tea or Badam Milk",
-    ] }],
+    courses: [
+      { name: "Idly & savoury bites", dishes: [
+        "1pc Thatte Idly or 6pc Mini Idly",
+        "1pc Medhu Vada(Garelu) or 2pc Kara Kuzhi Paniyaram or Punugulu",
+      ] },
+      { name: "Breakfast mains", dishes: [
+        "Ghee Pongal or Ghee Upma or Pesarattu Upma",
+        "Poori Aloo Masala",
+        "Kothu Parotta/Aloo Paratha/Chapati with Kurma",
+      ] },
+      { name: "Accompaniments", dishes: [
+        "Sambar & 2 types of chutneys",
+      ] },
+      { name: "Sweet finish", dishes: [
+        "Badam/Pineapple Kesari or Sooji Halwa",
+      ] },
+      { name: "Refreshment", dishes: [
+        "Filter Coffee or Tea or Badam Milk",
+      ] },
+    ],
   },
   {
     name: "Wedding Style Tiffin",
     image: "/images/occasion-combos.webp",
     intro: "A grand kalyana-style breakfast platter.",
     isTiffin: true,
-    courses: [{ name: "What’s included", dishes: [
-      "1pc Thatte Idly or 6pc Mini Idly",
-      "1pc Medhu Vada(Garelu)",
-      "2pc Kara Kuzhi Paniyaram or Punugulu",
-      "Ghee Pongal or Kichidi",
-      "Ghee Upma or Tomato Bath",
-      "Mix Veg Uthappam or Kal Dosa or Pesarattu Upma",
-      "Poori Aloo Masala",
-      "Idiyappam Coconut Milk or Bellam Semiya",
-      "Veg Paya or Vadacurry or Veg Kurma or Senagapappu Kurma",
-      "Badam/Pineapple Kesari or Sooji Halwa",
-      "Sambar & 2 types of chutneys",
-      "Filter Coffee or Tea or Badam Milk",
-    ] }],
+    courses: [
+      { name: "Idly & savoury bites", dishes: [
+        "1pc Thatte Idly or 6pc Mini Idly",
+        "1pc Medhu Vada(Garelu)",
+        "2pc Kara Kuzhi Paniyaram or Punugulu",
+      ] },
+      { name: "Breakfast mains", dishes: [
+        "Ghee Pongal or Kichidi",
+        "Ghee Upma or Tomato Bath",
+        "Mix Veg Uthappam or Kal Dosa or Pesarattu Upma",
+        "Poori Aloo Masala",
+        "Idiyappam Coconut Milk or Bellam Semiya",
+      ] },
+      { name: "Curries & accompaniments", dishes: [
+        "Veg Paya or Vadacurry or Veg Kurma or Senagapappu Kurma",
+        "Sambar & 2 types of chutneys",
+      ] },
+      { name: "Sweet finish", dishes: [
+        "Badam/Pineapple Kesari or Sooji Halwa",
+      ] },
+      { name: "Refreshment", dishes: [
+        "Filter Coffee or Tea or Badam Milk",
+      ] },
+    ],
   },
   {
     name: "Srivari Power Lunch",
     image: "/images/package-power-lunch.webp",
     intro: "A modern Indian bowl menu for everyday team lunches, with your choice of base and main, masala corn chaat cups, and fresh sides.",
+    isSuggested: true,
+    dishDescriptions: {
+      "Choose 1 base: Jeera rice or Lemon millet rice": "Start your bowl with cumin rice or lemon-flavoured millet rice.",
+      "Choose 1 main: Paneer tikka or Chana masala": "Add paneer tikka pieces or a hearty chickpea curry.",
+      "Seasonal vegetable poriyal": "A South Indian vegetable side to complete the bowl.",
+      "Cucumber, tomato & carrot salad": "A fresh, crunchy side served separately.",
+      "Mint-coriander chutney": "A herb chutney to spoon over the bowl.",
+      "Cucumber raita": "A cooling yogurt-and-cucumber accompaniment.",
+      "Masala corn & peanut chaat cups": "Individual cups of sweet corn and peanuts with a tangy masala dressing.",
+      "Mini Badam Kesari": "A small almond-kesari sweet to finish lunch.",
+    },
     courses: [
       { name: "Build your bowl", dishes: [
         "Choose 1 base: Jeera rice or Lemon millet rice",
@@ -295,6 +433,21 @@ export const menus: CateringMenu[] = [
     name: "The Boardroom Feast",
     image: "/images/occasion-corporate.webp",
     intro: "Paneer tikka and beetroot-aloo sliders, chaat cups, and a generous vegetarian lunch spread for client meetings and team celebrations.",
+    isSuggested: true,
+    dishDescriptions: {
+      "Paneer tikka sliders with mint chutney": "Mini buns filled with paneer tikka, crunchy vegetables, and mint chutney.",
+      "Beetroot-aloo sliders with tomato relish": "Mini buns with beetroot-and-potato patties and tomato relish.",
+      "Dahi papdi chaat cups": "Individual cups of crisp papdi, yogurt, chickpeas, and sweet and tangy chutneys.",
+      "Vegetable dum biryani": "Fragrant rice layered with mixed vegetables for the shared lunch spread.",
+      "Paneer Butter Masala": "Paneer in a creamy tomato gravy, paired with rice or bread.",
+      "Dal Tadka": "Tempered lentils to accompany the lunch mains.",
+      "Butter naan / Roti": "Indian breads to serve alongside the curries.",
+      "Cucumber raita": "A cooling yogurt-and-cucumber side for the biryani.",
+      "Fresh green salad": "A fresh vegetable salad to balance the lunch spread.",
+      "Mint chutney": "A herb dip for the sliders and lunch accompaniments.",
+      "Mini Gulab Jamun": "Small syrup-soaked sweets for a bite-size dessert.",
+      "Rose milk": "A chilled rose-flavoured milk refreshment.",
+    },
     courses: [
       { name: "Signature sliders & chaat", dishes: [
         "Paneer tikka sliders with mint chutney",
@@ -315,6 +468,18 @@ export const menus: CateringMenu[] = [
     name: "The Meeting Break",
     image: "/images/package-meeting-break.webp",
     intro: "Podi idly skewers, mini uttapam tacos, and dessert cups bring a fresh South Indian twist to meetings, workshops, and afternoon breaks.",
+    isSuggested: true,
+    dishDescriptions: {
+      "Podi idly skewers": "Mini idly tossed in podi and arranged on skewers for easy serving.",
+      "Mini uttapam tacos with coconut chutney": "Small uttapam folded around a vegetable filling, with coconut chutney.",
+      "Kara Kuzhi Paniyaram": "Savoury South Indian batter bites, served with chutney.",
+      "Mini paneer wraps": "Small wraps filled with paneer and vegetables for a meeting snack.",
+      "Coconut chutney": "A classic South Indian dip for the idly, uttapam, and paniyaram.",
+      "Mint chutney": "A fresh herb dip to accompany the paneer wraps.",
+      "Rose-rabdi dessert cups": "Individual cups of rose-flavoured thickened milk dessert.",
+      "Fresh fruit": "A selection of fruit for a lighter sweet option.",
+      "Filter coffee / Masala chai": "Choose South Indian filter coffee or spiced tea for the break.",
+    },
     courses: [
       { name: "Savoury bites", dishes: [
         "Podi idly skewers", "Mini uttapam tacos with coconut chutney",
