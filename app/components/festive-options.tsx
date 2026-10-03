@@ -18,7 +18,7 @@ export function FestiveOptions() {
       <section className="festive-specialties" aria-labelledby="festive-specialties-title">
         <p className="eyebrow">TRADITIONAL FESTIVE FAVOURITES</p>
         <h3 id="festive-specialties-title">Unique Tamil & Telugu Golu Specialties</h3>
-        <p>All items may be prepared in traditional Sattvic, no-onion and no-garlic style.</p>
+        <p>All items may be prepared in traditional Sattvic, no-onion and no-garlic style. Jain options are also available on request.</p>
         <p className="festive-serving-note">Small serves approximately 10–12 · Medium serves approximately 20–25</p>
         <p>Suggested pickup rates before tax and delivery. Where shown, quantities are pieces unless marked in lb.</p>
         <div className="festive-tables">

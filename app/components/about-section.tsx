@@ -53,7 +53,7 @@ export function AboutSection() {
       <div className="about-menu-note">
         <div>
           <h3>A menu that suits your gathering</h3>
-          <p>Jain options are available for Quick Fill and Jumbo combos. Festive menus also offer custom Jain and traditional Sattvic preparations without onion or garlic. Share your preferences when enquiring so we can discuss the right dishes, availability, quantities, and arrangements for your event.</p>
+          <p>Jain and no-onion, no-garlic options are available on request across all our catering menus, from traditional thalis and tiffin combos to weddings, office catering, festive spreads, and live dosas. Select your preferences in the catering planner and tell us which dishes or how many guests need special preparation in your enquiry.</p>
         </div>
         <Link className="button" href="/contact">Discuss Your Menu <Icon name="arrow" /></Link>
       </div>

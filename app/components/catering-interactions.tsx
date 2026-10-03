@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Fragment, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Icon, type IconName } from "./catering-icons";
 
-import { menus, menuPrice, buildPackageMenu, type MenuSelection } from "../data/catering-menu";
+import { menus, menuPrice, buildPackageMenu, dietaryAvailability, dietaryRequestOptions, type MenuSelection } from "../data/catering-menu";
 import { FestiveOptions } from "./festive-options";
 import { ContactForm } from "./contact-form";
 import { estimateFood, estimateStaff, formatCost } from "../data/catering-estimate";
@@ -128,7 +128,7 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
     menuIndex,
     occasionIndex: occasions.findIndex((occasion) => occasion.menuIndices.includes(menuIndex)),
   })).filter(({ menu: option, occasionIndex }) => {
-    const text = [option.name, option.intro, occasions[occasionIndex]?.name,
+    const text = [option.name, option.intro, occasions[occasionIndex]?.name, dietaryAvailability,
       ...option.courses.flatMap((course) => [course.name, ...(Array.isArray(course.dishes) ? course.dishes : [course.dishes])]),
       ...(option.selections?.flatMap((group) => group.options) ?? []),
     ].join(" ").toLowerCase();
@@ -177,7 +177,7 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
               if (selectedMenu === menuIndex) reveal(detailsHeading.current);
             }}>
               <Image src={option.image} alt="" width={80} height={80} />
-              <span><span className="menu-search-category">{occasions[occasionIndex].name}</span><span className="menu-search-name">{option.name}</span><span className="menu-search-price">{menuPrice(option)}</span></span>
+              <span><span className="menu-search-category">{occasions[occasionIndex].name}</span><span className="menu-search-name">{option.name}</span><span className="menu-search-price">{menuPrice(option)}</span><span className="menu-search-dietary">{dietaryAvailability}</span></span>
               <Icon name="arrow" />
             </button>)}
           </div> : <p>No packages found. Try a dish, cuisine, occasion, or package name.</p>}
@@ -227,6 +227,7 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
                     </div>
                   </div>
                   <p>{option.intro}</p>
+                  <p className="menu-dietary-note">{dietaryAvailability}</p>
                   <div className="package-pricing"><span className="package-price">{menuPrice(option)}</span>{option.serves && <span className="package-minimum">Serves {option.serves}</span>}{option.minimumGuests && <span className="package-minimum">Minimum order: {option.minimumGuests} guests</span>}</div>
                   <button className="button" type="button" aria-expanded={selectedMenu === menuIndex} aria-controls="package-details" onClick={() => { setSelectedMenu(menuIndex); setShowPlanner(false); if (selectedMenu === menuIndex) reveal(detailsHeading.current); }}>View package <Icon name="arrow" /><span className="sr-only">: {option.name}</span></button>
                 </article>
@@ -238,7 +239,7 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
       </div>
       <div id="package-details" hidden={!menu}>
         {menu && occasion && <div className="package-details">
-          <div className="details-intro"><p className="eyebrow">{occasion.name.toUpperCase()} / PACKAGE DETAILS</p><h3 ref={detailsHeading} tabIndex={-1}>{menu.name}</h3><p>{menu.intro}</p>{(menu.pricePerPerson !== undefined || menu.pricePerPackage !== undefined || menu.minimumGuests !== undefined) && <p className="combo-detail-price">{menuPrice(menu)}{menu.serves && <span>Serves {menu.serves}</span>}{menu.minimumGuests && <span>Minimum order: {menu.minimumGuests} guests</span>}</p>}{!planAfterChoices && planButton}</div>
+          <div className="details-intro"><p className="eyebrow">{occasion.name.toUpperCase()} / PACKAGE DETAILS</p><h3 ref={detailsHeading} tabIndex={-1}>{menu.name}</h3><p>{menu.intro}</p><p className="menu-dietary-note">{dietaryAvailability}</p>{(menu.pricePerPerson !== undefined || menu.pricePerPackage !== undefined || menu.minimumGuests !== undefined) && <p className="combo-detail-price">{menuPrice(menu)}{menu.serves && <span>Serves {menu.serves}</span>}{menu.minimumGuests && <span>Minimum order: {menu.minimumGuests} guests</span>}</p>}{!planAfterChoices && planButton}</div>
           <div className="menu-courses">
             {menu.isSuggested && <p className="menu-suggestion-note">Suggested corporate menu. Item descriptions can be tailored with our team; final dishes and pricing are confirmed on enquiry.</p>}
             {menu.courses.map((course, index) => (
@@ -285,7 +286,7 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
   choicesByMenu: ChoicesByMenu;
   onEditPackage: (menuName: string) => void;
 }) {
-  const [savedBrief, setBrief] = useState<{ text: string; choices: string; people: string; staff: string; cutlery: boolean; date: string; time: string } | null>(null);
+  const [savedBrief, setBrief] = useState<{ text: string; choices: string; people: string; staff: string; cutlery: boolean; date: string; time: string; dietaryRequests: string[] } | null>(null);
   const [selectionAttempted, setSelectionAttempted] = useState(false);
   const [chosenMenu, setChosenMenu] = useState(defaultMenu);
   const [guestCount, setGuestCount] = useState(defaultMenu === "Live Dosa Catering" ? "30" : "");
@@ -321,12 +322,14 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
     const total = subtotal !== null ? subtotal + cutleryAmount : null;
     const date = String(data.get("event_date") ?? "");
     const time = String(data.get("event_time") ?? "");
-    setBrief({ choices: choiceSnapshot, people: String(people), staff: String(staffCount), cutlery, date, time, text: [
+    const dietaryRequests = dietaryRequestOptions.filter((option) => data.getAll("dietary_requests").includes(option));
+    setBrief({ choices: choiceSnapshot, people: String(people), staff: String(staffCount), cutlery, date, time, dietaryRequests, text: [
       "SRIVARI CATERING — REQUEST PREVIEW",
       `Package: ${chosenMenu}`,
       `Number of people: ${data.get("guests")}`,
       `Event date: ${date || "Not specified"}`,
       `Event time: ${time || "Not specified"}`,
+      `Dietary requests: ${dietaryRequests.length ? dietaryRequests.join(" · ") : "Not requested"}`,
       ...(plannedMenu && (plannedMenu.pricePerPerson !== undefined || plannedMenu.pricePerPackage !== undefined) ? [`Price: ${menuPrice(plannedMenu)}`] : []),
       ...(plannedMenu?.serves ? [`Package serves: ${plannedMenu.serves}`] : []),
       `Food estimate: ${foodEstimate?.calculation ?? "Pricing upon enquiry"}`,
@@ -366,6 +369,14 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
           <label className="full-width">Number of people<input name="guests" type="number" min={plannedMenu?.minimumGuests ?? 1} max="100000" step="1" placeholder="e.g. 100" value={guestCount} onChange={(event) => setGuestCount(event.target.value)} required/>{plannedMenu?.minimumGuests && <span className="guest-minimum">Minimum {plannedMenu.minimumGuests} people for this package.</span>}</label>
           <label>Event date <span className="optional">(optional)</span><input name="event_date" type="date" /></label>
           <label>Event time <span className="optional">(optional)</span><input name="event_time" type="time" /></label>
+          <fieldset className="full-width planner-dietary-options">
+            <legend>Special dietary requests <span className="optional">(optional)</span></legend>
+            <p>{dietaryAvailability} Select any you need, then mention the dishes or number of guests in Special requests / Description.</p>
+            {dietaryRequestOptions.map((option) => <label className="planner-extra-option" key={option}>
+              <input type="checkbox" name="dietary_requests" value={option} />
+              <span>{option}</span>
+            </label>)}
+          </fieldset>
           {!isLiveDosa && <><label className="full-width">Do you need service staff?
             <select name="service_staff" defaultValue="0">
               <option value="0">No service staff needed</option>
@@ -395,7 +406,7 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
         <h3>Your catering request preview</h3>
         <p>Check your package, guest count, date, time, and menu below, then add your contact details to send your enquiry.</p>
         <pre>{brief}</pre>
-        <ContactForm key={brief} cateringRequest={{ preview: brief, packageName: chosenMenu, people: savedBrief.people, staff: savedBrief.staff, cutlery: savedBrief.cutlery, date: savedBrief.date, time: savedBrief.time, includeServiceExtras: !isLiveDosa }} />
+        <ContactForm key={brief} cateringRequest={{ preview: brief, packageName: chosenMenu, people: savedBrief.people, staff: savedBrief.staff, cutlery: savedBrief.cutlery, date: savedBrief.date, time: savedBrief.time, dietaryRequests: savedBrief.dietaryRequests, includeServiceExtras: !isLiveDosa }} />
       </div>}
     </div>
   );

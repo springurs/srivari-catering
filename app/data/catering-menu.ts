@@ -23,6 +23,9 @@ export type CateringMenu = {
   selections?: MenuSelection[];
 };
 
+export const dietaryAvailability = "Jain and no-onion, no-garlic options available on request.";
+export const dietaryRequestOptions = ["Jain preparation", "No onion or garlic"] as const;
+
 // Combo names, prices, inclusions, and choices transcribed from the supplied
 // Srivari Vegetarian Catering Combos PDF (pages 1–5), with North Indian Thali
 // from page 6 of the six-page edition.

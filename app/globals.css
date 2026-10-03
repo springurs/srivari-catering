@@ -145,6 +145,8 @@ h1 { font-size: clamp(48px, 5vw, 78px); line-height: .99; letter-spacing: -2px; 
 .details-intro h3 { text-transform: capitalize; }
 .details-intro > p:not(.eyebrow) { color: var(--muted); font-size: 14px; margin-top: 18px; }
 .details-intro .button { margin-top: 25px; }
+.package-card .menu-dietary-note, .details-intro .menu-dietary-note { padding: 10px 12px; border-left: 3px solid var(--gold); background: #f6f4ec; color: #456044; font-size: 14px; line-height: 1.6; }
+.menu-search-dietary { display: block; margin-top: 7px; color: #456044; font-size: 12px; line-height: 1.5; }
 .menu-course { display: flex; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); }
 .menu-course:first-child { padding-top: 0; }
 .menu-course:last-child { border: 0; padding-bottom: 0; }
@@ -195,6 +197,10 @@ h1 { font-size: clamp(48px, 5vw, 78px); line-height: .99; letter-spacing: -2px; 
 .selected-menu-group h5 { margin: 0 0 8px; font-size: 15px; font-weight: 500; color: #8b6b37; }
 .selected-menu-group ul { margin: 0; padding-left: 18px; list-style: disc; font-size: 14px; color: #595e58; line-height: 1.8; }
 .guest-minimum { display: block; margin-top: 8px; font-size: 10px; color: var(--muted); line-height: 1.5; }
+.planner-dietary-options { min-width: 0; border: 1px solid var(--line); border-radius: 7px; padding: 16px; }
+.planner-dietary-options legend { padding: 0 6px; font-size: 14px; }
+.planner-dietary-options > p { margin-bottom: 14px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.planner-dietary-options .planner-extra-option + .planner-extra-option { margin-top: 12px; }
 .festive-options { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--line); }
 .festive-options h3 { font-size: 30px; line-height: 1.25; margin: 10px 0 22px; }
 .festive-extras-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }

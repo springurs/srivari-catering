@@ -8,7 +8,7 @@ type FieldName = "name" | "phone" | "email" | "description";
 type FormErrors = Partial<Record<FieldName, string>>;
 
 export function ContactForm({ cateringRequest }: {
-  cateringRequest?: { preview: string; packageName: string; people: string; staff: string; cutlery: boolean; date: string; time: string; includeServiceExtras?: boolean };
+  cateringRequest?: { preview: string; packageName: string; people: string; staff: string; cutlery: boolean; date: string; time: string; dietaryRequests: string[]; includeServiceExtras?: boolean };
 } = {}) {
   const id = useId();
   const fieldId = (field: string) => `${cateringRequest ? `catering-${id}` : "contact"}-${field}`;
@@ -53,6 +53,7 @@ export function ContactForm({ cateringRequest }: {
       formData.set("subject", `Catering request — ${cateringRequest.packageName} — ${cateringRequest.people} people`);
       formData.set("package", cateringRequest.packageName);
       formData.set("number_of_people", cateringRequest.people);
+      formData.set("dietary_requests", cateringRequest.dietaryRequests.length ? cateringRequest.dietaryRequests.join(" · ") : "Not requested");
       if (cateringRequest.includeServiceExtras !== false) {
         formData.set("service_staff", cateringRequest.staff);
         formData.set("cutlery_and_plates", cateringRequest.cutlery ? "Requested" : "Not requested");
@@ -95,7 +96,7 @@ export function ContactForm({ cateringRequest }: {
   return (
     <section className={`contact-form-section ${cateringRequest ? "catering-contact-form" : "contact-card"}`} aria-labelledby={fieldId("form-title")}>
       {cateringRequest ? <h4 id={fieldId("form-title")}>Your contact details</h4> : <h2 id={fieldId("form-title")}><Icon name="mail" /> Send Us a Message</h2>}
-      <p className="contact-form-intro" id={fieldId("form-help")}>{cateringRequest ? "Add your contact details and anything specific you’d like to discuss. Your package, guest count, date, time, and selected menu will be included automatically in the email to our team." : "Just your name, a phone number or email, and a description."}</p>
+      <p className="contact-form-intro" id={fieldId("form-help")}>{cateringRequest ? "Add your contact details and anything specific you’d like to discuss. Your package, guest count, date, time, selected menu, and dietary requests will be included automatically in the email to our team." : "Just your name, a phone number or email, and a description."}</p>
       <form noValidate onSubmit={validateMessage} onChange={clearFeedback} aria-describedby={`${fieldId("form-help")} ${fieldId("form-note")}`} aria-busy={isSubmitting}>
         <input type="hidden" name="access_key" value={contactAccessKey}></input>
         {cateringRequest && <input type="hidden" name="request_preview" value={cateringRequest.preview} />}
@@ -122,7 +123,7 @@ export function ContactForm({ cateringRequest }: {
           </fieldset>
           <div>
             <label htmlFor={fieldId("description")}>{cateringRequest ? "Special requests / Description" : "Description"} <span className="contact-required">(required)</span></label>
-            <textarea id={fieldId("description")} name="description" rows={4} required placeholder={cateringRequest ? "Tell us about your venue, dietary preferences, menu preferences, or anything else you’d like to discuss." : undefined} aria-invalid={Boolean(errors.description)} aria-describedby={errors.description ? fieldId("description-error") : undefined} />
+            <textarea id={fieldId("description")} name="description" rows={4} required placeholder={cateringRequest ? "Tell us which dishes or how many guests need Jain or no-onion, no-garlic preparation, plus any venue or menu preferences." : "How can we help? Include any Jain or no-onion, no-garlic requests."} aria-invalid={Boolean(errors.description)} aria-describedby={errors.description ? fieldId("description-error") : undefined} />
             {errors.description && <p className="contact-form-error" id={fieldId("description-error")}>{errors.description}</p>}
           </div>
         </fieldset>
