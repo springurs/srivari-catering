@@ -6,7 +6,7 @@ Every package card displays a small decorative food photo beside its title. Exis
 | --- | --- |
 | Srivari Signature Veg Feast | `public/images/occasion-traditional.webp` |
 | Andhra Inti Bhojanam | `public/images/package-south-indian-thali.webp` |
-| Wedding Thali Combo | `public/images/occasion-weddings.webp` |
+| Wedding Spl Thali | `public/images/occasion-weddings.webp` |
 | Apna Ghar Ka Bhojan | `public/images/occasion-traditional.webp` |
 | Small Golu Package | `public/images/occasion-festive.webp` |
 | Medium Golu Package | `public/images/occasion-festive.webp` |

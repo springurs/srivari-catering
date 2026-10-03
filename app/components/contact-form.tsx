@@ -8,7 +8,7 @@ type FieldName = "name" | "phone" | "email" | "description";
 type FormErrors = Partial<Record<FieldName, string>>;
 
 export function ContactForm({ cateringRequest }: {
-  cateringRequest?: { preview: string; packageName: string; people: string; staff: string; cutlery: boolean; date: string; time: string; dietaryRequests: string[]; includeServiceExtras?: boolean };
+  cateringRequest?: { preview: string; packageName: string; people: string; staff: string; cutlery: boolean; date: string; time: string; dietaryRequests: string[]; includeServiceExtras?: boolean; includedService?: { style: string; staffing: string } };
 } = {}) {
   const id = useId();
   const fieldId = (field: string) => `${cateringRequest ? `catering-${id}` : "contact"}-${field}`;
@@ -55,9 +55,10 @@ export function ContactForm({ cateringRequest }: {
       formData.set("number_of_people", cateringRequest.people);
       formData.set("dietary_requests", cateringRequest.dietaryRequests.length ? cateringRequest.dietaryRequests.join(" · ") : "Not requested");
       if (cateringRequest.includeServiceExtras !== false) {
-        formData.set("service_staff", cateringRequest.staff);
+        formData.set("service_staff", cateringRequest.includedService ? `Included — ${cateringRequest.includedService.staffing}` : cateringRequest.staff);
         formData.set("cutlery_and_plates", cateringRequest.cutlery ? "Requested" : "Not requested");
       }
+      if (cateringRequest.includedService) formData.set("service_style", cateringRequest.includedService.style);
       if (cateringRequest.date) formData.set("event_date", cateringRequest.date);
       if (cateringRequest.time) formData.set("event_time", cateringRequest.time);
       formData.set("request_preview", cateringRequest.preview);

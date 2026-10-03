@@ -53,7 +53,7 @@ export function AboutSection() {
       <div className="about-menu-note">
         <div>
           <h3>A menu that suits your gathering</h3>
-          <p>Jain and no-onion, no-garlic options are available on request across all our catering menus, from traditional thalis and tiffin combos to weddings, office catering, festive spreads, and live dosas. Select your preferences in the catering planner and tell us which dishes or how many guests need special preparation in your enquiry.</p>
+          <p>Share your dietary requirements and preparation preferences when enquiring. You can select Jain or no-onion, no-garlic preparation in the catering planner and tell us which dishes or how many guests need it in your enquiry.</p>
         </div>
         <Link className="button" href="/contact">Discuss Your Menu <Icon name="arrow" /></Link>
       </div>

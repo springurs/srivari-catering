@@ -1,3 +1,5 @@
+import { premiumWeddingMenus } from "./premium-wedding-menu";
+
 export type MenuSelection = {
   name: string;
   count: number;
@@ -19,6 +21,12 @@ export type CateringMenu = {
   isTiffin?: boolean;
   isSuggested?: boolean;
   dishDescriptions?: Record<string, string>;
+  includedService?: {
+    style: string;
+    staffing: string;
+    inclusions: string[];
+    planningNotes: string[];
+  };
   courses: { name: string; dishes: string | string[] }[];
   selections?: MenuSelection[];
 };
@@ -173,11 +181,11 @@ export const menus: CateringMenu[] = [
     ],
   },
   {
-    name: "Wedding Thali Combo",
+    name: "Wedding Spl Thali",
     minimumGuests: 25,
     image: "/images/occasion-weddings.webp",
     intro: "A celebratory South Indian spread with traditional accompaniments and two desserts.",
-    pricePerPerson: 24.99,
+    pricePerPerson: 32.99,
     isCombo: true,
     courses: [
       { name: "Starter", dishes: [
@@ -451,7 +459,7 @@ export const menus: CateringMenu[] = [
     name: "Quick Fill Combo",
     minimumGuests: 25,
     image: "/images/occasion-combos.webp",
-    intro: "A filling South Indian combo. Jain option available.",
+    intro: "A filling South Indian combo.",
     isTiffin: true,
     courses: [
       { name: "Idly & savoury bites", dishes: [
@@ -484,7 +492,7 @@ export const menus: CateringMenu[] = [
     name: "Jumbo Combo",
     minimumGuests: 25,
     image: "/images/occasion-combos.webp",
-    intro: "The ultimate South Indian breakfast feast. Jain option available.",
+    intro: "The ultimate South Indian breakfast feast.",
     isTiffin: true,
     courses: [
       { name: "Idly & savoury bites", dishes: [
@@ -698,6 +706,7 @@ export const menus: CateringMenu[] = [
       { name: "Complimentary beverages", count: 1, replaces: "Coffee, Tea, Chaas, Rose milk or Lassi — choose 1", options: ["Coffee", "Tea", "Chaas", "Rose milk", "Lassi"] },
     ],
   },
+  ...premiumWeddingMenus,
 ];
 
 export function buildPackageMenu(menu: CateringMenu, choices: Record<string, string[]>) {
