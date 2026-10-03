@@ -13,6 +13,7 @@ export type CateringMenu = {
   pricePerPerson?: number;
   pricePerPackage?: number;
   serves?: string;
+  guestsPerPackage?: number;
   minimumGuests?: number;
   isCombo?: boolean;
   isTiffin?: boolean;
@@ -30,6 +31,19 @@ export type CateringMenu = {
 // supplied Golu Season Packages attachment.
 // Corporate menus are proposed vegetarian menus created at the user's request;
 // pricing, availability, and serving arrangements are confirmed on enquiry.
+// Shared starter and dessert choices from the supplied vegetarian combo menu.
+const vegetarianStarterChoices = [
+  "Punugulu", "Alasanda Guggillu", "Samosa", "Medhu Vada (Garelu)",
+  "Masala Vada", "Vegetable Pakora", "Cut Mirchi", "Mysore Bonda",
+  "Kara Kuzhi Paniyaram / Gunta Ponganalu", "Gobi Manchurian / Chilli Gobi",
+  "Baby Corn Manchurian / Chilli Baby Corn", "Sundal - chickpea or peanut varieties",
+  "Aloo Tikki", "Sabudana Vada",
+];
+const vegetarianDessertChoices = [
+  "Gulab Jamun", "Jamun Rabdi", "Rice Kheer", "Rasmalai", "Payasam",
+  "Kesari", "Double Ka Meetha", "Fruit Custard", "Shahi Tukda", "Gajar Halwa",
+];
+
 export const menus: CateringMenu[] = [
   {
     name: "Srivari Signature Veg Feast",
@@ -64,13 +78,7 @@ export const menus: CateringMenu[] = [
     selections: [
       {
         name: "Vegetarian starters", count: 2, replaces: "2 vegetarian starters",
-        options: [
-          "Punugulu", "Alasanda Guggillu", "Samosa", "Medhu Vada (Garelu)",
-          "Masala Vada", "Vegetable Pakora", "Cut Mirchi", "Mysore Bonda",
-          "Kara Kuzhi Paniyaram / Gunta Ponganalu", "Gobi Manchurian / Chilli Gobi",
-          "Baby Corn Manchurian / Chilli Baby Corn", "Sundal - chickpea or peanut varieties",
-          "Aloo Tikki", "Sabudana Vada",
-        ],
+        options: vegetarianStarterChoices,
       },
       {
         name: "Rice", section: "Rice & breads", count: 1, replaces: "Steamed rice or jeera rice",
@@ -106,10 +114,7 @@ export const menus: CateringMenu[] = [
       },
       {
         name: "Dessert", count: 1, replaces: "1 dessert",
-        options: [
-          "Gulab Jamun", "Jamun Rabdi", "Rice Kheer", "Rasmalai", "Payasam",
-          "Kesari", "Double Ka Meetha", "Fruit Custard", "Shahi Tukda", "Gajar Halwa",
-        ],
+        options: vegetarianDessertChoices,
       },
     ],
   },
@@ -309,6 +314,7 @@ export const menus: CateringMenu[] = [
     image: "/images/occasion-festive.webp",
     intro: "A traditional spread for Navaratri Golu gatherings, pooja celebrations, and evening guests.",
     pricePerPackage: 99,
+    guestsPerPackage: 10,
     serves: "8–10 guests",
     courses: [
       { name: "Welcome drink", dishes: [
@@ -334,6 +340,7 @@ export const menus: CateringMenu[] = [
     image: "/images/occasion-festive.webp",
     intro: "Traditional bites, two rice specialties, and your choice of sweet for a festive gathering.",
     pricePerPackage: 219,
+    guestsPerPackage: 20,
     serves: "15–20 guests",
     courses: [
       { name: "Refreshment", dishes: ["Panakam or Neer Mor / Majjiga"] },
@@ -360,6 +367,7 @@ export const menus: CateringMenu[] = [
     image: "/images/occasion-festive.webp",
     intro: "A generous heritage menu with welcome drinks, traditional savouries, temple rice, and festive sweets.",
     pricePerPackage: 399,
+    guestsPerPackage: 30,
     serves: "25–30 guests",
     courses: [
       { name: "Welcome drinks", dishes: ["Sweet Panakam", "Neer Mor / Majjiga"] },
@@ -652,6 +660,39 @@ export const menus: CateringMenu[] = [
       { name: "On the side", dishes: ["Coconut chutney", "Mint chutney"] },
       { name: "Something sweet", dishes: ["Rose-rabdi dessert cups", "Fresh fruit"] },
       { name: "Tea & coffee", dishes: ["Filter coffee / Masala chai"] },
+    ],
+  },
+  {
+    name: "Live Dosa Catering",
+    image: "/images/occasion-live-catering.webp",
+    minimumGuests: 30,
+    intro: "Unlimited dosas, freshly prepared at your event, with a range of additions. Your package includes one appetiser, one variety rice or biryani, one dessert, and one complimentary beverage of your choice. Starts from 30 people; pricing upon enquiry.",
+    courses: [
+      { name: "Live dosa station", dishes: ["Unlimited freshly prepared dosas"] },
+      { name: "Available dosas for your dosa party", dishes: [
+        "Andhra Kara Dosa",
+        "Green Chili Dosa",
+        "Curry Leaf Dosa",
+        "Paneer Dosa",
+        "Plain Dosa",
+        "Masala Dosa",
+        "Ghee Dosa",
+        "Ghee Podi Dosa",
+        "Mysore Dosa",
+        "Cheese Dosa",
+        "Chocolate Dosa",
+      ] },
+      { name: "Dosa additions", dishes: ["Ghee", "Podi", "Masala", "Paneer", "Mix veg", "Kara paste", "Green chilli", "Curry leaf"] },
+      { name: "Appetiser", dishes: ["1 vegetarian appetiser"] },
+      { name: "Rice or biryani", dishes: ["1 variety rice or biryani"] },
+      { name: "Dessert", dishes: ["1 dessert"] },
+      { name: "Complimentary beverages", dishes: ["Coffee, Tea, Chaas, Rose milk or Lassi — choose 1"] },
+    ],
+    selections: [
+      { name: "Appetiser", count: 1, replaces: "1 vegetarian appetiser", options: vegetarianStarterChoices },
+      { name: "Variety rice or biryani", count: 1, replaces: "1 variety rice or biryani", options: ["Variety rice", "Vegetable biryani"] },
+      { name: "Dessert", count: 1, replaces: "1 dessert", options: vegetarianDessertChoices },
+      { name: "Complimentary beverages", count: 1, replaces: "Coffee, Tea, Chaas, Rose milk or Lassi — choose 1", options: ["Coffee", "Tea", "Chaas", "Rose milk", "Lassi"] },
     ],
   },
 ];

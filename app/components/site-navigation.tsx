@@ -8,7 +8,7 @@ export function SiteNavigation({ currentPage = "home" }: { currentPage?: "home" 
     <nav className="side-nav" aria-label="Main navigation">
       <Link className={currentPage === "home" ? "nav-active" : undefined} aria-current={currentPage === "home" ? "page" : undefined} href="/#home"><Icon name="home" /><span>Home</span></Link>
       <Link href={aboutHref}><Icon name="people" /><span>About Us</span></Link>
-      <Link href={occasionsHref}><Icon name="menu" /><span>Our Menus</span></Link>
+      <a href="https://www.srivaripleasanton.com/#menu"><Icon name="menu" /><span>Our Menus</span></a>
       <Link href={occasionsHref}><Icon name="calendar" /><span>Occasions</span></Link>
       <Link className={currentPage === "contact" ? "nav-active" : undefined} aria-current={currentPage === "contact" ? "page" : undefined} href="/contact"><Icon name="mail" /><span>Contact Us</span></Link>
     </nav>
