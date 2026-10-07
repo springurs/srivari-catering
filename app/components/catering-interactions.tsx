@@ -7,6 +7,7 @@ import { Icon, type IconName } from "./catering-icons";
 import { menus, menuPrice, buildPackageMenu, dietaryAvailability, dietaryRequestOptions, type CateringMenu, type MenuSelection } from "../data/catering-menu";
 import { FestiveOptions } from "./festive-options";
 import { ContactForm } from "./contact-form";
+import { keywordPackages, restaurantMenuUrl, type SearchReply } from "../data/menu-search";
 import { estimateFood, estimateStaff, formatCost } from "../data/catering-estimate";
 
 const weddingMenuIndices = [2, 15, 16].sort((left, right) =>
@@ -110,7 +111,7 @@ function MenuCheckboxes({ groups, choices, onChange }: {
   });
 }
 
-export type MenuSearchRequest = { query: string; id: number };
+export type MenuSearchRequest = { query: string; id: number; pending?: boolean; error?: string; result?: SearchReply };
 
 function IncludedService({ service }: { service: NonNullable<CateringMenu["includedService"]> }) {
   return <div className="included-service">
@@ -133,18 +134,12 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
   const searchHeading = useRef<HTMLHeadingElement>(null);
   const occasion = selectedOccasion === null ? null : occasions[selectedOccasion];
   const menu = selectedMenu === null ? null : menus[selectedMenu];
-  const searchWords = searchRequest?.query.toLowerCase().split(/\s+/).filter(Boolean) ?? [];
-  const searchResults = menus.map((option, menuIndex) => ({
-    menu: option,
-    menuIndex,
-    occasionIndex: occasions.findIndex((occasion) => occasion.menuIndices.includes(menuIndex)),
-  })).filter(({ menu: option, occasionIndex }) => {
-    const text = [option.name, option.intro, occasions[occasionIndex]?.name, dietaryAvailability, option.includedService?.style,
-      ...option.courses.flatMap((course) => [course.name, ...(Array.isArray(course.dishes) ? course.dishes : [course.dishes])]),
-      ...(option.selections?.flatMap((group) => group.options) ?? []),
-    ].join(" ").toLowerCase();
-    return occasionIndex >= 0 && searchWords.every((word) => text.includes(word));
-  });
+  const matchingNames = searchRequest?.pending || searchRequest?.error ? [] : searchRequest?.result?.packageNames ?? keywordPackages(searchRequest?.query ?? "");
+  const searchResults = matchingNames.map((name) => {
+    const menuIndex = menus.findIndex((menu) => menu.name === name);
+    return { menu: menus[menuIndex], menuIndex, occasionIndex: occasions.findIndex((occasion) => occasion.menuIndices.includes(menuIndex)) };
+  }).filter(({ menu, occasionIndex }) => menu && occasionIndex >= 0);
+  const searchResult = searchRequest?.result;
 
   const changeChoice: ChangeChoice = (menuName, groupName, dish, checked) => {
     const group = menus.find((option) => option.name === menuName)?.selections?.find((option) => option.name === groupName);
@@ -176,10 +171,11 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
 
   return (
     <section className="occasion-section" id="occasions" aria-labelledby="occasions-title">
-      <div id="menu-search-results" className="menu-search-results" key={searchRequest?.id ?? "empty"} hidden={!searchRequest}>
+      <div id="menu-search-results" className="menu-search-results" key={searchRequest?.id ?? "empty"} hidden={!searchRequest} aria-busy={searchRequest?.pending ?? false}>
         {searchRequest && <>
           <h3 ref={searchHeading} tabIndex={-1}>Flavours for your occasion</h3>
-          <p role="status">{searchResults.length} {searchResults.length === 1 ? "matching package" : "matching packages"} for “{searchRequest.query}”</p>
+          {searchRequest.pending ? <p className="search-pending" role="status">Finding flavours for you…</p> : searchRequest.error ? <p role="alert">{searchRequest.error}</p> : <>
+          <h4 className="search-group-title">Catering packages <span>({searchResults.length})</span></h4>
           {searchResults.length ? <div className="menu-search-grid">
             {searchResults.map(({ menu: option, menuIndex, occasionIndex }, position) => <button className="menu-search-result" type="button" key={option.name} style={{ animationDelay: `${Math.min(position, 6) * 45}ms` }} aria-label={`View ${option.name}`} onClick={() => {
               setSelectedOccasion(occasionIndex);
@@ -191,7 +187,22 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
               <span><span className="menu-search-category">{occasions[occasionIndex].name}</span><span className="menu-search-name">{option.name}</span><span className="menu-search-price">{menuPrice(option)}</span></span>
               <Icon name="arrow" />
             </button>)}
-          </div> : <p>No packages found. Try a dish, cuisine, occasion, or package name.</p>}
+          </div> : <p>No catering matches yet. Try another occasion or dish, or browse the packages below.</p>}
+          <div className="restaurant-search-results">
+            <h4 className="search-group-title">From our restaurant menu</h4>
+            <p className="search-note">Restaurant prices are for individual orders. Catering availability and pricing are confirmed separately.</p>
+            {searchResult?.restaurantItems.length ? <div className="restaurant-search-grid">
+              {searchResult.restaurantItems.map((dish) => <a className="restaurant-search-card" href={restaurantMenuUrl} target="_blank" rel="noopener noreferrer" key={dish.id}>
+                <span className="menu-search-category">{dish.category}</span>
+                <span className="restaurant-dish-title"><strong>{dish.name}</strong><span>{dish.price === null ? "View menu" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(dish.price)}</span></span>
+                {dish.description && <span>{dish.description}</span>}
+                <span className="restaurant-source-label">View restaurant menu ↗</span>
+              </a>)}
+            </div> : <p>{searchResult?.restaurantStatus === "unavailable" ? "The restaurant menu could not be refreshed right now." : "No matching restaurant dishes for this search."}</p>}
+            <p className="search-source"><a href={restaurantMenuUrl} target="_blank" rel="noopener noreferrer">Explore the full restaurant menu ↗</a>{searchResult?.checkedAt && <span> · Menu checked {new Date(searchResult.checkedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>}</p>
+          </div>
+          <p className="search-note">Menu suggestions help you explore. Confirm availability and your final catering quote with Srivari.</p>
+          </>}
         </>}
       </div>
       <div className="occasion-heading">
