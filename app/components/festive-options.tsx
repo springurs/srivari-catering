@@ -10,6 +10,7 @@ export function FestiveOptions() {
           {festiveExtras.map((extra) => (
             <article className="festive-extra" key={extra.name}>
               <h4>{extra.name}</h4>
+              <p>Price on enquiry</p>
               <ul>{extra.items.map((item) => <li key={item}>{item}</li>)}</ul>
             </article>
           ))}
@@ -20,7 +21,7 @@ export function FestiveOptions() {
         <h3 id="festive-specialties-title">Unique Tamil & Telugu Golu Specialties</h3>
         <p>All items may be prepared in traditional Sattvic, no-onion and no-garlic style.</p>
         <p className="festive-serving-note">Small serves approximately 10–12 · Medium serves approximately 20–25</p>
-        <p>Suggested pickup rates before tax and delivery. Where shown, quantities are pieces unless marked in lb.</p>
+        <p>Price on enquiry for all festive specialties. Available quantities are shown below.</p>
         <div className="festive-tables">
           {festiveSpecialties.map((category) => (
             <div className="festive-table" key={category.name}>

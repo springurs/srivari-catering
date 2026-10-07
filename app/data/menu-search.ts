@@ -10,7 +10,7 @@ export type SearchReply = {
   checkedAt: string | null;
 };
 
-const categoryNames = ["combos vegetarian feast", "traditional Andhra thali", "wedding thali", "traditional North Indian thali", "festive Golu", "festive Golu", "festive Golu", "traditional Tamil thali", "combos tiffin breakfast", "combos tiffin breakfast", "wedding combos tiffin breakfast", "corporate office lunch", "corporate office sliders lunch", "corporate office meeting snacks", "live dosa party", "wedding Andhra banana leaf", "wedding Andhra North Indian buffet"];
+const categoryNames = ["combos vegetarian feast", "traditional Andhra thali", "wedding thali", "traditional North Indian thali", "festive Golu", "festive Golu", "festive Golu", "traditional Tamil thali", "combos tiffin breakfast", "combos tiffin breakfast", "wedding combos tiffin breakfast", "corporate office lunch", "corporate office sliders lunch", "corporate office meeting snacks", "live dosa party", "wedding Andhra banana leaf", "wedding Andhra North Indian buffet", "executive meals corporate office lunch meetings"];
 const stopWords = new Set("a an and are at available can catering for have i in is me menu menus my of on please show some the to want with people guests person persons need we our us find recommend suggest looking options option restaurant".split(" "));
 
 export function queryWords(query: string) {
@@ -44,7 +44,7 @@ export function isSearchReply(value: unknown): value is SearchReply {
   if (!value || typeof value !== "object") return false;
   const reply = value as SearchReply;
   return reply.mode === "keyword" &&
-    Array.isArray(reply.packageNames) && reply.packageNames.length <= 17 && reply.packageNames.every((name) => menus.some((menu) => menu.name === name)) &&
+    Array.isArray(reply.packageNames) && reply.packageNames.length <= menus.length && reply.packageNames.every((name) => menus.some((menu) => menu.name === name)) &&
     Array.isArray(reply.restaurantItems) && reply.restaurantItems.length <= 6 && reply.restaurantItems.every((dish) =>
       dish && typeof dish.id === "string" && dish.id.length <= 300 && typeof dish.name === "string" && dish.name.length <= 160 &&
       typeof dish.category === "string" && dish.category.length <= 160 && typeof dish.description === "string" && dish.description.length <= 600 &&

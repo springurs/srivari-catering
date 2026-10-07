@@ -12,8 +12,6 @@ export type CateringMenu = {
   name: string;
   image: string;
   intro: string;
-  pricePerPerson?: number;
-  pricePerPackage?: number;
   serves?: string;
   guestsPerPackage?: number;
   minimumGuests?: number;
@@ -34,11 +32,11 @@ export type CateringMenu = {
 export const dietaryAvailability = "Jain and no-onion, no-garlic options available on request.";
 export const dietaryRequestOptions = ["Jain preparation", "No onion or garlic"] as const;
 
-// Combo names, prices, inclusions, and choices transcribed from the supplied
+// Combo names, inclusions, and choices transcribed from the supplied
 // Srivari Vegetarian Catering Combos PDF (pages 1–5), with North Indian Thali
 // from page 6 of the six-page edition.
 // Wedding, traditional, and combo minimums are 25 guests per the business update.
-// Golu menus, package prices, servings, and sweet choices come from the
+// Golu menus, servings, and sweet choices come from the
 // supplied Golu Season Packages attachment.
 // Corporate menus are proposed vegetarian menus created at the user's request;
 // pricing, availability, and serving arrangements are confirmed on enquiry.
@@ -55,12 +53,32 @@ const vegetarianDessertChoices = [
   "Kesari", "Double Ka Meetha", "Fruit Custard", "Shahi Tukda", "Gajar Halwa",
 ];
 
+export const executiveMeal: CateringMenu = {
+  name: "Srivari Executive Feast",
+  image: "/images/package-south-indian-thali.webp",
+  intro: "A complete vegetarian meal for office lunches, meetings, and corporate gatherings. Enjoy your choice of comforting rice, a vegetable side, biryani, and dessert, with curd rice and classic accompaniments.",
+  minimumGuests: 25,
+  courses: [
+    { name: "Rice favourites", dishes: ["Sambar Rice or Vathal Kuzhambu Rice", "Curd Rice"] },
+    { name: "Vegetable side", dishes: ["Poriyal or Dry Curry"] },
+    { name: "Biryani", dishes: ["Jackfruit Biryani or Paneer Biryani"] },
+    { name: "Accompaniments", dishes: ["Pickle or Roti Pachadi", "Papad"] },
+    { name: "Dessert", dishes: ["1 dessert"] },
+  ],
+  selections: [
+    { name: "Rice", count: 1, replaces: "Sambar Rice or Vathal Kuzhambu Rice", options: ["Sambar Rice", "Vathal Kuzhambu Rice"] },
+    { name: "Vegetable side", count: 1, replaces: "Poriyal or Dry Curry", options: ["Poriyal", "Dry Curry"] },
+    { name: "Biryani", count: 1, replaces: "Jackfruit Biryani or Paneer Biryani", options: ["Jackfruit Biryani", "Paneer Biryani"] },
+    { name: "Pickle or pachadi", count: 1, replaces: "Pickle or Roti Pachadi", options: ["Pickle", "Roti Pachadi"] },
+    { name: "Dessert", count: 1, replaces: "1 dessert", options: vegetarianDessertChoices },
+  ],
+};
+
 export const menus: CateringMenu[] = [
   {
     name: "Srivari Signature Veg Feast",
     image: "/images/occasion-traditional.webp",
     intro: "Build your perfect menu with South Indian, Andhra, and North Indian favourites. Choose 2 starters, 2 curries, and 1 dessert, plus your rice, bread, lentil, and soup preferences, subject to availability.",
-    pricePerPerson: 20,
     minimumGuests: 25,
     isCombo: true,
     courses: [
@@ -134,7 +152,6 @@ export const menus: CateringMenu[] = [
     minimumGuests: 25,
     image: "/images/package-south-indian-thali.webp",
     intro: "A comforting Andhra-style feast inspired by traditional home cooking.",
-    pricePerPerson: 22.99,
     isCombo: true,
     courses: [
       { name: "Starter", dishes: [
@@ -185,7 +202,6 @@ export const menus: CateringMenu[] = [
     minimumGuests: 25,
     image: "/images/occasion-weddings.webp",
     intro: "A celebratory South Indian spread with traditional accompaniments and two desserts.",
-    pricePerPerson: 32.99,
     isCombo: true,
     courses: [
       { name: "Starter", dishes: [
@@ -253,7 +269,6 @@ export const menus: CateringMenu[] = [
     minimumGuests: 25,
     image: "/images/occasion-traditional.webp",
     intro: "A generous North Indian menu featuring classic breads, curries, rice and festive sweets.",
-    pricePerPerson: 23.99,
     isCombo: true,
     courses: [
       { name: "Starter", dishes: [
@@ -324,7 +339,6 @@ export const menus: CateringMenu[] = [
     name: "Small Golu Package",
     image: "/images/occasion-festive.webp",
     intro: "A traditional spread for Navaratri Golu gatherings, pooja celebrations, and evening guests.",
-    pricePerPackage: 99,
     guestsPerPackage: 10,
     serves: "8–10 guests",
     courses: [
@@ -350,7 +364,6 @@ export const menus: CateringMenu[] = [
     name: "Medium Golu Package",
     image: "/images/occasion-festive.webp",
     intro: "Traditional bites, two rice specialties, and your choice of sweet for a festive gathering.",
-    pricePerPackage: 219,
     guestsPerPackage: 20,
     serves: "15–20 guests",
     courses: [
@@ -377,7 +390,6 @@ export const menus: CateringMenu[] = [
     name: "Premium Golu Heritage Package",
     image: "/images/occasion-festive.webp",
     intro: "A generous heritage menu with welcome drinks, traditional savouries, temple rice, and festive sweets.",
-    pricePerPackage: 399,
     guestsPerPackage: 30,
     serves: "25–30 guests",
     courses: [
@@ -408,7 +420,6 @@ export const menus: CateringMenu[] = [
     name: "Namba Oru Sapadu",
     minimumGuests: 25,
     image: "/images/package-south-indian-thali.webp",
-    pricePerPerson: 22.99,
     intro: "A traditional meal with Masal Vadai, rice, comforting curries, and classic accompaniments.",
     courses: [
       { name: "Starter", dishes: [
@@ -707,6 +718,7 @@ export const menus: CateringMenu[] = [
     ],
   },
   ...premiumWeddingMenus,
+  executiveMeal,
 ];
 
 export function buildPackageMenu(menu: CateringMenu, choices: Record<string, string[]>) {
@@ -733,8 +745,4 @@ export function buildPackageMenu(menu: CateringMenu, choices: Record<string, str
   return courses;
 }
 
-export function menuPrice(menu: CateringMenu) {
-  const price = menu.pricePerPackage ?? menu.pricePerPerson;
-  if (price === undefined) return "Pricing upon enquiry";
-  return `$${Number.isInteger(price) ? price : price.toFixed(2)} ${menu.pricePerPackage !== undefined ? "per package" : "per person"}`;
-}
+export const cateringPricing = "Price on enquiry";
