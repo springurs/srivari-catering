@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const configuredUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://srivari-catering.srivaripleasanton.workers.dev");
+const configuredUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://srivaricatering.com");
 if (configuredUrl.protocol !== "https:" || configuredUrl.username || configuredUrl.password || configuredUrl.pathname !== "/" || configuredUrl.search || configuredUrl.hash) {
   throw new Error("NEXT_PUBLIC_SITE_URL must be the public HTTPS origin of the catering website.");
 }
