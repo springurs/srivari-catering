@@ -94,3 +94,9 @@ No AI API key is needed. Run `npm run preview` to serve the static site and sear
 The endpoint validates same-origin requests and input length, and uses a Cloudflare rate-limit binding of 20 searches per IP per minute before retrieving the restaurant menu. The browser cancels pending searches and ignores stale responses.
 
 Run `npm run test:search` for parsing, caching, keyword matching, source-outage, and request-validation tests, plus `npm run lint` and `npm run build`. `npx wrangler deploy --dry-run` validates the Worker bundle without publishing it.
+
+## Search metadata and crawling
+
+The homepage and Contact Us page have distinct Pleasanton catering titles, descriptions, canonical URLs, Open Graph tags, and Twitter cards. Metadata is rendered into the exported HTML. Restaurant, WebSite, and WebPage/ContactPage JSON-LD describe the supplied business address, cuisines, email, restaurant phone, and catering phone. No ratings, opening hours, or prices are invented. `/robots.txt` allows public pages and assets, excludes API and Cloudflare internal routes, and points to `/sitemap.xml`. The sitemap contains the two public page URLs and the homepage food images.
+
+The production origin defaults to the verified `https://srivari-catering.srivaripleasanton.workers.dev`. If using a custom domain, set `NEXT_PUBLIC_SITE_URL` to that HTTPS origin in the Next.js build environment before running `npm run build` or deploying. This updates canonical links, social URLs, structured data, robots, and sitemap together. Because this site is a static export, changing a runtime Worker variable does not update the built metadata. After publishing, submit `/sitemap.xml` in Google Search Console and inspect the homepage and contact URLs to request indexing. Metadata and sitemaps help Google understand the site; indexing and rankings are determined by Google.
