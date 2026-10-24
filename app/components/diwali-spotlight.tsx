@@ -2,6 +2,7 @@ import { useRef, useState, type MouseEvent } from "react";
 import { diwaliMenus } from "../data/diwali-menu";
 import { siteUrl } from "../data/site-seo";
 import { Icon } from "./catering-icons";
+import { DiwaliLightsControl, FestiveDiya } from "./diwali-decorations";
 
 export function DiwaliSpotlight({ onExplore }: { onExplore: (packageName?: string) => void }) {
   const [copyStatus, setCopyStatus] = useState<"" | "copied" | "manual">("");
@@ -29,7 +30,13 @@ export function DiwaliSpotlight({ onExplore }: { onExplore: (packageName?: strin
       <div className="diwali-spotlight-card">
         <Icon name="lotus" className="diwali-spotlight-ornament" />
         <div className="diwali-spotlight-copy">
-          <p className="diwali-spotlight-kicker"><Icon name="flame" /> DIWALI CATERING SPECIALS</p>
+          <div className="diwali-festive-header">
+            <p className="diwali-spotlight-kicker"><Icon name="flame" /> DIWALI CATERING SPECIALS</p>
+            <DiwaliLightsControl />
+          </div>
+          <div className="diwali-lamp-garland" aria-hidden="true">
+            <span /><FestiveDiya /><FestiveDiya /><FestiveDiya /><span />
+          </div>
           <h2 id="diwali-specials-title">Host the lights. <span>We bring the feast.</span></h2>
           <p className="diwali-spotlight-description">For family gatherings, poojas, and office celebrations. Bring everyone together over a festive vegetarian spread, or let our live dosa station be part of the celebration.</p>
           <div className="diwali-spotlight-offers" aria-label="Explore our Diwali specials">

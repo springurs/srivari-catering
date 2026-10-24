@@ -22,6 +22,18 @@ A separate, full-width teal-and-gold Diwali Specials section appears immediately
 
 The supplied `Elegant Diwali Catering Packages (1).png` is preserved unchanged as [public/images/diwali-catering-poster.png](../public/images/diwali-catering-poster.png). A WebP encoding is also retained as a source asset. The homepage feature displays the full-width package and pricing cards; the flyer has been removed from the layout. The poster is user-supplied artwork. The detailed package selections remain defined in the Diwali menu data.
 
+## Festive lights
+
+The Diwali theme carries teal, ivory and gold through the hero, navigation, occasion and package cards, About Us section and footer. Three animated SVG diyas sit above the promotion heading, with small lamps pinned to the page edges, slow staggered golden firework bursts, and floating embers throughout the page. String lights decorate the hero and footer. The decorative layer ignores pointer events and is hidden from assistive technology. Small screens use fewer edge decorations and embers. Pause festive lights freezes the flames and string lights and removes the fireworks and embers; system reduced-motion settings show static lamps and string lights without fireworks or embers. Print output omits the decorations. The seasonal wrapper lives in `app/components/diwali-decorations.tsx`, with no holiday calendar or automatic menu changes. The separate contact page keeps its existing layout.
+
+## Diwali hero image
+
+The homepage hero uses [public/images/diwali-hero.webp](../public/images/diwali-hero.webp), generated with the built-in imagegen tool and encoded as WebP on October 24, 2026. It is illustrative imagery rather than a photograph of the restaurant's actual food. The original remains in the generated-image library. The hero preserves keyword menu search and links to the shareable Diwali menu.
+
+Final prompt:
+
+> Use case: photorealistic-natural. Asset type: wide landscape website hero photograph for Srivari vegetarian Diwali catering, approximately 2:1 composition. Primary request: a luxurious, appetising Indian vegetarian Diwali feast with glowing clay diyas, warm golden fairy-light bokeh and a restrained marigold garland. Scene: deep teal textile backdrop and dark teal table. Composition: keep the left 45 percent dark, calm and uncluttered for a website headline and search box; arrange the food prominently on the right half, filling the foreground with brass bowls of paneer curry and jackfruit vegetable biryani, a plate of golden masala vadai and a small bowl of gulab jamun, with a few glowing diyas among the dishes. Lighting: warm, natural editorial food photography, gentle highlights on brass, realistic food textures, welcoming celebratory atmosphere. Palette: deep teal, gold, saffron and ivory. Constraints: strictly vegetarian, no people, no meat, no lettering, no logos, no watermark, no menu flyer, no firecracker objects near food. Generate a new photograph, not a webpage mockup.
+
 ## Sharing and bookmarks
 
 Share **https://srivaricatering.com/#diwali** after deploying the changes. The fragment automatically opens the Diwali category and scrolls to its packages on a fresh visit or reload. An explicit Diwali bookmark takes precedence over the browser's saved catering plan. Selecting Diwali through the occasion card, promotion, package cards or menu search updates the address bar to the same bookmark. Leaving Diwali or clearing the plan removes that bookmark, so it cannot reopen the wrong category on reload.

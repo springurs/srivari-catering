@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "./catering-icons";
 import { SiteNavigation } from "./site-navigation";
+import { DiwaliSeason, DiwaliStringLights } from "./diwali-decorations";
 
 function BrandLogo() {
   return (
@@ -13,7 +14,7 @@ function BrandLogo() {
 
 export function SiteFrame({ children, currentPage = "home" }: { children: React.ReactNode; currentPage?: "home" | "contact" }) {
   return (
-    <>
+    <DiwaliSeason active={currentPage === "home"}>
       <a className="skip-link" href="#main">Skip to content</a>
       <div className="page-shell" id="home">
         <aside className="sidebar" aria-label="Site sidebar">
@@ -26,6 +27,7 @@ export function SiteFrame({ children, currentPage = "home" }: { children: React.
         </main>
       </div>
       <footer className="site-footer" id="location">
+        {currentPage === "home" && <DiwaliStringLights />}
         <div className="footer-main">
           <BrandLogo />
           <a className="footer-address" href="https://www.google.com/maps/search/?api=1&query=3180%20Santa%20Rita%20Rd%2C%20Pleasanton%2C%20CA%2094566" target="_blank" rel="noopener noreferrer"><Icon name="pin" /><address>3180 Santa Rita Rd, Pleasanton, CA 94566</address><span className="sr-only"> (opens directions in a new tab)</span></a>
@@ -33,6 +35,6 @@ export function SiteFrame({ children, currentPage = "home" }: { children: React.
         </div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Srivari Catering</span><span>Good food brings people together.</span></div>
       </footer>
-    </>
+    </DiwaliSeason>
   );
 }

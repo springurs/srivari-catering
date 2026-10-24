@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { OccasionPackages, type MenuSearchRequest } from "./catering-interactions";
 import { Icon } from "./catering-icons";
+import { DiwaliStringLights, FestiveDiya } from "./diwali-decorations";
 import { isSearchReply, keywordPackages, type SearchReply } from "../data/menu-search";
 
 export function CateringHome() {
@@ -59,13 +60,14 @@ export function CateringHome() {
 
   return (
     <>
-      <section className="hero" aria-labelledby="hero-title">
-        <Image className="hero-image" src="/images/elegant-buffet.png" alt="An elegant vegetarian catering buffet with plated appetisers, flowers, and golden event lighting" fill sizes="(max-width: 760px) 100vw, calc(100vw - 180px)" priority />
+      <section className="hero diwali-hero" aria-labelledby="hero-title">
+        <Image className="hero-image" src="/images/diwali-hero.webp" alt="A festive vegetarian spread of paneer curry, biryani, vadai, and sweets in brass bowls beside glowing Diwali diyas" fill sizes="(max-width: 760px) 100vw, calc(100vw - 180px)" preload />
+        <DiwaliStringLights />
         <div className="hero-copy">
-          <p className="eyebrow">EXCEPTIONAL FOOD FOR<br />LIFE’S SPECIAL MOMENTS</p>
+          <p className="eyebrow"><Icon name="flame" /> A SEASON TO CELEBRATE TOGETHER</p>
           <span className="gold-rule" aria-hidden="true" />
-          <h1 id="hero-title">Catering<br />Made Memorable</h1>
-          <p>Delicious food. Beautiful presentation. Unforgettable experiences.<br className="desktop-break" /> From intimate gatherings to grand celebrations, bring people together over your favourite flavours.</p>
+          <h1 id="hero-title">Diwali catering,<br /><span>made memorable.</span></h1>
+          <p>Light up your celebration with a vegetarian feast. From family poojas to office gatherings, share the flavours, the joy, and a little Srivari magic.</p>
           <form className="hero-menu-search" role="search" aria-label="Menu search" onSubmit={searchMenus}>
             <input type="search" name="menu_query" value={query} maxLength={1000} placeholder="Explore your menu" aria-label="Search catering and restaurant menus" aria-controls="menu-search-results" aria-describedby="menu-search-hint" onChange={(event) => {
               setQuery(event.currentTarget.value);
@@ -76,9 +78,11 @@ export function CateringHome() {
           </form>
           <p id="menu-search-hint" className="hero-search-hint">Search by dish, cuisine, or occasion.</p>
           <div className="search-examples" aria-label="Try a menu search">
-            {["Office lunch", "Live dosa", "Restaurant thalis"].map((example) => <button type="button" key={example} onClick={() => { setQuery(example); void runSearch(example); }}>{example}</button>)}
+            {["Diwali feast", "Live dosa", "Office lunch"].map((example) => <button type="button" key={example} onClick={() => { setQuery(example); void runSearch(example); }}>{example}</button>)}
           </div>
+          <a className="diwali-hero-link" href="#diwali">Discover the Diwali specials <Icon name="arrow" /></a>
         </div>
+        <div className="diwali-hero-signoff" aria-hidden="true"><FestiveDiya /><span>Good food.<br />Brighter celebrations.</span></div>
       </section>
       <OccasionPackages searchRequest={searchRequest} />
     </>

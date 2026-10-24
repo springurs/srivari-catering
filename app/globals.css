@@ -443,6 +443,63 @@ textarea { resize: vertical; }
 .diwali-recipe-star { color: #a86912; }
 
 .diwali-spotlight { padding: 28px 26px 8px; }
+.diwali-festive-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+.diwali-lights-control { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #d5b66b66; border-radius: 20px; background: #ffffff08; color: #e7d5b0; font-size: 12px; cursor: pointer; }
+.diwali-lights-control:hover { background: #f1cd8826; }
+.diwali-lights-control:focus-visible { outline: 2px solid #f1cd88; outline-offset: 4px; }
+.diwali-lamp-garland { display: flex; justify-content: center; align-items: center; gap: 16px; margin: 14px 0 0; pointer-events: none; }
+.diwali-lamp-garland > span:not(.festive-diya) { width: 100px; height: 1px; background: linear-gradient(90deg, transparent, #d4aa5e); }
+.diwali-lamp-garland > span:last-child { transform: rotate(180deg); }
+.diwali-lamp-garland .festive-diya { width: 68px; }
+.diwali-lamp-garland .festive-diya:nth-child(3) { width: 88px; }
+.festive-diya { display: block; position: relative; width: 66px; aspect-ratio: 1; pointer-events: none; }
+.festive-diya svg { display: block; position: relative; width: 100%; height: 100%; overflow: visible; }
+.diya-glow { position: absolute; inset: -18% -28% 4%; border-radius: 50%; background: radial-gradient(ellipse, #ffbe4f40, #ffae2414 40%, transparent 70%); animation: diya-glow 3.6s ease-in-out infinite alternate; }
+.diya-flame { transform-origin: 60px 62px; animation: diya-flicker 2.8s ease-in-out infinite alternate; }
+.festive-diya:nth-child(even) .diya-flame { animation-delay: -1.4s; animation-duration: 3.3s; }
+.festive-diya:nth-child(3) .diya-flame { animation-delay: -.7s; }
+.diwali-page-decorations { position: fixed; inset: 0; z-index: 8; overflow: hidden; pointer-events: none; }
+.diwali-page-decorations .festive-diya { position: absolute; }
+.diya-page-left { left: 18px; bottom: 20px; width: 76px; }
+.diya-page-right { right: 5px; bottom: 100px; width: 56px; }
+.festive-firework { position: absolute; width: 100px; height: 100px; color: #dba64b; opacity: .65; }
+.firework-one { right: 8px; top: 9%; }
+.firework-two { left: 16px; top: 48%; color: #b97d2b; }
+.firework-three { right: -14px; top: 64%; width: 74px; height: 74px; }
+.festive-firework i { position: absolute; top: 50%; left: 50%; width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0; animation: diwali-spark 10s ease-out infinite; }
+.firework-two i { animation-delay: -3.5s; }
+.firework-three i { animation-delay: -7s; }
+@keyframes diya-flicker {
+  0%, 100% { transform: rotate(-3deg) scale(.95, 1); }
+  45% { transform: rotate(3deg) scale(1.04, .94); }
+  70% { transform: rotate(-1deg) scale(.98, 1.06); }
+}
+@keyframes diya-glow { from { opacity: .55; transform: scale(.94); } to { opacity: .9; transform: scale(1.06); } }
+@keyframes diwali-spark {
+  0%, 5% { opacity: 0; transform: rotate(var(--spark-angle)) translateY(-3px) scale(.4); }
+  12% { opacity: .85; }
+  30% { opacity: 0; transform: rotate(var(--spark-angle)) translateY(-43px) scale(.3); }
+  100% { opacity: 0; transform: rotate(var(--spark-angle)) translateY(-43px) scale(.3); }
+}
+.diwali-season[data-paused="true"] .diya-flame,
+.diwali-season[data-paused="true"] .diya-glow { animation-play-state: paused; }
+.diwali-season[data-paused="true"] .festive-firework { display: none; }
+@media (max-width: 760px) {
+  .diwali-lamp-garland { gap: 10px; margin-top: 16px; }
+  .diwali-lamp-garland .festive-diya { width: 48px; }
+  .diwali-lamp-garland .festive-diya:nth-child(3) { width: 62px; }
+  .diwali-lamp-garland > span:not(.festive-diya) { width: 30px; }
+  .diya-page-left { left: 2px; bottom: 8px; width: 36px; }
+  .diya-page-right, .firework-two, .firework-three { display: none; }
+  .firework-one { top: 31%; right: -24px; width: 74px; height: 74px; opacity: .45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .diya-flame, .diya-glow { animation: none; }
+  .festive-firework, .diwali-lights-control { display: none; }
+}
+@media print {
+  .diwali-page-decorations, .diwali-lamp-garland, .diwali-lights-control { display: none; }
+}
 .diwali-spotlight-card { position: relative; isolation: isolate; padding: clamp(26px, 3.5vw, 50px); overflow: hidden; background: radial-gradient(ellipse at top left, #17606466, transparent 65%), #06383c; border: 1px solid #b58d43; border-radius: 14px; color: #fff5df; box-shadow: 0 10px 30px #17332c12; }
 .diwali-spotlight-ornament { position: absolute; z-index: -1; width: 300px; height: 300px; top: -75px; right: -50px; color: #e2b76c; opacity: .07; transform: rotate(-20deg); pointer-events: none; }
 .diwali-spotlight-copy { min-width: 0; width: 100%; }
@@ -504,4 +561,91 @@ textarea { resize: vertical; }
   .diwali-spotlight-offer { display: flex; align-items: flex-start; gap: 14px; padding: 26px 20px 22px; }
   .diwali-offer-price { margin-top: 0; }
   .diwali-offer-price strong { font-size: 54px; }
+}
+
+/* A single seasonal palette carries the Diwali celebration through the homepage. */
+.diwali-season { --cream: #fffaf0; --green: #073d3f; --gold: #aa7627; --muted: #656b65; --line: #e8d8b9; background: #fffaf0; }
+.diwali-season .page-shell { background: linear-gradient(90deg, #07383b 180px, transparent 180px); }
+.diwali-season .sidebar { background: #07383b; color: #f7e6be; box-shadow: inset -1px 0 #b58d4366; }
+.diwali-season .side-nav a, .diwali-season .side-nav button { color: #e0e8dd; }
+.diwali-season .side-nav .nav-active, .diwali-season .side-nav a:hover, .diwali-season .side-nav button:hover { background: #f1cd8821; color: #ffe1a1; }
+.diwali-season .side-nav .nav-active svg { color: #f1cd88; }
+.diwali-season .sidebar-note { color: #e6d5ad; }
+.diwali-season .sidebar-note span { background: #d9b16b; }
+.diwali-season .main-content { background-color: #fffaf0; background-image: linear-gradient(45deg, transparent 48%, #c9a7650a 49%, #c9a7650a 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, #c9a7650a 49%, #c9a7650a 51%, transparent 52%); background-size: 52px 52px; }
+.diwali-season .occasion-section { background: radial-gradient(ellipse at 50% 0, #f5d58f26, transparent 65%); }
+.diwali-season .occasion-heading h2, .diwali-season .package-heading h3, .diwali-season .about-copy h2, .diwali-season .about-cuisine h3 { color: #073d3f; }
+.diwali-season .occasion-card { background: #fffef9; border-color: #dfcda6; border-radius: 12px; box-shadow: 0 4px 16px #74501508; }
+.diwali-season .occasion-card.is-selected { border-color: #ac7b2e; box-shadow: 0 0 0 2px #b4863626; }
+.diwali-season .occasion-name { color: #073d3f; }
+.diwali-season .package-card, .diwali-season .package-details, .diwali-season .planner-card { border-color: #dfcda6; border-radius: 12px; background: #fffefb; }
+.diwali-season .about-section { border-color: #dfcda6; background: linear-gradient(135deg, #f7e9cc77, #fffaf000 65%); }
+.diwali-season .about-photo { border: 4px solid #fff9e9; outline: 1px solid #c9a76a; border-radius: 16px; }
+.diwali-season .about-cuisine { background: #fffef9; border-color: #dfcda6; border-radius: 12px; }
+.diwali-season .about-menu-note { background: #073d3f; border-color: #b58d43; color: #fff0d2; border-radius: 12px; }
+.diwali-season .about-menu-note p { color: #e0e7d9; }
+.diwali-season .site-footer { position: relative; overflow: hidden; padding-top: 70px; background: #062f33; border-top: 1px solid #c9a76a; }
+.diwali-season .site-footer .diwali-string-lights { height: 50px; }
+.diwali-season .footer-bottom { border-color: #d1ac633d; color: #c2d3ca; }
+.diwali-string-lights { position: absolute; inset: 0 0 auto; width: 100%; height: 75px; z-index: 2; pointer-events: none; }
+.diwali-string-bulb { animation: diwali-bulb-glow 3.6s ease-in-out infinite alternate; }
+.diwali-hero { min-height: 660px; border-bottom: 2px solid #cfad68; background: #07383b; }
+.diwali-hero .hero-image { object-position: center; }
+.diwali-hero::after { background: linear-gradient(90deg, #042f34f5 0%, #042f34df 30%, #042f3480 53%, #042f3412 80%), linear-gradient(0deg, #042f3499, transparent 35%); }
+.diwali-hero .hero-copy { max-width: min(740px, 100%); padding: 86px 48px 64px; }
+.diwali-hero .eyebrow { display: flex; align-items: center; gap: 9px; color: #f3d294; font-size: 10px; letter-spacing: 2.2px; }
+.diwali-hero .eyebrow svg { width: 21px; height: 21px; }
+.diwali-hero h1 { font-size: clamp(46px, 4.9vw, 74px); line-height: 1.08; letter-spacing: -1.8px; }
+.diwali-hero h1 span { color: #f3d294; }
+.diwali-hero .hero-copy > p:not(.eyebrow) { max-width: 440px; line-height: 1.75; }
+.diwali-hero .hero-menu-search { border-color: #dfbb77; background: #fffaf0; }
+.diwali-hero .hero-menu-search button { background: #a96d22; }
+.diwali-hero .search-examples button { color: #ffe4ae; border-color: #ddbc7680; font-size: 12px; }
+.diwali-hero-link { display: inline-flex; align-items: center; gap: 14px; margin-top: 26px; padding-bottom: 7px; border-bottom: 1px solid #e2be75; font-size: 14px; color: #ffe4ae; }
+.diwali-hero-link svg { width: 17px; height: 17px; }
+.diwali-hero-link:hover { color: #fff; }
+.diwali-hero-signoff { position: absolute; bottom: 24px; right: 32px; z-index: 1; display: flex; align-items: center; gap: 10px; color: #fff1cf; font: italic 18px/1.4 Georgia, serif; pointer-events: none; }
+.diwali-hero-signoff .festive-diya { width: 58px; }
+.diwali-embers { position: absolute; inset: 0; }
+.diwali-embers i { position: absolute; bottom: -10px; left: calc(1% + var(--ember-index) * 14%); width: 3px; height: 3px; border-radius: 50%; background: #e3b757; box-shadow: 0 0 7px #efb34b88; opacity: 0; animation: diwali-ember-drift 18s linear infinite; animation-delay: calc(var(--ember-index) * -2.2s); }
+@keyframes diwali-bulb-glow { from { opacity: .5; } to { opacity: 1; } }
+@keyframes diwali-ember-drift {
+  0% { opacity: 0; transform: translate(0, 0); }
+  15%, 65% { opacity: .5; }
+  100% { opacity: 0; transform: translate(20px, -85vh); }
+}
+.diwali-season[data-paused="true"] .diwali-string-bulb { animation-play-state: paused; }
+.diwali-season[data-paused="true"] .diwali-embers { display: none; }
+@media (max-width: 1150px) {
+  .diwali-season .page-shell { background: linear-gradient(90deg, #07383b 155px, transparent 155px); }
+}
+@media (max-width: 1000px) {
+  .diwali-hero::after { background: linear-gradient(90deg, #042f34f5, #042f34cb 50%, #042f3455), linear-gradient(0deg, #042f34aa, transparent 50%); }
+  .diwali-hero-signoff { right: 20px; bottom: 15px; font-size: 15px; }
+}
+@media (max-width: 760px) {
+  .diwali-season .page-shell { background: transparent; }
+  .diwali-season .sidebar { padding-bottom: 0; }
+  .diwali-hero { min-height: 680px; }
+  .diwali-hero .hero-image { object-position: 68% center; }
+  .diwali-hero::after { background: linear-gradient(90deg, #042f34ee, #042f34c4 70%, #042f349c), linear-gradient(0deg, #042f34d9, transparent 45%); }
+  .diwali-hero .hero-copy { padding: 78px 25px 90px; }
+  .diwali-hero .eyebrow { font-size: 9px; letter-spacing: 1.4px; }
+  .diwali-hero h1 { font-size: clamp(40px, 7.6vw, 60px); letter-spacing: -1.4px; }
+  .diwali-hero .hero-copy > p:not(.eyebrow) { font-size: 14px; }
+  .diwali-hero .hero-copy > p.hero-search-hint { font-size: 12px; }
+  .diwali-hero-signoff { bottom: 10px; right: 22px; font-size: 14px; }
+  .diwali-hero-signoff .festive-diya { width: 45px; }
+  .diwali-embers i:nth-child(even) { display: none; }
+}
+@media (max-width: 380px) {
+  .diwali-hero .hero-copy { padding-left: 20px; padding-right: 20px; }
+  .diwali-hero .eyebrow { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .diwali-string-bulb { animation: none; }
+  .diwali-embers { display: none; }
+}
+@media print {
+  .diwali-string-lights, .diwali-embers, .diwali-hero-signoff { display: none; }
 }
