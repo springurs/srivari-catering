@@ -10,7 +10,7 @@ export type SearchReply = {
   checkedAt: string | null;
 };
 
-const categoryNames = ["combos vegetarian feast", "traditional Andhra thali", "wedding thali", "traditional North Indian thali", "festive Golu", "festive Golu", "festive Golu", "traditional Tamil thali", "combos tiffin breakfast", "combos tiffin breakfast", "wedding combos tiffin breakfast", "corporate office lunch", "corporate office sliders lunch", "corporate office meeting snacks", "live dosa party", "wedding Andhra banana leaf", "wedding Andhra North Indian buffet", "executive meals corporate office lunch meetings"];
+const categoryNames = ["combos vegetarian feast", "traditional Andhra thali", "wedding thali", "traditional North Indian thali", "festive Diwali Deepavali celebration", "festive Diwali Deepavali celebration", "festive Diwali Deepavali celebration", "traditional Tamil thali", "combos tiffin breakfast", "combos tiffin breakfast", "wedding combos tiffin breakfast", "corporate office lunch", "corporate office sliders lunch", "corporate office meeting snacks", "live dosa party", "wedding Andhra banana leaf", "wedding Andhra North Indian buffet", "executive meals corporate office lunch meetings"];
 const stopWords = new Set("a an and are at available can catering for have i in is me menu menus my of on please show some the to want with people guests person persons need we our us find recommend suggest looking options option restaurant".split(" "));
 
 export function queryWords(query: string) {

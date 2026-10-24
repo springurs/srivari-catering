@@ -1,4 +1,5 @@
 import { premiumWeddingMenus } from "./premium-wedding-menu";
+import { diwaliMenus } from "./diwali-menu";
 
 export type MenuSelection = {
   name: string;
@@ -6,6 +7,8 @@ export type MenuSelection = {
   options: string[];
   replaces?: string;
   section?: string;
+  featuredOptions?: string[];
+  limits?: { label: string; count: number; options: string[] }[];
 };
 
 export type CateringMenu = {
@@ -15,6 +18,11 @@ export type CateringMenu = {
   serves?: string;
   guestsPerPackage?: number;
   minimumGuests?: number;
+  theme?: "diwali";
+  pricePerPerson?: number;
+  isLiveDosa?: boolean;
+  serviceDuration?: string;
+  notes?: string[];
   isCombo?: boolean;
   isTiffin?: boolean;
   isSuggested?: boolean;
@@ -36,8 +44,7 @@ export const dietaryRequestOptions = ["Jain preparation", "No onion or garlic"] 
 // Srivari Vegetarian Catering Combos PDF (pages 1–5), with North Indian Thali
 // from page 6 of the six-page edition.
 // Wedding, traditional, and combo minimums are 25 guests per the business update.
-// Golu menus, servings, and sweet choices come from the
-// supplied Golu Season Packages attachment.
+// Diwali packages replace the previous seasonal menus and follow the supplied poster.
 // Corporate menus are proposed vegetarian menus created at the user's request;
 // pricing, availability, and serving arrangements are confirmed on enquiry.
 // Shared starter and dessert choices from the supplied vegetarian combo menu.
@@ -335,87 +342,7 @@ export const menus: CateringMenu[] = [
         options: ["Kesar Badam Kheer", "Rice Kheer"] },
     ],
   },
-  {
-    name: "Small Golu Package",
-    image: "/images/occasion-festive.webp",
-    intro: "A traditional spread for Navaratri Golu gatherings, pooja celebrations, and evening guests.",
-    guestsPerPackage: 10,
-    serves: "8–10 guests",
-    courses: [
-      { name: "Welcome drink", dishes: [
-        "Sweet Panakam",
-      ] },
-      { name: "Traditional bites", dishes: [
-        "Konda Kadalai Sundal / Senagalu Guggillu",
-        "Milagu Vadai / Miriyala Garelu — 10 pieces",
-      ] },
-      { name: "Temple rice", dishes: [
-        "Temple Puliyodarai / Andhra Pulihora — ¼ tray",
-      ] },
-      { name: "Accompaniment", dishes: [
-        "Thengai Thuvaiyal / Kobbari Pachadi",
-      ] },
-      { name: "Traditional sweet", dishes: [
-        "Nei Appam / Bellam Appalu — 10 pieces",
-      ] },
-    ],
-  },
-  {
-    name: "Medium Golu Package",
-    image: "/images/occasion-festive.webp",
-    intro: "Traditional bites, two rice specialties, and your choice of sweet for a festive gathering.",
-    guestsPerPackage: 20,
-    serves: "15–20 guests",
-    courses: [
-      { name: "Refreshment", dishes: ["Panakam or Neer Mor / Majjiga"] },
-      { name: "Traditional bites", dishes: [
-        "Konda Kadalai Sundal / Senagalu Guggillu",
-        "Mamidikaya Senagapappu Sundal",
-        "Milagu Vadai / Miriyala Garelu — 20 pieces",
-        "Kuzhi Paniyaram / Gunta Ponganalu — 40 pieces",
-      ] },
-      { name: "Rice specialties", dishes: [
-        "Temple Puliyodarai / Andhra Pulihora — ¼ tray",
-        "Thengai Sadam / Kobbari Annam — ¼ tray",
-      ] },
-      { name: "Accompaniments", dishes: ["Coconut and ginger chutneys included"] },
-    ],
-    selections: [{ name: "Sweet", count: 1, options: [
-      "Sakkarai Pongal / Bellam Pongali",
-      "Poornam Boorelu — 20 pieces",
-      "Nei Appam / Bellam Appalu — 20 pieces",
-    ] }],
-  },
-  {
-    name: "Premium Golu Heritage Package",
-    image: "/images/occasion-festive.webp",
-    intro: "A generous heritage menu with welcome drinks, traditional savouries, temple rice, and festive sweets.",
-    guestsPerPackage: 30,
-    serves: "25–30 guests",
-    courses: [
-      { name: "Welcome drinks", dishes: ["Sweet Panakam", "Neer Mor / Majjiga"] },
-      { name: "Sundal & Guggillu", dishes: [
-        "Navadhanya Sundal / Navadhanya Guggillu", "Mamidikaya Senagapappu Sundal",
-      ] },
-      { name: "Traditional savories", dishes: [
-        "Milagu Vadai / Miriyala Garelu — 30 pieces",
-        "Kara Kozhukattai / Karam Kudumulu — 30 pieces",
-        "Kuzhi Paniyaram / Gunta Ponganalu — 60 pieces",
-      ] },
-      { name: "Temple rice specialties", dishes: [
-        "Temple Puliyodarai / Andhra Pulihora — ½ tray",
-        "Thayir Sadam / Daddojanam — ¼ tray",
-      ] },
-      { name: "Traditional sweets", dishes: [
-        "Paruppu Poli / Bobbatlu — 15 pieces, cut in halves",
-        "Poornam Boorelu — 30 pieces", "Sakkarai Pongal / Bellam Pongali",
-      ] },
-      { name: "Accompaniments", dishes: [
-        "Thengai Chutney / Kobbari Pachadi", "Inji Chutney / Allam Pachadi",
-        "Milagai Podi / Karam Podi",
-      ] },
-    ],
-  },
+  ...diwaliMenus,
   {
     name: "Namba Oru Sapadu",
     minimumGuests: 25,
@@ -686,6 +613,7 @@ export const menus: CateringMenu[] = [
   },
   {
     name: "Live Dosa Catering",
+    isLiveDosa: true,
     image: "/images/occasion-live-catering.webp",
     minimumGuests: 30,
     intro: "Unlimited dosas, freshly prepared at your event, with a range of additions. Your package includes one appetiser, one variety rice or biryani, one dessert, and one complimentary beverage of your choice. Starts from 30 people; pricing upon enquiry.",
@@ -724,8 +652,7 @@ export const menus: CateringMenu[] = [
 export function buildPackageMenu(menu: CateringMenu, choices: Record<string, string[]>) {
   const selections = menu.selections ?? [];
   const filledGroups = new Set<string>();
-  const selectedDishes = (group: MenuSelection) => Array.from(new Set(choices[group.name] ?? []))
-    .filter((dish) => group.options.includes(dish)).slice(0, group.count);
+  const selectedDishes = (group: MenuSelection) => sanitizeMenuChoices(group, choices[group.name] ?? []);
   const courses = menu.courses.map((course) => ({
     name: course.name,
     dishes: (Array.isArray(course.dishes) ? course.dishes : [course.dishes]).flatMap((dish) => {
@@ -746,3 +673,19 @@ export function buildPackageMenu(menu: CateringMenu, choices: Record<string, str
 }
 
 export const cateringPricing = "Price on enquiry";
+
+export function packagePricing(menu: CateringMenu) {
+  return menu.pricePerPerson === undefined ? cateringPricing : `$${menu.pricePerPerson.toFixed(2)} per person`;
+}
+
+export function validMenuChoices(group: MenuSelection, dishes: string[], complete = false) {
+  return dishes.length <= group.count && (!complete || dishes.length === group.count) &&
+    new Set(dishes).size === dishes.length && dishes.every((dish) => group.options.includes(dish)) &&
+    (group.limits ?? []).every((limit) => dishes.filter((dish) => limit.options.includes(dish)).length <= limit.count);
+}
+
+export function sanitizeMenuChoices(group: MenuSelection, dishes: string[]) {
+  const selected: string[] = [];
+  for (const dish of dishes) if (validMenuChoices(group, [...selected, dish])) selected.push(dish);
+  return selected;
+}

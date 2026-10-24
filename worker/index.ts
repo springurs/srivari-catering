@@ -1,5 +1,6 @@
 import { keywordDishes, keywordPackages, type SearchReply } from "../app/data/menu-search";
 import { fetchRestaurantMenu, readLimited } from "./restaurant-menu";
+import { handleSiteActivity, sendDailyReport, type ReportEnv } from "./daily-reports";
 
 export type SearchEnv = {
   ASSETS: { fetch: typeof fetch };
@@ -27,13 +28,17 @@ export async function handleSearch(request: Request, env: SearchEnv, fetcher: ty
 }
 
 const worker = {
-  async fetch(request: Request, env: SearchEnv) {
+  async fetch(request: Request, env: SearchEnv & ReportEnv) {
+    if (new URL(request.url).pathname === "/api/site-activity") return handleSiteActivity(request, env);
     if (new URL(request.url).pathname === "/api/catering-search") {
       const cache = (globalThis.caches as CacheStorage & { default?: Cache } | undefined)?.default;
       return handleSearch(request, env, fetch, cache);
     }
     if (new URL(request.url).pathname.startsWith("/api/")) return json({ error: "Not found" }, 404);
     return env.ASSETS.fetch(request);
+  },
+  async scheduled(controller: { scheduledTime: number }, env: ReportEnv) {
+    await sendDailyReport(controller.scheduledTime, env);
   },
 };
 

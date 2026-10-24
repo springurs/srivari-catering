@@ -9,7 +9,10 @@
     "lint": "eslint",
     "preview": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy",
-    "test:search": "node scripts/test-catering-search.mjs"
+    "test:search": "node scripts/test-catering-search.mjs",
+    "test:plan": "node scripts/test-catering-plan.mjs",
+    "test:reports": "node scripts/test-daily-reports.mjs",
+    "test:diwali": "node scripts/test-diwali-menu.mjs"
   },
   "dependencies": {
     "next": "16.3.8",

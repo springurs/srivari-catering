@@ -120,6 +120,9 @@ h1 { font-size: clamp(48px, 5vw, 78px); line-height: .99; letter-spacing: -2px; 
   .occasion-card:hover .card-arrow { transform: translateX(3px); background: var(--gold); color: white; }
 }
 .packages-region { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--line); }
+.saved-plan-notice { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 24px; padding: 16px 20px; border: 1px solid var(--line); border-radius: 7px; background: #fcf9f1; }
+.saved-plan-notice p { font-size: 14px; color: var(--muted); }
+.saved-plan-notice .text-link { flex-shrink: 0; }
 .package-heading { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 25px; }
 .package-heading h3, .details-intro h3, .planner-intro h3 { font-size: 34px; line-height: 1.2; letter-spacing: -.5px; margin-top: 10px; scroll-margin-top: 35px; }
 .package-heading > p { font-size: 12px; color: var(--muted); max-width: 250px; }
@@ -207,29 +210,6 @@ h1 { font-size: clamp(48px, 5vw, 78px); line-height: .99; letter-spacing: -2px; 
 .planner-dietary-options legend { padding: 0 6px; font-size: 14px; }
 .planner-dietary-options > p { margin-bottom: 14px; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .planner-dietary-options .planner-extra-option + .planner-extra-option { margin-top: 12px; }
-.festive-options { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--line); }
-.festive-options h3 { font-size: 30px; line-height: 1.25; margin: 10px 0 22px; }
-.festive-extras-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.festive-extra { padding: 25px; background: #fff; border: 1px solid var(--line); border-radius: 7px; }
-.festive-extra h4 { font-size: 23px; line-height: 1.3; margin-bottom: 15px; }
-.festive-extra ul { padding-left: 18px; margin: 0; list-style: disc; color: #646762; font-size: 14px; line-height: 1.8; }
-.festive-extra li + li { margin-top: 10px; }
-.festive-specialties { margin-top: 40px; }
-.festive-specialties > p:not(.eyebrow) { color: #646762; font-size: 14px; margin-bottom: 8px; }
-.festive-specialties .festive-serving-note { color: #8b6b37 !important; font-weight: 600; }
-.festive-tables { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 20px; margin-top: 25px; }
-.festive-table { min-width: 0; border: 1px solid #d8bb85; border-radius: 7px; overflow: hidden; background: #fff; }
-.festive-table table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5; }
-.festive-table caption { text-align: left; background: #f0e2c5; color: #59462d; font: 23px/1.3 Georgia, serif; padding: 14px; }
-.festive-table th, .festive-table td { padding: 9px 12px; border-bottom: 1px solid #efe7d8; }
-.festive-table thead th { color: #8b6b37; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; background: #fbf7ec; }
-.festive-table tbody th { text-align: left; font-weight: 400; color: #59584e; overflow-wrap: anywhere; }
-.festive-table td, .festive-table thead th:not(:first-child) { text-align: right; white-space: nowrap; }
-.festive-table td { color: #59462d; font-weight: 600; font-variant-numeric: tabular-nums; }
-.festive-table tbody tr:nth-child(even) { background: #fcf9f1; }
-.festive-table tbody tr:last-child th, .festive-table tbody tr:last-child td { border: 0; }
-.festive-contact { margin-top: 25px; font-size: 12px; color: #646762; }
-.festive-contact a { margin-left: 5px; color: #8b6b37; }
 .planner-section { display: grid; grid-template-columns: .8fr 1.2fr; gap: 45px; padding: 40px 0 15px; }
 .planner-intro > p:not(.eyebrow) { color: var(--muted); margin-top: 20px; max-width: 335px; font-size: 12px; }
 .planner-card { background: white; border: 1px solid var(--line); border-radius: 7px; padding: 30px; }
@@ -330,7 +310,6 @@ textarea { resize: vertical; }
 @media (max-width: 1150px) {
   .about-intro { gap: 25px; }
   .about-cuisines { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .festive-tables { grid-template-columns: 1fr; }
   .page-shell { grid-template-columns: 155px minmax(0, 1fr); background: linear-gradient(90deg, #fbfaf8 155px, var(--cream) 155px); }
   .sidebar { padding-left: 10px; padding-right: 10px; }
   .sidebar header { padding: 0 7px; }
@@ -370,11 +349,6 @@ textarea { resize: vertical; }
   .contact-map-heading h2 { font-size: 23px; }
   .contact-map iframe { flex: none; min-height: 0; height: 300px; }
   .contact-reply-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .festive-extras-grid { grid-template-columns: 1fr; }
-  .festive-options h3 { font-size: 27px; }
-  .festive-table caption { font-size: 21px; padding: 12px; }
-  .festive-table table { font-size: 13px; }
-  .festive-table th, .festive-table td { padding: 9px 7px; }
   html { scroll-padding-top: 20px; }
   .page-shell { display: block; background: var(--cream); }
   .sidebar { position: static; min-height: 0; height: auto; padding: 16px 0 0; }
@@ -461,3 +435,73 @@ textarea { resize: vertical; }
 @keyframes searchPulse { from { opacity: .6; } to { opacity: 1; } }
 @media (max-width: 540px) { .restaurant-search-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .search-pending { animation: none; } }
+
+.diwali-notes { margin-top: 35px; padding: 24px; background: #fcf5e7; border: 1px solid #ead7b1; border-radius: 8px; }
+.diwali-notes h3 { font-size: clamp(24px, 3vw, 30px); margin: 10px 0 18px; }
+.diwali-notes ul { padding-left: 20px; list-style: disc; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.diwali-notes > p:last-child { margin-top: 16px; font-size: 14px; }
+.diwali-recipe-star { color: #a86912; }
+
+.diwali-spotlight { padding: 28px 26px 8px; }
+.diwali-spotlight-card { position: relative; isolation: isolate; padding: clamp(26px, 3.5vw, 50px); overflow: hidden; background: radial-gradient(ellipse at top left, #17606466, transparent 65%), #06383c; border: 1px solid #b58d43; border-radius: 14px; color: #fff5df; box-shadow: 0 10px 30px #17332c12; }
+.diwali-spotlight-ornament { position: absolute; z-index: -1; width: 300px; height: 300px; top: -75px; right: -50px; color: #e2b76c; opacity: .07; transform: rotate(-20deg); pointer-events: none; }
+.diwali-spotlight-copy { min-width: 0; width: 100%; }
+.diwali-spotlight-kicker { display: inline-flex; align-items: center; gap: 10px; color: #f0c978; font-size: 12px; letter-spacing: 2.5px; line-height: 1.5; }
+.diwali-spotlight-kicker svg { width: 23px; height: 23px; }
+.diwali-spotlight-copy h2 { margin-top: 18px; font-size: clamp(38px, 4.8vw, 64px); line-height: 1.1; letter-spacing: -1.3px; }
+.diwali-spotlight-copy h2 span { color: #f1cd88; }
+.diwali-spotlight-description { margin-top: 20px; max-width: 850px; color: #e3e9df; font-size: 16px; line-height: 1.75; }
+.diwali-spotlight-offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 34px; }
+.diwali-spotlight-offer { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; min-width: 0; padding: 28px 24px 24px; border: 1px solid #d5b66b88; border-radius: 10px; background: #ffffff08; color: #fff5df; text-align: left; }
+.diwali-spotlight-offer.is-recommended { border-color: #f1cd88; background: #fff0d2; color: #07383b; box-shadow: 0 6px 24px #0002; }
+.diwali-offer-recommendation { position: absolute; top: -12px; left: 18px; padding: 5px 12px; border-radius: 14px; background: #f1cd88; color: #07383b; font-size: 11px; letter-spacing: .4px; line-height: 1.2; }
+.diwali-offer-name { min-height: 2.4em; font: 27px/1.2 Georgia, serif; overflow-wrap: break-word; }
+.diwali-offer-price { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: auto; color: #f4d592; }
+.diwali-offer-price > span { color: #dfdfd0; font-size: 13px; }
+.diwali-offer-price strong { font: 400 clamp(44px, 4.8vw, 64px)/1.05 Georgia, serif; letter-spacing: -1.5px; font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.diwali-offer-price small { font-size: 14px; }
+.diwali-offer-minimum { font-size: 13px; line-height: 1.5; color: #d3dfd6; }
+.diwali-spotlight-offer.is-recommended .diwali-offer-price { color: #935719; }
+.diwali-spotlight-offer.is-recommended .diwali-offer-price > span,
+.diwali-spotlight-offer.is-recommended .diwali-offer-minimum { color: #49635b; }
+.diwali-spotlight-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 26px; margin-top: 30px; }
+.diwali-spotlight-actions .button { background: #f1cd88; color: #07383b; font-weight: 600; font-size: 14px; padding: 16px 26px; }
+.diwali-spotlight-actions .button:hover { background: #ffe2ad; }
+.diwali-spotlight-call { font-size: 17px; line-height: 1.5; color: #fff3d7; }
+.diwali-spotlight-call span { display: block; color: #d0dfd8; font-size: 12px; }
+.diwali-spotlight-note { margin-top: 20px; color: #bfcec7; font-size: 12px; line-height: 1.7; }
+.diwali-share { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; margin-top: 20px; font-size: 13px; }
+.diwali-share-button { padding: 10px 14px; border: 1px solid #d5b66b88; border-radius: 6px; background: transparent; color: #f1cd88; }
+.diwali-share-button:hover { background: #f1cd8826; }
+.diwali-share > a { color: #f1cd88; text-decoration: underline; text-underline-offset: 4px; }
+.diwali-share [role="status"] { color: #d3dfd6; }
+.diwali-share input { flex: 1 0 100%; min-width: 0; width: 100%; padding: 10px; border: 1px solid #d5b66b88; border-radius: 5px; background: #fff7e5; color: #07383b; font-size: 13px; }
+@media (hover: hover) and (pointer: fine) {
+  .diwali-spotlight-offer:hover { background: #f1cd8826; border-color: #e5b769; }
+  .diwali-spotlight-offer.is-recommended:hover { background: #ffe5b5; border-color: #ffe5b5; }
+}
+@media (max-width: 1000px) {
+  .diwali-spotlight-offers { grid-template-columns: minmax(0, 1fr); }
+  .diwali-spotlight-offer { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px 24px; padding: 24px; }
+  .diwali-offer-name { min-height: 0; }
+  .diwali-offer-price { grid-column: 2; grid-row: 1 / 3; margin-top: 0; }
+  .diwali-offer-minimum { grid-column: 1; }
+}
+@media (max-width: 760px) {
+  .diwali-spotlight { padding: 20px 16px 4px; }
+  .diwali-spotlight-card { padding: 24px; }
+  .diwali-spotlight-kicker { font-size: 10px; letter-spacing: 1.4px; }
+  .diwali-spotlight-copy h2 { font-size: clamp(34px, 7vw, 46px); }
+  .diwali-spotlight-description { font-size: 14px; }
+  .diwali-spotlight-offers { gap: 18px; margin-top: 28px; }
+  .diwali-offer-name { font-size: 24px; }
+  .diwali-offer-price strong { font-size: 50px; }
+  .diwali-spotlight-actions { gap: 18px; }
+  .diwali-spotlight-actions .button { width: 100%; justify-content: space-between; }
+  .diwali-spotlight-call { width: 100%; text-align: center; }
+}
+@media (max-width: 480px) {
+  .diwali-spotlight-offer { display: flex; align-items: flex-start; gap: 14px; padding: 26px 20px 22px; }
+  .diwali-offer-price { margin-top: 0; }
+  .diwali-offer-price strong { font-size: 54px; }
+}

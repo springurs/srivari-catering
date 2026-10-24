@@ -3,6 +3,7 @@
 import { useId, useRef, useState, type FormEvent } from "react";
 import { Icon } from "./catering-icons";
 import { contactAccessKey } from "../data/contact-settings";
+import { reportSiteActivity } from "../lib/site-activity";
 
 type FieldName = "name" | "phone" | "email" | "description";
 type FormErrors = Partial<Record<FieldName, string>>;
@@ -78,6 +79,7 @@ export function ContactForm({ cateringRequest }: {
       if (!response.ok || responseData.success !== true) {
         throw new Error("Submission was not confirmed.");
       }
+      reportSiteActivity({ kind: "enquiry_sent", packageName: cateringRequest?.packageName, guestCount: cateringRequest?.people });
       form.reset();
       setIsSent(Boolean(cateringRequest));
       setResult(cateringRequest ? "Thank you! Your catering request has been submitted. Our team will contact you to discuss availability and the next steps." : "Thank you! Your message has been submitted.");

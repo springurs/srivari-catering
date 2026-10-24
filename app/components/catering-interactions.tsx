@@ -1,13 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { Fragment, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Icon, type IconName } from "./catering-icons";
 
-import { menus, executiveMeal, cateringPricing, buildPackageMenu, dietaryAvailability, dietaryRequestOptions, type CateringMenu, type MenuSelection } from "../data/catering-menu";
-import { FestiveOptions } from "./festive-options";
+import { menus, executiveMeal, cateringPricing, packagePricing, validMenuChoices, buildPackageMenu, dietaryAvailability, dietaryRequestOptions, type CateringMenu, type MenuSelection } from "../data/catering-menu";
+import { DiwaliNotes } from "./diwali-notes";
+import { DiwaliSpotlight } from "./diwali-spotlight";
 import { ContactForm } from "./contact-form";
 import { keywordPackages, restaurantMenuUrl, type SearchReply } from "../data/menu-search";
+import { readCateringPlan, saveCateringPlan, normalizeGuestCount, type MenuChoices, type SavedCateringPlan } from "../lib/catering-plan-cookie";
+import { reportSiteActivity } from "../lib/site-activity";
 
 const executiveMealIndex = menus.indexOf(executiveMeal);
 const weddingMenuIndices = [2, 16, 15];
@@ -17,7 +20,7 @@ const occasions: { name: string; formValue: string; description: string; icon: I
   { name: "Traditional Package", formValue: "Traditional Package", description: "Celebrate with an Andhra, Tamil, or North Indian thali feast.", icon: "menu", image: "/images/occasion-traditional.webp", menuIndices: [1, 3, 7] },
   { name: "Corporate Events", formValue: "Corporate event", description: "Indian bowls, signature sliders, and creative meeting bites for your team.", icon: "office", image: "/images/occasion-corporate.webp", menuIndices: [11, 12, 13, executiveMealIndex] },
   { name: "Combos", formValue: "Combos", description: "Choose a complete meal or a South Indian tiffin spread.", icon: "menu", image: "/images/occasion-combos.webp", menuIndices: [0, 8, 9, 10] },
-  { name: "Festive Catering", formValue: "Festival or puja", description: "Golu season packages and Tamil & Telugu specialties for festive gatherings.", icon: "lotus", image: "/images/occasion-festive.webp", menuIndices: [4, 5, 6] },
+  { name: "Diwali Catering", formValue: "Diwali celebration", description: "Celebrate Diwali with Classic Feast, Signature Celebration, or live dosa catering.", icon: "lotus", image: "/images/occasion-diwali.webp", menuIndices: [4, 5, 6] },
   { name: "Live Catering", formValue: "Live catering", description: "Unlimited live dosas with delicious additions and a complete vegetarian spread.", icon: "flame", image: "/images/occasion-live-catering.webp", menuIndices: [14] },
 ];
 
@@ -27,7 +30,6 @@ function reveal(element: HTMLElement | null) {
   element.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
 }
 
-type MenuChoices = Record<string, string[]>;
 type ChoicesByMenu = Record<string, MenuChoices>;
 type ChangeChoice = (menuName: string, groupName: string, dish: string, checked: boolean) => void;
 
@@ -70,17 +72,16 @@ function MenuCheckboxes({ groups, choices, onChange }: {
               {section.groups.map((group) => {
                 const groupIndex = groups.indexOf(group);
                 const selected = choices[group.name] ?? [];
-                const atLimit = selected.length >= group.count;
                 const hintId = `${id}-${groupIndex}-hint`;
 
                 return (
                   <fieldset className="menu-choice-group" key={group.name} data-selection-group={groupIndex} aria-describedby={hintId}>
                     <legend><span className="menu-choice-heading"><span>{group.name} — choose {group.count}</span><span className="menu-choice-count" role="status">{selected.length}/{group.count} selected</span></span></legend>
-                    <p className="menu-choice-hint" id={hintId}>Choose {group.count}. Uncheck an item to change your selection.</p>
+                    <p className="menu-choice-hint" id={hintId}>Choose {group.count}. {group.limits?.map((limit) => `${limit.label}. `).join("")}Uncheck an item to change your selection.</p>
                     <div className="menu-choice-grid">
                       {group.options.map((dish) => {
                         const checked = selected.includes(dish);
-                        const disabled = atLimit && !checked;
+                        const disabled = !checked && !validMenuChoices(group, [...selected, dish]);
                         return (
                           <label className={`menu-choice${checked ? " is-checked" : ""}${disabled ? " is-disabled" : ""}`} key={dish}>
                             <input type="checkbox" name={`selection-${groupIndex}`} value={dish} checked={checked} disabled={disabled} onChange={(event) => {
@@ -94,7 +95,7 @@ function MenuCheckboxes({ groups, choices, onChange }: {
                                 sectionButtons.current[nextSection ?? sectionIndex]?.focus({ preventScroll: true });
                               }
                             }} />
-                            <span>{dish}</span>
+                            <span>{dish}{group.featuredOptions?.includes(dish) && <span className="diwali-recipe-star" aria-label="New recipe; kitchen confirmation required"> ★</span>}</span>
                           </label>
                         );
                       })}
@@ -120,17 +121,49 @@ function IncludedService({ service }: { service: NonNullable<CateringMenu["inclu
   </div>;
 }
 
+const subscribeToBrowser = () => () => {};
+const browserSnapshot = () => true;
+const serverSnapshot = () => false;
+
+function isDiwaliBookmark() {
+  return window.location.hash.toLowerCase() === "#diwali";
+}
+
+function updateDiwaliBookmark(selected: boolean) {
+  if (!selected && !isDiwaliBookmark()) return;
+  const hash = selected ? "#diwali" : "#occasions";
+  if (window.location.hash === hash) return;
+  window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}${hash}`);
+}
+
 export function OccasionPackages({ searchRequest = null }: { searchRequest?: MenuSearchRequest | null }) {
-  const [selectedOccasion, setSelectedOccasion] = useState<number | null>(null);
-  const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
-  const [showPlanner, setShowPlanner] = useState(false);
-  const [choicesByMenu, setChoicesByMenu] = useState<ChoicesByMenu>({});
+  const browserReady = useSyncExternalStore(subscribeToBrowser, browserSnapshot, serverSnapshot);
+  const initialPlan = useMemo(() => browserReady ? readCateringPlan() : null, [browserReady]);
+  const initialDiwali = useMemo(() => browserReady && isDiwaliBookmark(), [browserReady]);
+  // Initialise from browser cookies once after hydration, preserving the static HTML.
+  return <OccasionPackagesContent key={browserReady ? "browser" : "server"} searchRequest={searchRequest} initialPlan={initialPlan} initialDiwali={initialDiwali} browserReady={browserReady} />;
+}
+
+function OccasionPackagesContent({ searchRequest, initialPlan, initialDiwali, browserReady }: {
+  searchRequest: MenuSearchRequest | null;
+  initialPlan: SavedCateringPlan | null;
+  initialDiwali: boolean;
+  browserReady: boolean;
+}) {
+  const initialMenu = !initialDiwali && initialPlan ? menus.findIndex((item) => item.name === initialPlan.menuName) : -1;
+  const [selectedOccasion, setSelectedOccasion] = useState<number | null>(() => initialDiwali ? occasions.findIndex((item) => item.name === "Diwali Catering") : initialMenu < 0 ? null : occasions.findIndex((item) => item.menuIndices.includes(initialMenu)));
+  const [selectedMenu, setSelectedMenu] = useState<number | null>(initialMenu < 0 ? null : initialMenu);
+  const [showPlanner, setShowPlanner] = useState(!initialDiwali && Boolean(initialPlan?.guestCount));
+  const [plannedMenuName, setPlannedMenuName] = useState(initialPlan?.menuName ?? "");
+  const [guestCount, setGuestCount] = useState(initialPlan?.guestCount ?? "");
+  const [choicesByMenu, setChoicesByMenu] = useState<ChoicesByMenu>(() => initialPlan ? { [initialPlan.menuName]: initialPlan.choices } : {});
   const [menuResetCount, setMenuResetCount] = useState(0);
   const packagesHeading = useRef<HTMLHeadingElement>(null);
   const detailsHeading = useRef<HTMLHeadingElement>(null);
   const choicesHeading = useRef<HTMLHeadingElement>(null);
   const plannerHeading = useRef<HTMLHeadingElement>(null);
   const searchHeading = useRef<HTMLHeadingElement>(null);
+  const restoringPlan = useRef(!initialDiwali && Boolean(initialPlan));
   const occasion = selectedOccasion === null ? null : occasions[selectedOccasion];
   const menu = selectedMenu === null ? null : menus[selectedMenu];
   const matchingNames = searchRequest?.pending || searchRequest?.error ? [] : searchRequest?.result?.packageNames ?? keywordPackages(searchRequest?.query ?? "");
@@ -148,7 +181,7 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
     setChoicesByMenu((current) => {
       const choices = current[menuName] ?? {};
       const selected = choices[groupName] ?? [];
-      if (checked && (selected.includes(dish) || selected.length >= group.count)) return current;
+      if (checked && !validMenuChoices(group, [...selected, dish])) return current;
       return { ...current, [menuName]: { ...choices, [groupName]: checked ? [...selected, dish] : selected.filter((option) => option !== dish) } };
     });
   };
@@ -158,20 +191,68 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
     const occasionIndex = selectedOccasion !== null && occasions[selectedOccasion].menuIndices.includes(menuIndex)
       ? selectedOccasion : occasions.findIndex((option) => option.menuIndices.includes(menuIndex));
     if (menuIndex < 0 || occasionIndex < 0) return;
+    updateDiwaliBookmark(occasions[occasionIndex].name === "Diwali Catering");
     setSelectedOccasion(occasionIndex);
     setSelectedMenu(menuIndex);
     requestAnimationFrame(() => reveal(menus[menuIndex].selections ? choicesHeading.current : detailsHeading.current));
   }
 
-  useEffect(() => { if (selectedOccasion !== null) reveal(packagesHeading.current); }, [selectedOccasion]);
-  useEffect(() => { if (selectedMenu !== null) reveal(detailsHeading.current); }, [selectedMenu]);
-  useEffect(() => { if (showPlanner) reveal(plannerHeading.current); }, [showPlanner]);
+  useEffect(() => { if (!restoringPlan.current && selectedOccasion !== null) reveal(packagesHeading.current); }, [selectedOccasion]);
+  useEffect(() => { if (!restoringPlan.current && selectedMenu !== null) reveal(detailsHeading.current); }, [selectedMenu]);
+  useEffect(() => { if (!restoringPlan.current && showPlanner) reveal(plannerHeading.current); }, [showPlanner]);
   useEffect(() => { if (searchRequest) reveal(searchHeading.current); }, [searchRequest]);
+  useEffect(() => { restoringPlan.current = false; }, []);
 
-  const planAfterChoices = Boolean(menu?.selections) && occasion?.name !== "Corporate Events" && occasion?.name !== "Festive Catering";
-  const planButton = <button className="button" type="button" aria-expanded={showPlanner} aria-controls="event-planner" onClick={() => { setShowPlanner(true); if (showPlanner) reveal(plannerHeading.current); }}>Plan with this package <Icon name="arrow" /></button>;
+  useEffect(() => {
+    if (!browserReady) return;
+    const rememberedMenu = showPlanner ? menus.find((item) => item.name === plannedMenuName) ?? menu : menu;
+    saveCateringPlan(rememberedMenu ? { menuName: rememberedMenu.name, choices: choicesByMenu[rememberedMenu.name] ?? {}, guestCount } : null);
+  }, [browserReady, menu, plannedMenuName, showPlanner, choicesByMenu, guestCount]);
+
+  function clearSavedPlan() {
+    updateDiwaliBookmark(false);
+    saveCateringPlan(null);
+    setSelectedOccasion(null);
+    setSelectedMenu(null);
+    setShowPlanner(false);
+    setPlannedMenuName("");
+    setGuestCount("");
+    setChoicesByMenu({});
+    setMenuResetCount((count) => count + 1);
+  }
+
+  const exploreDiwali = useCallback((packageName?: string) => {
+    const occasionIndex = occasions.findIndex((item) => item.name === "Diwali Catering");
+    const menuIndex = packageName ? menus.findIndex((item) => item.name === packageName) : -1;
+    if (occasionIndex < 0 || menuIndex >= 0 && !occasions[occasionIndex].menuIndices.includes(menuIndex)) return;
+    updateDiwaliBookmark(true);
+    setSelectedOccasion(occasionIndex);
+    setSelectedMenu(menuIndex < 0 ? null : menuIndex);
+    setShowPlanner(false);
+    if (menuIndex >= 0) reportSiteActivity({ kind: "package_view", packageName: menus[menuIndex].name });
+    requestAnimationFrame(() => reveal(menuIndex < 0 ? packagesHeading.current : detailsHeading.current));
+  }, []);
+
+  useEffect(() => {
+    if (!browserReady) return;
+    const openBookmark = () => { if (isDiwaliBookmark()) exploreDiwali(); };
+    window.addEventListener("hashchange", openBookmark);
+    return () => window.removeEventListener("hashchange", openBookmark);
+  }, [browserReady, exploreDiwali]);
+
+  const planAfterChoices = Boolean(menu?.selections) && occasion?.name !== "Corporate Events";
+  const planButton = <button className="button" type="button" aria-expanded={showPlanner} aria-controls="event-planner" onClick={() => {
+    if (menu) {
+      setPlannedMenuName(menu.name);
+      setGuestCount(normalizeGuestCount(guestCount, menu));
+    }
+    setShowPlanner(true);
+    if (showPlanner) reveal(plannerHeading.current);
+  }}>Plan with this package <Icon name="arrow" /></button>;
 
   return (
+    <>
+    <DiwaliSpotlight onExplore={exploreDiwali} />
     <section className="occasion-section" id="occasions" aria-labelledby="occasions-title">
       <div id="menu-search-results" className="menu-search-results" key={searchRequest?.id ?? "empty"} hidden={!searchRequest} aria-busy={searchRequest?.pending ?? false}>
         {searchRequest && <>
@@ -180,13 +261,15 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
           <h4 className="search-group-title">Catering packages <span>({searchResults.length})</span></h4>
           {searchResults.length ? <div className="menu-search-grid">
             {searchResults.map(({ menu: option, menuIndex, occasionIndex }, position) => <button className="menu-search-result" type="button" key={option.name} style={{ animationDelay: `${Math.min(position, 6) * 45}ms` }} aria-label={`View ${option.name}`} onClick={() => {
+              updateDiwaliBookmark(occasions[occasionIndex].name === "Diwali Catering");
               setSelectedOccasion(occasionIndex);
               setSelectedMenu(menuIndex);
               setShowPlanner(false);
+              reportSiteActivity({ kind: "package_view", packageName: option.name });
               if (selectedMenu === menuIndex) reveal(detailsHeading.current);
             }}>
               <Image src={option.image} alt="" width={80} height={80} />
-              <span><span className="menu-search-category">{occasions[occasionIndex].name}</span><span className="menu-search-name">{option.name}</span><span className="menu-search-price">{cateringPricing}</span></span>
+              <span><span className="menu-search-category">{occasions[occasionIndex].name}</span><span className="menu-search-name">{option.name}</span><span className="menu-search-price">{packagePricing(option)}</span></span>
               <Icon name="arrow" />
             </button>)}
           </div> : <p>No catering matches yet. Try another occasion or dish, or browse the packages below.</p>}
@@ -222,7 +305,7 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
             aria-label={`${item.name} — view packages`}
             aria-pressed={selectedOccasion === index}
             aria-controls="occasion-packages"
-            onClick={() => { setSelectedOccasion(index); setSelectedMenu(null); setShowPlanner(false); if (selectedOccasion === index) reveal(packagesHeading.current); }}
+            onClick={() => { updateDiwaliBookmark(item.name === "Diwali Catering"); setSelectedOccasion(index); setSelectedMenu(null); setShowPlanner(false); if (selectedOccasion === index) reveal(packagesHeading.current); }}
           >
             <span className="occasion-photo-frame"><Image className="occasion-photo" src={item.image} alt="" width={960} height={640} sizes="(max-width: 760px) 50vw, (max-width: 1349px) 33vw, 17vw" /></span>
             <span className="occasion-card-body">
@@ -234,9 +317,13 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
           </button>
         ))}
       </div>
+      {menu && <div className="saved-plan-notice">
+        <p>This browser can remember your package, menu choices and guest count for 30 days.</p>
+        <button className="text-link" type="button" onClick={clearSavedPlan}>Clear saved plan</button>
+      </div>}
       <div id="occasion-packages" className="packages-region" hidden={!occasion}>
         {occasion && <>
-          <div className="package-heading"><div><p className="eyebrow">YOUR OCCASION / {occasion.name.toUpperCase()}</p><h3 ref={packagesHeading} tabIndex={-1}>{occasion.name === "Combos" ? "Explore our combos" : occasion.name === "Traditional Package" ? "Explore our traditional packages" : occasion.name === "Festive Catering" ? "Golu Season Packages" : occasion.name === "Weddings" ? "Explore wedding packages" : occasion.name === "Live Catering" ? "Live Dosa Catering" : "Fresh ideas for your workday"}</h3></div><p>{occasion.name === "Combos" ? "Choose a meal or tiffin combo to explore its complete menu." : occasion.name === "Traditional Package" ? "Choose a thali to explore its complete menu." : occasion.name === "Festive Catering" ? "Celebrate Navaratri with a Golu package, upgrades, and traditional specialties." : occasion.name === "Weddings" ? "Choose a wedding thali, traditional banana leaf dining, or a premium Andhra and North Indian buffet." : occasion.name === "Live Catering" ? "Unlimited dosas, your choice of appetiser, rice or biryani, and dessert — for 30 guests or more." : "Choose an everyday lunch, a celebration spread, a meeting break, or our Executive Feast."}</p></div>
+          <div className="package-heading" id={occasion.name === "Diwali Catering" ? "diwali" : undefined}><div><p className="eyebrow">YOUR OCCASION / {occasion.name.toUpperCase()}</p><h3 ref={packagesHeading} tabIndex={-1}>{occasion.name === "Combos" ? "Explore our combos" : occasion.name === "Traditional Package" ? "Explore our traditional packages" : occasion.name === "Diwali Catering" ? "Choose Your Diwali Feast" : occasion.name === "Weddings" ? "Explore wedding packages" : occasion.name === "Live Catering" ? "Live Dosa Catering" : "Fresh ideas for your workday"}</h3></div><p>{occasion.name === "Combos" ? "Choose a meal or tiffin combo to explore its complete menu." : occasion.name === "Traditional Package" ? "Choose a thali to explore its complete menu." : occasion.name === "Diwali Catering" ? "Select one menu for your entire event. Explore Classic Feast, Signature Celebration, or a two-hour Live Dosa Celebration." : occasion.name === "Weddings" ? "Choose a wedding thali, traditional banana leaf dining, or a premium Andhra and North Indian buffet." : occasion.name === "Live Catering" ? "Unlimited dosas, your choice of appetiser, rice or biryani, and dessert — for 30 guests or more." : "Choose an everyday lunch, a celebration spread, a meeting break, or our Executive Feast."}</p></div>
           {occasion.menuIndices.length === 0 && <div className="package-empty"><p>Contact our team to discuss corporate catering menus and arrangements.</p><a className="button" href="tel:+14088930438">Call +1 (408) 893-0438 <Icon name="arrow" /></a></div>}
           <div className="package-grid">
             {occasion.menuIndices.map((menuIndex, position) => {
@@ -247,24 +334,24 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
                   <div className="package-card-heading">
                     <Image className="package-image-icon" src={option.image} alt="" width={80} height={80} sizes="80px" />
                     <div>
-                      <p className="eyebrow">{option === executiveMeal ? "EXECUTIVE MEALS" : option.includedService ? "PREMIUM ANDHRA WEDDING" : occasion.name === "Traditional Package" ? "TRADITIONAL PACKAGE" : occasion.name === "Festive Catering" ? "NAVARATRI CELEBRATIONS" : occasion.name === "Corporate Events" ? "CORPORATE PACKAGE" : occasion.name === "Live Catering" ? "LIVE CATERING" : option.isTiffin ? "TIFFIN COMBO" : option.isCombo ? "VEGETARIAN COMBO" : "CATERING PACKAGE"}</p>
+                      <p className="eyebrow">{option === executiveMeal ? "EXECUTIVE MEALS" : option.includedService ? "PREMIUM ANDHRA WEDDING" : occasion.name === "Traditional Package" ? "TRADITIONAL PACKAGE" : occasion.name === "Diwali Catering" ? "DIWALI CELEBRATIONS" : occasion.name === "Corporate Events" ? "CORPORATE PACKAGE" : occasion.name === "Live Catering" ? "LIVE CATERING" : option.isTiffin ? "TIFFIN COMBO" : option.isCombo ? "VEGETARIAN COMBO" : "CATERING PACKAGE"}</p>
                       <h4>{option.name}</h4>
                     </div>
                   </div>
                   <p>{option.intro}</p>
                   {option.includedService && <p className="package-included-service">Delivery, setup &amp; service staff included.</p>}
-                  <div className="package-pricing"><span className="package-price">{cateringPricing}</span>{option.serves && <span className="package-minimum">Serves {option.serves}</span>}{option.minimumGuests && <span className="package-minimum">Minimum order: {option.minimumGuests} guests</span>}</div>
-                  <button className="button" type="button" aria-expanded={selectedMenu === menuIndex} aria-controls="package-details" onClick={() => { setSelectedMenu(menuIndex); setShowPlanner(false); if (selectedMenu === menuIndex) reveal(detailsHeading.current); }}>View package <Icon name="arrow" /><span className="sr-only">: {option.name}</span></button>
+                  <div className="package-pricing"><span className="package-price">{packagePricing(option)}</span>{option.serviceDuration && <span className="package-minimum">{option.serviceDuration}</span>}{option.serves && <span className="package-minimum">Serves {option.serves}</span>}{option.minimumGuests && <span className="package-minimum">Minimum order: {option.minimumGuests} guests</span>}</div>
+                  <button className="button" type="button" aria-expanded={selectedMenu === menuIndex} aria-controls="package-details" onClick={() => { updateDiwaliBookmark(occasion.name === "Diwali Catering"); setSelectedMenu(menuIndex); setShowPlanner(false); reportSiteActivity({ kind: "package_view", packageName: option.name }); if (selectedMenu === menuIndex) reveal(detailsHeading.current); }}>View package <Icon name="arrow" /><span className="sr-only">: {option.name}</span></button>
                 </article>
               </Fragment>;
             })}
           </div>
-          <p className="package-note">{occasion.name === "Combos" ? "Menu selections may be combined across South Indian, Andhra, and North Indian favourites, subject to availability." : occasion.name === "Traditional Package" ? "Menu selections and presentation can be tailored to your event." : occasion.name === "Festive Catering" ? "Perfect for Navaratri Golu gatherings, pooja celebrations and evening guests." : occasion.name === "Weddings" ? "Menu selections and presentation can be tailored to your wedding." : occasion.name === "Live Catering" ? "Looking for more dosa additions? Share your preferences, date, time, and venue details in your enquiry. Our team will confirm availability, setup, and pricing." : "Suggested vegetarian menus, ready to tailor to your team. Confirm dishes, availability, pricing, packaging, and dietary arrangements before booking."}</p>
+          <p className="package-note">{occasion.name === "Combos" ? "Menu selections may be combined across South Indian, Andhra, and North Indian favourites, subject to availability." : occasion.name === "Traditional Package" ? "Menu selections and presentation can be tailored to your event." : occasion.name === "Diwali Catering" ? "Classic Feast and Signature Celebration require at least 25 guests. Live Dosa Celebration requires 35 guests and includes a two-hour service. Delivery, tax and additional services are extra." : occasion.name === "Weddings" ? "Menu selections and presentation can be tailored to your wedding." : occasion.name === "Live Catering" ? "Looking for more dosa additions? Share your preferences, date, time, and venue details in your enquiry. Our team will confirm availability, setup, and pricing." : "Suggested vegetarian menus, ready to tailor to your team. Confirm dishes, availability, pricing, packaging, and dietary arrangements before booking."}</p>
         </>}
       </div>
       <div id="package-details" hidden={!menu}>
         {menu && occasion && <div className="package-details">
-          <div className="details-intro"><p className="eyebrow">{occasion.name.toUpperCase()} / PACKAGE DETAILS</p><h3 ref={detailsHeading} tabIndex={-1}>{menu.name}</h3><p>{menu.intro}</p><p className="combo-detail-price">{cateringPricing}{menu.serves && <span>Serves {menu.serves}</span>}{menu.minimumGuests && <span>Minimum order: {menu.minimumGuests} guests</span>}</p>{menu.includedService && <IncludedService service={menu.includedService} />}{!planAfterChoices && planButton}</div>
+          <div className="details-intro"><p className="eyebrow">{occasion.name.toUpperCase()} / PACKAGE DETAILS</p><h3 ref={detailsHeading} tabIndex={-1}>{menu.name}</h3><p>{menu.intro}</p><p className="combo-detail-price">{packagePricing(menu)}{menu.serviceDuration && <span>{menu.serviceDuration}</span>}{menu.serves && <span>Serves {menu.serves}</span>}{menu.minimumGuests && <span>Minimum order: {menu.minimumGuests} guests</span>}</p>{menu.includedService && <IncludedService service={menu.includedService} />}{!planAfterChoices && planButton}</div>
           <div className="menu-courses">
             {menu.isSuggested && <p className="menu-suggestion-note">Suggested corporate menu. Item descriptions can be tailored with our team; final dishes and pricing are confirmed on enquiry.</p>}
             {menu.courses.map((course, index) => (
@@ -299,33 +386,42 @@ export function OccasionPackages({ searchRequest = null }: { searchRequest?: Men
         </div>}
       </div>
       <div id="event-planner" hidden={!showPlanner}>
-        {showPlanner && occasion && menu && <div className="planner-section"><div className="planner-intro"><p className="eyebrow">LET’S PLAN YOUR OCCASION</p><h3 ref={plannerHeading} tabIndex={-1}>Your catering plan.</h3><p>Review your package and selected dishes, then enter the number of people and your event date and time. Preview your catering request and add your contact details to send it to our team.</p></div><EventPlanner defaultMenu={menu.name} choicesByMenu={choicesByMenu} onEditPackage={editPackage}/></div>}
+        {showPlanner && occasion && menu && <div className="planner-section"><div className="planner-intro"><p className="eyebrow">LET’S PLAN YOUR OCCASION</p><h3 ref={plannerHeading} tabIndex={-1}>Your catering plan.</h3><p>Review your package and selected dishes, then enter the number of people and your event date and time. Preview your catering request and add your contact details to send it to our team.</p></div><EventPlanner defaultMenu={plannedMenuName || menu.name} choicesByMenu={choicesByMenu} onEditPackage={editPackage} guestCount={guestCount} onGuestCountChange={setGuestCount} onPackageChange={(name) => {
+          const nextMenu = menus.find((item) => item.name === name);
+          if (!nextMenu) return;
+          updateDiwaliBookmark(nextMenu.theme === "diwali");
+          setPlannedMenuName(name);
+          setGuestCount(normalizeGuestCount(guestCount, nextMenu));
+        }}/></div>}
       </div>
-      {occasion?.name === "Festive Catering" && <FestiveOptions />}
+      {occasion?.name === "Diwali Catering" && <DiwaliNotes />}
     </section>
+    </>
   );
 }
 
-function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
+function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage, guestCount, onGuestCountChange, onPackageChange }: {
   defaultMenu: string;
   choicesByMenu: ChoicesByMenu;
   onEditPackage: (menuName: string) => void;
+  guestCount: string;
+  onGuestCountChange: (value: string) => void;
+  onPackageChange: (menuName: string) => void;
 }) {
-  const [savedBrief, setBrief] = useState<{ text: string; choices: string; people: string; staff: string; cutlery: boolean; date: string; time: string; dietaryRequests: string[] } | null>(null);
+  const [savedBrief, setBrief] = useState<{ menuName: string; text: string; choices: string; people: string; staff: string; cutlery: boolean; date: string; time: string; dietaryRequests: string[] } | null>(null);
   const [selectionAttempted, setSelectionAttempted] = useState(false);
-  const [chosenMenu, setChosenMenu] = useState(defaultMenu);
-  const [guestCount, setGuestCount] = useState(defaultMenu === "Live Dosa Catering" ? "30" : "");
+  const chosenMenu = defaultMenu;
   const plannedMenu = menus.find((menu) => menu.name === chosenMenu);
-  const isLiveDosa = plannedMenu?.name === "Live Dosa Catering";
+  const isLiveDosa = Boolean(plannedMenu?.isLiveDosa);
   const includedService = plannedMenu?.includedService;
-  const equipmentNotes = includedService?.planningNotes ?? [
+  const equipmentNotes = includedService?.planningNotes ?? plannedMenu?.notes ?? [
     "Chafing dishes and ladles are provided free of charge.",
     "Burners are not provided. Customers must buy their own burners.",
   ];
   const choices = choicesByMenu[chosenMenu] ?? {};
   const choiceSnapshot = JSON.stringify(choices);
-  const brief = savedBrief?.choices === choiceSnapshot ? savedBrief.text : "";
-  const incompleteGroup = plannedMenu?.selections?.find((group) => (choices[group.name]?.length ?? 0) !== group.count);
+  const brief = savedBrief?.menuName === chosenMenu && savedBrief.choices === choiceSnapshot ? savedBrief.text : "";
+  const incompleteGroup = plannedMenu?.selections?.find((group) => !validMenuChoices(group, choices[group.name] ?? [], true));
   const packageGroups = plannedMenu ? buildPackageMenu(plannedMenu, choices) : [];
   const result = useRef<HTMLDivElement>(null);
   const editButton = useRef<HTMLButtonElement>(null);
@@ -335,7 +431,7 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
     const data = new FormData(event.currentTarget);
     for (const group of plannedMenu?.selections ?? []) {
       const dishes = choices[group.name] ?? [];
-      if (dishes.length !== group.count || new Set(dishes).size !== group.count || dishes.some((dish) => !group.options.includes(dish))) {
+      if (!validMenuChoices(group, dishes, true)) {
         setSelectionAttempted(true);
         editButton.current?.focus();
         return;
@@ -348,15 +444,17 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
     const date = String(data.get("event_date") ?? "");
     const time = String(data.get("event_time") ?? "");
     const dietaryRequests = dietaryRequestOptions.filter((option) => data.getAll("dietary_requests").includes(option));
-    setBrief({ choices: choiceSnapshot, people: String(people), staff: String(staffCount), cutlery, date, time, dietaryRequests, text: [
+    reportSiteActivity({ kind: "plan_preview", packageName: chosenMenu, guestCount: String(people), choices });
+    setBrief({ menuName: chosenMenu, choices: choiceSnapshot, people: String(people), staff: String(staffCount), cutlery, date, time, dietaryRequests, text: [
       "SRIVARI CATERING — REQUEST PREVIEW",
       `Package: ${chosenMenu}`,
       `Number of people: ${data.get("guests")}`,
       `Event date: ${date || "Not specified"}`,
       `Event time: ${time || "Not specified"}`,
       `Dietary requests: ${dietaryRequests.length ? dietaryRequests.join(" · ") : "Not requested"}`,
-      `Pricing: ${cateringPricing}`,
+      `Pricing: ${plannedMenu ? packagePricing(plannedMenu) : cateringPricing}`,
       ...(plannedMenu?.serves ? [`Package serves: ${plannedMenu.serves}`] : []),
+      ...(plannedMenu?.serviceDuration ? [`Service duration: ${plannedMenu.serviceDuration}`] : []),
       ...(!isLiveDosa ? [
         ...(includedService ? [
           `Service style: ${includedService.style}`,
@@ -387,11 +485,10 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
       }}>
         <div className="form-grid">
           <label className="full-width">Package<select name="menu" value={chosenMenu} onChange={(event) => {
-            setChosenMenu(event.target.value);
-            if (event.target.value === "Live Dosa Catering" && Number(guestCount) < 30) setGuestCount("30");
+            onPackageChange(event.target.value);
             setSelectionAttempted(false);
           }}>{menus.map((menu) => <option key={menu.name}>{menu.name}</option>)}</select></label>
-          <label className="full-width">Number of people<input name="guests" type="number" min={plannedMenu?.minimumGuests ?? 1} max="100000" step="1" placeholder="e.g. 100" value={guestCount} onChange={(event) => setGuestCount(event.target.value)} required/>{plannedMenu?.minimumGuests && <span className="guest-minimum">Minimum {plannedMenu.minimumGuests} people for this package.</span>}</label>
+          <label className="full-width">Number of people<input name="guests" type="number" min={plannedMenu?.minimumGuests ?? 1} max="100000" step="1" placeholder="e.g. 100" value={guestCount} onChange={(event) => onGuestCountChange(event.target.value)} required/>{plannedMenu?.minimumGuests && <span className="guest-minimum">Minimum {plannedMenu.minimumGuests} people for this package.</span>}</label>
           <label>Event date <span className="optional">(optional)</span><input name="event_date" type="date" /></label>
           <label>Event time <span className="optional">(optional)</span><input name="event_time" type="time" /></label>
           <fieldset className="full-width planner-dietary-options">
@@ -424,7 +521,7 @@ function EventPlanner({ defaultMenu, choicesByMenu, onEditPackage }: {
           <h4>Notes</h4>
           {equipmentNotes.map((note) => <p key={note}>{note}</p>)}
         </div>
-        {selectionAttempted && incompleteGroup && <p className="menu-choice-error" role="alert">Choose exactly {incompleteGroup.count} {incompleteGroup.name.toLowerCase()} before previewing your catering request.</p>}
+        {selectionAttempted && incompleteGroup && <p className="menu-choice-error" role="alert">Choose exactly {incompleteGroup.count} {incompleteGroup.name.toLowerCase()} before previewing your catering request. {incompleteGroup.limits?.map((limit) => limit.label).join(". ")}</p>}
         <button className="button" type="submit">Preview your catering request <span aria-hidden="true">↗</span></button>
         <p className="form-note">Check your menu first. Add your contact details on the next step to send your catering enquiry.</p>
       </form>

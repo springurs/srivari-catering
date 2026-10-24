@@ -11,7 +11,37 @@
     ]
   },
   "main": "worker/index.ts",
+  "vars": {
+    "REPORTS_ENABLED": "true",
+    "REPORT_EMAIL_FROM": "reports@srivaricatering.com",
+    "REPORT_EMAIL_TO": "srivaripleasanton@gmail.com"
+  },
+  "d1_databases": [
+    {
+      "binding": "REPORT_DB",
+      "database_name": "srivari-catering-reports",
+      "database_id": "c699cb90-fd8e-4f5a-b52c-1614fd181517",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "send_email": [
+    {
+      "name": "DAILY_REPORT_EMAIL",
+      "allowed_destination_addresses": ["srivaripleasanton@gmail.com"],
+      "allowed_sender_addresses": ["reports@srivaricatering.com"]
+    }
+  ],
+  "triggers": {
+    // One UTC hour matches 9 AM Pacific in summer, the other in winter.
+    // The scheduled handler checks local time and claims each report once.
+    "crons": ["0 16,17 * * *"]
+  },
   "ratelimits": [
+    {
+      "name": "ACTIVITY_RATE_LIMITER",
+      "namespace_id": "1002",
+      "simple": { "limit": 60, "period": 60 }
+    },
     {
       "name": "SEARCH_RATE_LIMITER",
       "namespace_id": "1001",

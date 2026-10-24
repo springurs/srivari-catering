@@ -20,8 +20,8 @@ const cuisines = [
     description: "Our Quick Fill, Jumbo, and Wedding Style Tiffin menus offer combinations of thatte or mini idly, medhu vada, paniyaram, pongal, upma, and poori with aloo masala. Larger spreads include favourites such as uthappam, idiyappam with coconut milk, and filter coffee, accompanied by sambar and chutneys.",
   },
   {
-    title: "Festive Tamil & Telugu specialties",
-    description: "For Navaratri Golu and pooja gatherings, explore panakam, sundal or guggillu, temple puliyodarai or Andhra pulihora, traditional savouries, and sweets. Our festive selection includes Tamil and Telugu specialties such as kozhukattai, garelu, paruppu poli, bobbatlu, and poornam boorelu, with packages for different gathering sizes.",
+    title: "Diwali celebrations",
+    description: "Choose Classic Feast, Signature Celebration, or Live Dosa Celebration for your Diwali gathering. Build a vegetarian spread with starters, regional curries, jackfruit or vegetable biryani, breads, and festive desserts such as pineapple kesari, paal kozhukattai, or poornam boorelu. Select one menu for your entire event, with a live dosa option for 35 guests or more.",
   },
   {
     title: "Modern menus for the office",
