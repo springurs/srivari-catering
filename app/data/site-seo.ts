@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cateringFaqs } from "./catering-faq";
 
 const configuredUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://srivaricatering.com");
 if (configuredUrl.protocol !== "https:" || configuredUrl.username || configuredUrl.password || configuredUrl.pathname !== "/" || configuredUrl.search || configuredUrl.hash) {
@@ -7,12 +8,17 @@ if (configuredUrl.protocol !== "https:" || configuredUrl.username || configuredU
 
 export const siteUrl = configuredUrl.origin;
 export const siteName = "Srivari Catering";
-export const homeTitle = "Vegetarian Catering in Pleasanton, CA | Srivari Catering";
-export const homeDescription = "Indian vegetarian catering in Pleasanton for weddings, corporate events and festivals. Explore Andhra thalis, North Indian menus and live dosa catering.";
+export const homeTitle = "Indian Vegetarian Catering in Pleasanton | Srivari Catering";
+export const homeDescription = "Plan Indian vegetarian catering in Pleasanton: wedding thalis, corporate meals, live dosa and Diwali menus. Explore à la carte trays or order on ezCater.";
 export const contactTitle = "Catering Enquiries in Pleasanton | Srivari Catering";
 export const contactDescription = "Request a vegetarian catering quote for weddings, office meals or live dosa events. Contact Srivari at 3180 Santa Rita Rd, Pleasanton, CA 94566.";
+export const faqTitle = "Catering FAQs: Menus, Trays & ezCater | Srivari Pleasanton";
+export const faqDescription = "Answers about Srivari vegetarian catering in Pleasanton: guest minimums, tray sizes, Jain requests, live dosa, Diwali packages and ordering on ezCater.";
 
-export function pageMetadata(title: string, description: string, path: "/" | "/contact"): Metadata {
+export const indexedPaths = ["/", "/contact", "/faq"] as const;
+export type SitePath = typeof indexedPaths[number];
+
+export function pageMetadata(title: string, description: string, path: SitePath): Metadata {
   const url = new URL(path, siteUrl).toString();
   const image = {
     url: `${siteUrl}/images/about-thali.jpg`,
@@ -29,7 +35,7 @@ export function pageMetadata(title: string, description: string, path: "/" | "/c
   };
 }
 
-export function pageStructuredData(title: string, description: string, path: "/" | "/contact") {
+export function pageStructuredData(title: string, description: string, path: SitePath) {
   const url = new URL(path, siteUrl).toString();
   return {
     "@context": "https://schema.org",
@@ -54,7 +60,12 @@ export function pageStructuredData(title: string, description: string, path: "/"
           addressCountry: "US",
         },
         servesCuisine: ["Indian Vegetarian", "South Indian", "Andhra", "Tamil", "North Indian"],
-        hasMenu: "https://www.srivaripleasanton.com/#menu",
+        hasMenu: [
+          { "@type": "Menu", name: "Vegetarian catering packages", url: `${siteUrl}/#occasions` },
+          { "@type": "Menu", name: "À La Carte Catering Trays", url: `${siteUrl}/#a-la-carte` },
+          "https://www.srivaripleasanton.com/#menu",
+        ],
+        sameAs: ["https://www.srivaripleasanton.com/", "https://www.ezcater.com/catering/srivari-3"],
         hasMap: "https://www.google.com/maps/search/?api=1&query=3180%20Santa%20Rita%20Rd%2C%20Pleasanton%2C%20CA%2094566",
         contactPoint: {
           "@type": "ContactPoint",
@@ -72,7 +83,7 @@ export function pageStructuredData(title: string, description: string, path: "/"
         inLanguage: "en-US",
       },
       {
-        "@type": path === "/contact" ? "ContactPage" : "WebPage",
+        "@type": path === "/faq" ? "FAQPage" : path === "/contact" ? "ContactPage" : "WebPage",
         "@id": `${url}#webpage`,
         name: title,
         description,
@@ -80,7 +91,33 @@ export function pageStructuredData(title: string, description: string, path: "/"
         isPartOf: { "@id": `${siteUrl}/#website` },
         about: { "@id": `${siteUrl}/#business` },
         inLanguage: "en-US",
+        ...(path !== "/" ? { breadcrumb: { "@id": `${url}#breadcrumbs` } } : {}),
+        ...(path === "/faq" ? {
+          mainEntity: cateringFaqs.map((faq) => ({
+            "@type": "Question",
+            "@id": `${url}#question-${faq.id}`,
+            name: faq.question,
+            acceptedAnswer: { "@type": "Answer", text: faq.answer },
+          })),
+        } : {}),
       },
+      ...(path === "/" ? [{
+        "@type": "Service",
+        "@id": `${siteUrl}/#catering-service`,
+        name: "Indian vegetarian catering in Pleasanton",
+        description: homeDescription,
+        serviceType: ["Wedding catering", "Corporate catering", "Traditional vegetarian meals", "Live dosa catering", "Diwali catering", "À la carte catering trays"],
+        provider: { "@id": `${siteUrl}/#business` },
+        areaServed: { "@type": "City", name: "Pleasanton" },
+        url: `${siteUrl}/#occasions`,
+      }] : [{
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumbs`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+          { "@type": "ListItem", position: 2, name: path === "/faq" ? "Catering FAQs" : "Contact Us", item: url },
+        ],
+      }]),
     ],
   };
 }

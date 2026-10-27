@@ -12,7 +12,8 @@
     "test:search": "node scripts/test-catering-search.mjs",
     "test:plan": "node scripts/test-catering-plan.mjs",
     "test:reports": "node scripts/test-daily-reports.mjs",
-    "test:diwali": "node scripts/test-diwali-menu.mjs"
+    "test:diwali": "node scripts/test-diwali-menu.mjs",
+    "test:trays": "node scripts/test-a-la-carte-menu.mjs"
   },
   "dependencies": {
     "next": "16.3.8",

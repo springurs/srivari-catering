@@ -67,7 +67,7 @@ export function CateringHome() {
           <p className="eyebrow"><Icon name="flame" /> A SEASON TO CELEBRATE TOGETHER</p>
           <span className="gold-rule" aria-hidden="true" />
           <h1 id="hero-title">Diwali catering,<br /><span>made memorable.</span></h1>
-          <p>Light up your celebration with a vegetarian feast. From family poojas to office gatherings, share the flavours, the joy, and a little Srivari magic.</p>
+          <p>Indian vegetarian catering from our Pleasanton kitchen. From family poojas to office gatherings, light up your celebration with the flavours, the joy, and a little Srivari magic.</p>
           <form className="hero-menu-search" role="search" aria-label="Menu search" onSubmit={searchMenus}>
             <input type="search" name="menu_query" value={query} maxLength={1000} placeholder="Explore your menu" aria-label="Search catering and restaurant menus" aria-controls="menu-search-results" aria-describedby="menu-search-hint" onChange={(event) => {
               setQuery(event.currentTarget.value);

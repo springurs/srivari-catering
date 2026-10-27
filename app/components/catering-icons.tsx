@@ -1,4 +1,4 @@
-export type IconName = "home" | "people" | "menu" | "calendar" | "gallery" | "mail" | "rings" | "cake" | "office" | "lotus" | "pin" | "arrow" | "search" | "flame";
+export type IconName = "home" | "people" | "menu" | "calendar" | "gallery" | "mail" | "rings" | "cake" | "office" | "lotus" | "pin" | "arrow" | "search" | "flame" | "question";
 
 const paths: Record<IconName, React.ReactNode> = {
   home: <><path d="m3 10 9-7 9 7M6 8v13h12V8"/><path d="M10 21v-8h4v8"/></>,
@@ -14,6 +14,7 @@ const paths: Record<IconName, React.ReactNode> = {
   pin: <><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
   arrow: <path d="M4 12h15m-6-6 6 6-6 6"/>,
   search: <><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></>,
+  question: <><circle cx="12" cy="12" r="9"/><path d="M9.5 8.5a2.5 2.5 0 1 1 4.2 1.8c-1 .8-1.7 1.2-1.7 2.7M12 17h.01"/></>,
   flame: <><path d="M12 2c1 5 5 5 5 9 0 0 1-1 2-3 2 3 2 5 2 7a9 9 0 0 1-18 0c0-4 3-7 5-9 0 3 1 4 2 5 0-4 1-6 2-9Z"/><path d="M12 13c-2 2-3 3-3 5a3 3 0 0 0 6 0c0-2-1-3-3-5Z"/></>,
 };
 
