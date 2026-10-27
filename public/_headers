@@ -2,4 +2,4 @@
   X-Robots-Tag: noindex, follow
   X-Content-Type-Options: nosniff
   Cross-Origin-Resource-Policy: cross-origin
-  Cache-Control: public, max-age=300
+  Cache-Control: public, max-age=0, must-revalidate

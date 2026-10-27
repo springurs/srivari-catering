@@ -46,7 +46,9 @@ For a homepage placement, put it after the introductory content or before the fo
 <noscript><a href="https://srivaricatering.com/#diwali">Explore Srivari Diwali catering</a></noscript>
 ```
 
-The button opens the existing `#diwali` bookmark and Diwali package choices. Prices are not repeated in the creative, so menu enquiries and any future price changes remain on the destination page.
+The compact Diwali banner reads **Diwali Festive Catering Quotes**, with a **Diwali celebrations** label, one prominent animated diya beside the logo, and curved gold string-light borders along the top and bottom matching the supplied reference. Each border has six warm circular bulbs with soft halos; their fixed size keeps them legible in narrow placements. The lamp stays in the brand column, and reserved edge spacing keeps the border clear of text and buttons. There is no pause button or visible new-tab label. The footer reads **Explore Srivari Catering**. Reduced-motion and print settings display a still lamp. No additional artwork request or tracking code is needed.
+
+The **Get Diwali quote** button opens the existing `#diwali` bookmark and Diwali package choices. Prices are not repeated in the creative, so menu enquiries and any future price changes remain on the destination page. Preview this version directly at `/embeds/demo?campaign=diwali`; campaign, theme, destination, and width settings are shareable in the preview URL. The placement tag itself does not change. The demo and stylesheet use versioned asset URLs to avoid mixing the redesigned markup with an older cached stylesheet.
 
 ## ezCater placement
 
@@ -92,10 +94,11 @@ Each tag creates one independent placement. Multiple tags may appear on the same
 
 - Local preview after `npm run build`: `http://localhost:8790/embeds/demo.html` when using the existing Cloudflare preview on port 8790.
 - Published preview: `https://srivaricatering.com/embeds/demo.html` after deployment.
+- The public domain is attached to the Cloudflare Worker `srivari-events-catering`; `wrangler.jsonc` targets that Worker. Deploying the separate `srivari-catering` Worker does not update `srivaricatering.com`.
 - The preview offers all campaigns, themes, destinations, and a width slider from 160 to 1440 pixels, plus a copyable tag.
 - `public/embeds/srivari-catering.js` contains the creative text, destinations, and image paths. If the ezCater URL changes, update its embed constant as well as `app/data/ordering-partners.ts`.
 - `public/embeds/srivari-catering.css` contains the isolated layout and colours. CSS container queries adapt to the placement width, with a wrapping flex layout as a fallback.
-- `public/_headers` applies a five-minute asset cache and `noindex` to these utility assets on Cloudflare. The demo also contains its own `noindex` meta tag and is not included in the public sitemap.
+- `public/_headers` makes these utility assets revalidate on reload and applies `noindex` on Cloudflare. ETags allow unchanged files to be reused without keeping an older banner revision for five minutes. The demo also contains its own `noindex` meta tag and is not included in the public sitemap.
 
 The script uses Shadow DOM so its layout does not inherit the restaurant website’s heading, image, button, or font styles. It loads only its stylesheet and Srivari-hosted images. Website links add `utm_source` (hostname or source label), `utm_medium=referral`, `utm_campaign`, and `utm_content` (placement label). The ezCater URL is left intact. The embed does not count impressions, send click beacons, set cookies, store browser data, or add analytics. URL labels only become reports if analytics is configured separately on the destination.
 
