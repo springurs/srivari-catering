@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, follow">
+  <title>Srivari Responsive Banner Preview</title>
+  <link rel="stylesheet" href="demo.css">
+  <script src="demo.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">SRIVARI · PLACEMENT PREVIEW</p><h1>One banner. Any placement.</h1><p>Preview a catering promotion inside a wide homepage section, a narrow sidebar, or a mobile layout. Its height follows its content.</p></header>
+    <form id="controls" aria-label="Banner preview settings">
+      <label>Campaign<select id="campaign"><option value="catering">General catering</option><option value="diwali">Diwali celebrations</option><option value="corporate">Corporate catering</option></select></label>
+      <label>Colour theme<select id="theme"><option value="dark">Deep teal</option><option value="light">Ivory</option></select></label>
+      <label>Destination<select id="destination"><option value="website">Srivari Catering</option><option value="ezcater">Order on ezCater</option></select></label>
+      <label class="width-control">Placement width: <output id="width-label" for="width">1200 px</output><input id="width" type="range" min="160" max="1440" step="10" value="1200"></label>
+    </form>
+    <p class="preview-note">The placement stays within the viewport when the selected width is larger than your screen.</p>
+    <div id="preview"></div>
+    <section class="code-section" aria-labelledby="code-title"><h2 id="code-title">Your placement tag</h2><p>After publishing the embed assets to srivaricatering.com, paste this tag into an HTML block where the banner should appear on either website.</p><pre><code id="placement-code"></code></pre><p id="copy-status" role="status"></p><button id="copy" type="button">Copy placement tag</button></section>
+    <footer>No fixed height is needed. The embed uses isolated styling, local assets, ordinary links, and optional URL campaign labels. It does not set cookies, record impressions, or load advertising pixels.</footer>
+  </main>
+</body>
+</html>

@@ -111,6 +111,10 @@ The endpoint validates same-origin requests and input length, and uses a Cloudfl
 
 Run `npm run test:search` for parsing, caching, keyword matching, source-outage, and request-validation tests, plus `npm run lint` and `npm run build`. `npx wrangler deploy --dry-run` validates the Worker bundle without publishing it.
 
+## Responsive promotional placements
+
+The reusable banner in `public/embeds/` can be placed on both Srivari websites with one async script tag. It provides general catering, Diwali, and corporate creatives, teal/ivory themes, optional direct ezCater ordering, and layouts that respond to the placement container. See [the placement tags and setup guide](docs/banner-placements.md) and preview `/embeds/demo.html` after building. Publish the assets before installing the production tags. The embed does not add advertising pixels, cookies, or analytics; optional campaign URL labels identify placements only. The demo is excluded from indexing and the sitemap.
+
 ## Search metadata and crawling
 
 The homepage, Contact Us, and Catering FAQs (`/faq`) have distinct titles, descriptions, self-canonical URLs, Open Graph tags, and Twitter cards. Metadata is rendered into the exported HTML. Restaurant and WebSite JSON-LD describe the supplied business address, cuisines, email, restaurant phone, catering phone, and menu/ordering identities. The homepage also describes the catering Service and links both the package and à la carte menus. Contact and FAQ pages have visible breadcrumbs with matching BreadcrumbList markup. No ratings, opening hours, unconfirmed service areas, or draft recipe offers are invented. `/robots.txt` allows public pages and assets, excludes API and Cloudflare internal routes, and points to `/sitemap.xml`. The sitemap derives its three canonical page URLs from `indexedPaths` in `app/data/site-seo.ts` and includes the current homepage food images. Homepage section anchors and external ordering URLs are not separate sitemap pages.
