@@ -16,7 +16,7 @@ test("Diwali replaces the seasonal packages with the poster's prices, minimums a
   assert.equal(menus.some((menu) => /golu/i.test(menu.name)), false);
   assert.equal(menus.find((menu) => menu.name === "Live Dosa Catering")?.minimumGuests, 30);
   assert.equal(packagePricing(diwaliMenus[0]), "$17.99 per person");
-  assert(menus.filter((menu) => menu.theme !== "diwali").every((menu) => packagePricing(menu) === "Price on enquiry"));
+  assert(menus.filter((menu) => !menu.theme).every((menu) => packagePricing(menu) === "Price on enquiry"));
 });
 
 test("Signature starters require two distinct dishes with at most one paneer starter", () => {

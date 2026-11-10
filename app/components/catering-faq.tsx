@@ -14,10 +14,7 @@ export function FaqList({ items, openFirst = false }: { items: CateringFaq[]; op
             {faq.links && <ul className="faq-links" aria-label="Related information">
               {faq.links.map((link) => <li key={link.href}>{link.href.startsWith("https://")
                 ? <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗<span className="sr-only"> (opens in a new tab)</span></a>
-                // Load the document with its Diwali bookmark so the planner reads it on initialisation.
-                : link.href === "/#diwali"
-                  ? <a href={link.href}>{link.label} <Icon name="arrow" /></a>
-                  : <Link href={link.href}>{link.label} <Icon name="arrow" /></Link>}
+                : <Link href={link.href}>{link.label} <Icon name="arrow" /></Link>}
               </li>)}
             </ul>}
           </div>

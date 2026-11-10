@@ -16,7 +16,7 @@ export default function FaqPage() {
         <header className="faq-page-intro">
           <p className="eyebrow">SRIVARI CATERING · PLEASANTON</p>
           <h1>Catering FAQs</h1>
-          <p>From your first menu idea to your event-day arrangements, find answers about vegetarian packages, individual trays, dietary requests, live dosa, Diwali, and ordering Srivari on ezCater.</p>
+          <p>From your first menu idea to your event-day arrangements, find answers about vegetarian packages, individual trays, dietary requests, live dosa, and ordering Srivari on ezCater.</p>
           <Link className="button" href="/contact">Ask our catering team <Icon name="arrow" /></Link>
         </header>
         <nav className="faq-topics" aria-label="FAQ topics">

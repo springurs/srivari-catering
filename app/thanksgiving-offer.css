@@ -1,0 +1,57 @@
+.harvest-offer { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .85fr); gap: clamp(24px, 4vw, 64px); align-items: center; padding: 44px clamp(24px, 4vw, 56px); background: radial-gradient(ellipse at 0 0, #fff3d8, transparent 60%), #f7ddbe; border-bottom: 1px solid #d8ad76; }
+.harvest-offer-eyebrow { display: flex; align-items: center; gap: 9px; font-size: 10px; letter-spacing: 1.8px; color: #98501d; }
+.harvest-offer-eyebrow > span { width: 20px; height: 1px; background: #b56b27; }
+.harvest-offer h2 { margin: 16px 0; color: #432413; font-size: clamp(32px, 3.4vw, 50px); line-height: 1.08; letter-spacing: -1px; }
+.harvest-offer h2 em { color: #b74c12; font-weight: 400; }
+.harvest-offer-description { max-width: 530px; color: #5e4b3e; font-size: 14px; line-height: 1.6; }
+.harvest-offer-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 22px; margin-top: 24px; }
+.harvest-offer .button { background: #b74709; padding: 14px 20px; border-radius: 8px; font-size: 13px; gap: 18px; }
+.harvest-offer .button:hover { background: #8c3308; }
+.harvest-offer-call { display: flex; flex-wrap: wrap; gap: 5px; color: #644832; font-size: 12px; line-height: 1.6; }
+.harvest-offer-call strong { font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
+.harvest-offer-fineprint { margin-top: 18px; font-size: 11px; color: #776251; }
+.harvest-offer-ticket { position: relative; padding: 22px 28px 16px; background: #4b2918; background-image: radial-gradient(ellipse at right top, #b267253d, transparent 65%); color: #fff1d9; border: 1px solid #75472b; border-radius: 18px; box-shadow: 0 12px 28px #6635141a; }
+.harvest-offer-ticket::before, .harvest-offer-ticket::after { content: ""; position: absolute; width: 22px; height: 22px; background: #f7ddbe; top: 65%; border-radius: 50%; }
+.harvest-offer-ticket::before { left: -12px; }
+.harvest-offer-ticket::after { right: -12px; }
+.harvest-offer-ticket-top { display: flex; justify-content: space-between; gap: 12px; font-size: 9px; letter-spacing: 1.3px; color: #eccba0; }
+.harvest-offer-ticket-top > span:last-child { padding: 4px 7px; margin-top: -4px; border: 1px solid #b1855666; border-radius: 4px; white-space: nowrap; }
+.harvest-offer-amount { display: flex; align-items: baseline; justify-content: center; gap: 13px; margin-top: 12px; line-height: 1; }
+.harvest-offer-amount strong { font: 400 clamp(72px, 7vw, 100px)/1 Georgia, serif; letter-spacing: -5px; color: #f7c47c; }
+.harvest-offer-amount strong span { font-size: .48em; letter-spacing: -2px; }
+.harvest-offer-amount > span { font-size: 20px; font-weight: 500; letter-spacing: 3px; }
+.harvest-offer-threshold { text-align: center; color: #ead5b9; font-size: 13px; margin-top: 7px; }
+.harvest-offer-code-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 22px; padding-top: 20px; border-top: 1px dashed #c39a6688; }
+.harvest-offer-code-row > div > span { display: block; font-size: 8px; letter-spacing: 1.8px; color: #d8b893; }
+.harvest-offer-code-row code { display: block; margin-top: 6px; color: #fff5e5; font: 600 25px/1.2 var(--font-geist-mono), monospace; letter-spacing: 3px; user-select: all; }
+.harvest-offer-code-row button { min-height: 40px; padding: 9px 12px; border: 1px solid #d4b17c88; border-radius: 6px; color: #f7e1be; background: transparent; font-size: 11px; }
+.harvest-offer-code-row button:hover { background: #80502f; }
+.harvest-offer-status { min-height: 28px; margin-top: 12px; color: #ddc19b; font-size: 10px; line-height: 1.5; }
+.planner-offer-note { margin-bottom: 20px; padding: 12px 14px; border: 1px dashed #c38a4c; border-radius: 7px; background: #fff1d9; color: #6d3a17; font-size: 12px; line-height: 1.5; }
+@media (max-width: 1100px) { .harvest-offer { gap: 24px; padding: 32px 24px; } .harvest-offer-ticket { padding-inline: 22px; } }
+@media (max-width: 900px) { .harvest-offer { grid-template-columns: 1fr; } .harvest-offer-ticket { width: 100%; max-width: 460px; } .harvest-offer h2 { font-size: 38px; } }
+@media (max-width: 480px) { .harvest-offer { padding: 30px 20px; gap: 28px; } .harvest-offer h2 { font-size: 34px; } .harvest-offer-eyebrow { font-size: 8px; letter-spacing: 1.2px; } .harvest-offer .button { width: 100%; } .harvest-offer-amount strong { font-size: 88px; } }
+
+/* A fine botanical frame draws attention without covering the offer. */
+.harvest-offer { position: relative; isolation: isolate; padding-block: 66px; scroll-margin-top: 20px; }
+.harvest-offer::before {
+  content: ""; position: absolute; inset: 10px; z-index: -1; pointer-events: none;
+  border: 1px solid #c99759; border-radius: 16px;
+  background-image: url("/images/thanksgiving-offer-leaves.svg"), url("/images/thanksgiving-offer-leaves.svg");
+  background-repeat: repeat-x;
+  background-size: 440px 44px;
+  background-position: center top, center bottom;
+}
+.harvest-offer-visit { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; margin-top: 20px; padding: 11px 14px; border: 1px solid #dfc8a8; border-radius: 10px; background: #fffdf6; color: #75411e; transition: background .2s, border-color .2s; }
+.harvest-offer-visit:hover { background: #f9e8cd; border-color: #bc8d51; }
+.harvest-offer-visit > svg { width: 19px; height: 19px; }
+.harvest-offer-visit > span:not(.sr-only) { min-width: 0; }
+.harvest-offer-visit strong { display: block; color: #633515; font-size: 13px; font-weight: 500; }
+.harvest-offer-visit > span > span { display: block; margin-top: 3px; color: #79624d; font-size: 11px; line-height: 1.5; }
+.harvest-offer-visit > svg:last-of-type { width: 16px; height: 16px; margin-left: 6px; }
+@media (max-width: 480px) {
+  .harvest-offer { padding: 56px 24px; }
+  .harvest-offer::before { inset: 6px; background-size: 340px 34px; }
+  .harvest-offer-visit { width: 100%; padding: 10px; }
+}
+@media print { .harvest-offer::before { background-image: none; } }

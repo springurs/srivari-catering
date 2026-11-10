@@ -1,5 +1,6 @@
 import { premiumWeddingMenus } from "./premium-wedding-menu";
 import { diwaliMenus } from "./diwali-menu";
+import { thanksgivingMenus } from "./thanksgiving-menu";
 
 export type MenuSelection = {
   name: string;
@@ -18,7 +19,9 @@ export type CateringMenu = {
   serves?: string;
   guestsPerPackage?: number;
   minimumGuests?: number;
-  theme?: "diwali";
+  theme?: "diwali" | "thanksgiving";
+  badge?: string;
+  pricePerPackage?: number;
   pricePerPerson?: number;
   isLiveDosa?: boolean;
   serviceDuration?: string;
@@ -44,7 +47,6 @@ export const dietaryRequestOptions = ["Jain preparation", "No onion or garlic"] 
 // Srivari Vegetarian Catering Combos PDF (pages 1–5), with North Indian Thali
 // from page 6 of the six-page edition.
 // Wedding, traditional, and combo minimums are 25 guests per the business update.
-// Diwali packages replace the previous seasonal menus and follow the supplied poster.
 // Corporate menus are proposed vegetarian menus created at the user's request;
 // pricing, availability, and serving arrangements are confirmed on enquiry.
 // Shared starter and dessert choices from the supplied vegetarian combo menu.
@@ -647,6 +649,7 @@ export const menus: CateringMenu[] = [
   },
   ...premiumWeddingMenus,
   executiveMeal,
+  ...thanksgivingMenus,
 ];
 
 export function buildPackageMenu(menu: CateringMenu, choices: Record<string, string[]>) {
@@ -675,6 +678,7 @@ export function buildPackageMenu(menu: CateringMenu, choices: Record<string, str
 export const cateringPricing = "Price on enquiry";
 
 export function packagePricing(menu: CateringMenu) {
+  if (menu.pricePerPackage !== undefined) return `$${menu.pricePerPackage.toFixed(menu.pricePerPackage % 1 === 0 ? 0 : 2)} per package`;
   return menu.pricePerPerson === undefined ? cateringPricing : `$${menu.pricePerPerson.toFixed(2)} per person`;
 }
 

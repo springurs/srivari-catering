@@ -1,3 +1,5 @@
+> Diwali packages remain available under Choose Your Occasion → Diwali Catering. The standalone specials banner and seasonal page decorations are removed.
+
 # Diwali catering
 
 The seasonal occasion is now **Diwali Catering**, with a **Choose Your Diwali Feast** package section. The supplied poster replaces the previous seasonal packages and specialty tables.

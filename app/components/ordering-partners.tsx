@@ -14,10 +14,9 @@ export function OrderingPartners() {
       </div>
       <div className="ordering-partners-actions">
         <span className="ordering-partners-name">ezCater</span>
-        <a className="button" href={ezCaterOrderingUrl} target="_blank" rel="noopener noreferrer" aria-describedby="ordering-partners-note">
+        <a className="button" href={ezCaterOrderingUrl} target="_blank" rel="noopener noreferrer">
           Order on ezCater <Icon name="arrow" /><span className="sr-only"> (opens in a new tab)</span>
         </a>
-        <p id="ordering-partners-note">External ordering site · Opens in a new tab</p>
       </div>
     </section>
   );

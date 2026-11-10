@@ -4,10 +4,11 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { OccasionPackages, type MenuSearchRequest } from "./catering-interactions";
 import { Icon } from "./catering-icons";
-import { DiwaliStringLights, FestiveDiya } from "./diwali-decorations";
+import { useThanksgivingSeason } from "./thanksgiving-season";
 import { isSearchReply, keywordPackages, type SearchReply } from "../data/menu-search";
 
 export function CateringHome() {
+  const thanksgiving = useThanksgivingSeason();
   const [searchRequest, setSearchRequest] = useState<MenuSearchRequest | null>(null);
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState(false);
@@ -60,29 +61,28 @@ export function CateringHome() {
 
   return (
     <>
-      <section className="hero diwali-hero" aria-labelledby="hero-title">
-        <Image className="hero-image" src="/images/diwali-hero.webp" alt="A festive vegetarian spread of paneer curry, biryani, vadai, and sweets in brass bowls beside glowing Diwali diyas" fill sizes="(max-width: 760px) 100vw, calc(100vw - 180px)" preload />
-        <DiwaliStringLights />
+      <section className="hero" aria-labelledby="hero-title">
+        <Image className="hero-image" src="/images/south-indian-feast.png" alt="A traditional South Indian vegetarian feast with rice, curries, and accompaniments" fill sizes="(max-width: 760px) 100vw, calc(100vw - 180px)" preload />
         <div className="hero-copy">
-          <p className="eyebrow"><Icon name="flame" /> A SEASON TO CELEBRATE TOGETHER</p>
+          <p className="eyebrow">{thanksgiving ? "SRIVARI · PURE INDIAN VEGETARIAN" : "GOOD FOOD BRINGS PEOPLE TOGETHER"}</p>
           <span className="gold-rule" aria-hidden="true" />
-          <h1 id="hero-title">Diwali catering,<br /><span>made memorable.</span></h1>
-          <p>Indian vegetarian catering from our Pleasanton kitchen. From family poojas to office gatherings, light up your celebration with the flavours, the joy, and a little Srivari magic.</p>
+          <h1 id="hero-title">{thanksgiving ? <>Thanksgiving<br /><span>Catering Options</span></> : <>Your occasion,<br /><span>our tradition.</span></>}</h1>
+          {thanksgiving && <div className="hero-harvest-ribbon">GOOD FOOD. GRATEFUL HEARTS.</div>}
+          <p>Indian vegetarian catering from our Pleasanton kitchen. From family poojas to office gatherings, bring everyone together over authentic flavours and food made to share.</p>
           <form className="hero-menu-search" role="search" aria-label="Menu search" onSubmit={searchMenus}>
             <input type="search" name="menu_query" value={query} maxLength={1000} placeholder="Explore your menu" aria-label="Search catering and restaurant menus" aria-controls="menu-search-results" aria-describedby="menu-search-hint" onChange={(event) => {
               setQuery(event.currentTarget.value);
               // Changing the question invalidates recommendations and cancels stale answers.
               clearSearch();
             }} />
-            <button type="submit" disabled={pending} aria-label={pending ? "Searching menus" : "Search menus"}><Icon name="search" /></button>
+            <button type="submit" disabled={pending} aria-label={pending ? "Searching menus" : "Browse menus"} aria-busy={pending}><Icon name="search" /></button>
           </form>
           <p id="menu-search-hint" className="hero-search-hint">Search by dish, cuisine, or occasion.</p>
           <div className="search-examples" aria-label="Try a menu search">
-            {["Diwali feast", "Live dosa", "Office lunch"].map((example) => <button type="button" key={example} onClick={() => { setQuery(example); void runSearch(example); }}>{example}</button>)}
+            {[thanksgiving ? "Thanksgiving feast" : "Wedding thali", "Live dosa", "Office lunch"].map((example) => <button type="button" key={example} onClick={() => { setQuery(example); void runSearch(example); }}>{example}</button>)}
           </div>
-          <a className="diwali-hero-link" href="#diwali">Discover the Diwali specials <Icon name="arrow" /></a>
+          <a className="button hero-packages-link" href="#occasions">Browse catering packages</a>
         </div>
-        <div className="diwali-hero-signoff" aria-hidden="true"><FestiveDiya /><span>Good food.<br />Brighter celebrations.</span></div>
       </section>
       <OccasionPackages searchRequest={searchRequest} />
     </>

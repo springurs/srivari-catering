@@ -1,4 +1,3 @@
-import { diwaliMenus } from "./diwali-menu";
 import { ezCaterOrderingUrl } from "./ordering-partners";
 
 export type CateringFaq = {
@@ -16,7 +15,7 @@ export const faqCategories: FaqCategory[] = [
     items: [
       {
         id: "occasions", question: "What occasions does Srivari cater for?",
-        answer: "Explore vegetarian menus for weddings, traditional gatherings, corporate events, tiffin and meal combos, Diwali celebrations, and live dosa catering. Share your event date, guest count, location, and menu preferences so our team can confirm availability and a suitable package.",
+        answer: "Explore vegetarian menus for weddings, traditional gatherings, corporate events, tiffin and meal combos, Thanksgiving family feasts, and live dosa catering. Share your event date, guest count, location, and menu preferences so our team can confirm availability and a suitable package.",
         links: [{ label: "Explore catering packages", href: "/#occasions" }],
       },
       {
@@ -26,7 +25,7 @@ export const faqCategories: FaqCategory[] = [
       },
       {
         id: "minimum-guests", question: "What is the minimum guest count for catering?",
-        answer: "Wedding, traditional, and combo packages require at least 25 guests. Standard Live Dosa Catering starts at 30 guests. The Diwali Live Dosa Celebration has a separate minimum of 35 guests. Check the selected package for its minimum; ezCater orders follow the requirements displayed on ezCater.",
+        answer: "Thanksgiving family packages serve 5–6, 10–12, or 20–25 people at $119, $229, or $499 per package. Wedding, traditional, and combo packages require at least 25 guests. Standard Live Dosa Catering starts at 30 guests. Check the selected package for its minimum; ezCater orders follow the requirements displayed on ezCater.",
         links: [{ label: "Choose a catering package", href: "/#occasions" }],
       },
       {
@@ -82,17 +81,12 @@ export const faqCategories: FaqCategory[] = [
     ],
   },
   {
-    id: "live-and-diwali", title: "Live dosa & Diwali catering",
+    id: "live-dosa-catering", title: "Live dosa catering",
     items: [
       {
         id: "live-dosa", question: "What is included in standard Live Dosa Catering?",
         answer: "Standard Live Dosa Catering starts at 30 guests and includes unlimited freshly prepared dosas with additions such as ghee, podi, masala, paneer, and vegetables. Choose one vegetarian appetiser, one variety rice or biryani, one dessert, and one complimentary beverage from coffee, tea, chaas, rose milk, or lassi. Share your event date, time, and specific requirements for confirmation.",
         links: [{ label: "Explore live catering packages", href: "/#occasions" }],
-      },
-      {
-        id: "diwali-packages", question: "Which Diwali catering packages are available?",
-        answer: `${diwaliMenus.map((menu) => `${menu.name} is $${menu.pricePerPerson?.toFixed(2)} per person with a minimum of ${menu.minimumGuests} guests`).join(". ")}. Live Dosa Celebration includes a two-hour live service. Select one menu for the entire event. Delivery, tax, and additional services are extra; menu availability and any upgrades need confirmation.`,
-        links: [{ label: "See Diwali menus and selections", href: "/#diwali" }],
       },
     ],
   },

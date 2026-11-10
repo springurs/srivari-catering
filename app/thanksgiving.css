@@ -1,0 +1,309 @@
+/* Pumpkin Thanksgiving theme, shared by every page through November 30. */
+.site-theme, .thanksgiving-theme { min-height: 100svh; }
+.thanksgiving-theme {
+  --cream: #fcf1e1;
+  --harvest-pattern: url("/images/thanksgiving-leaves.svg");
+  color: var(--ink);
+  --green: #602a17;
+  --ink: #333;
+  --muted: #756051;
+  --gold: #b94b08;
+  --line: #e5cdb5;
+  background: #fcf1e1;
+}
+.thanksgiving-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, #35190e, #54301c 56%, #6b4025);
+  color: #fff1de;
+  border-bottom: 1px solid #e6a65e55;
+  font: 14px/1.5 Georgia, serif;
+  letter-spacing: .6px;
+  text-align: center;
+}
+.thanksgiving-note > span[aria-hidden] { color: #f4c790; font-size: 24px; line-height: 1; }
+.thanksgiving-theme .page-shell { background: #421f10; }
+.thanksgiving-theme .sidebar { background: #421f10; }
+.thanksgiving-theme .sidebar-note { color: #e7bb86; }
+.thanksgiving-theme .side-nav a,
+.thanksgiving-theme .side-nav button { color: #634635; }
+.thanksgiving-theme .side-nav .nav-active,
+.thanksgiving-theme .side-nav a:hover,
+.thanksgiving-theme .side-nav button:hover { background: #e9cdae; color: #763512; }
+.thanksgiving-theme .main-content {
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-color: #fff8ed;
+  background-image: var(--harvest-pattern);
+}
+.thanksgiving-theme .hero::after {
+  background: linear-gradient(90deg, #352012ee, #452817a6 48%, #45281714 90%);
+}
+.thanksgiving-theme .hero .eyebrow { color: #ffcf8b; letter-spacing: 1.8px; }
+.thanksgiving-theme .hero h1 span { color: #ffd59b; }
+.thanksgiving-theme .gold-rule { background: #e6a65e; }
+.thanksgiving-theme .hero-menu-search { background: #fffaf2; border-color: #ecc28f; }
+.thanksgiving-theme .button,
+.thanksgiving-theme .ordering-partners-actions .button {
+  background: #bc4906;
+  color: #fffaf3;
+}
+.thanksgiving-theme .button:hover,
+.thanksgiving-theme .ordering-partners-actions .button:hover { background: #923505; }
+.thanksgiving-theme .hero-menu-search button { background: #bc4906; }
+.thanksgiving-theme .hero-menu-search button:hover { background: #923505; }
+.thanksgiving-theme .occasion-section { background: #fff8ede8; }
+.thanksgiving-theme .occasion-card,
+.thanksgiving-theme .package-card,
+.thanksgiving-theme .package-details,
+.thanksgiving-theme .planner-card,
+.thanksgiving-theme .menu-search-result,
+.thanksgiving-theme .contact-card,
+.thanksgiving-theme .contact-map,
+.thanksgiving-theme .signature-card,
+.thanksgiving-theme .about-cuisine,
+.thanksgiving-theme .a-la-carte-category,
+.thanksgiving-theme .faq-list,
+.thanksgiving-theme .faq-topics a {
+  background: #fffcf6;
+  border-color: #e5cdb5;
+}
+.thanksgiving-theme .occasion-heading h2,
+.thanksgiving-theme .ordering-partners h2,
+.thanksgiving-theme .ordering-partners-name,
+.thanksgiving-theme .ordering-partners-direct a,
+.thanksgiving-theme .signature-intro h2,
+.thanksgiving-theme .about-copy h2,
+.thanksgiving-theme .contact-heading h1,
+.thanksgiving-theme .contact-map-heading h2,
+.thanksgiving-theme .faq-page-intro h1,
+.thanksgiving-theme .faq-category h2,
+.thanksgiving-theme .faq-contact h2,
+.thanksgiving-theme .home-faq-intro h2,
+.thanksgiving-theme .home-faq-intro .text-link,
+.thanksgiving-theme .faq-links a,
+.thanksgiving-theme .faq-topics a { color: #713d23; }
+.thanksgiving-theme .ordering-partners,
+.thanksgiving-theme .about-section,
+.thanksgiving-theme .signature-section,
+.thanksgiving-theme .home-faq,
+.thanksgiving-theme .contact-section { background: #f8ead8e8; border-color: #e5cdb5; }
+.thanksgiving-theme .a-la-carte-section { background: #fff8ede8; }
+.thanksgiving-theme .signature-intro-note,
+.thanksgiving-theme .about-menu-note { background: #653b24; color: #fff3df; border-color: #b77a47; }
+.thanksgiving-theme .signature-intro-note p,
+.thanksgiving-theme .about-menu-note p { color: #f5dfc0; }
+.thanksgiving-theme .a-la-carte-category > summary,
+.thanksgiving-theme .a-la-carte-item:nth-child(even),
+.thanksgiving-theme .a-la-carte-note,
+.thanksgiving-theme .faq-contact,
+.thanksgiving-theme .faq-item summary:hover,
+.thanksgiving-theme .faq-item[open] summary,
+.thanksgiving-theme .diwali-notes { background: #f6e5ce; border-color: #e5cdb5; }
+.thanksgiving-theme .site-footer { background: #432b20; color: #fff0d8; border-top: 2px solid #c68c53; }
+.thanksgiving-theme .footer-bottom { color: #dfc7ad; border-color: #856448; }
+.thanksgiving-theme .site-footer a:hover { color: #ffd59b; }
+@media (max-width: 760px) {
+  .thanksgiving-note { gap: 10px; padding: 10px 16px; font-size: 12px; }
+  .thanksgiving-theme .hero::after { background: linear-gradient(90deg, #352012ee, #452817bd 70%, #45281775); }
+  .thanksgiving-theme .hero .eyebrow { font-size: 9px; letter-spacing: 1.2px; }
+}
+@media print {
+  .thanksgiving-note { display: none; }
+  .thanksgiving-theme .main-content { background-image: none; }
+}
+
+/* Leaves carry the background theme; only two pumpkins accent the edges. */
+.thanksgiving-theme .occasion-section,
+.thanksgiving-theme .ordering-partners,
+.thanksgiving-theme .about-section,
+.thanksgiving-theme .signature-section,
+.thanksgiving-theme .a-la-carte-section,
+.thanksgiving-theme .home-faq,
+.thanksgiving-theme .contact-section { background-image: var(--harvest-pattern); background-repeat: no-repeat; background-position: right bottom; }
+.thanksgiving-theme .sidebar {
+  background-image: url("/images/thanksgiving-pumpkin-orange.svg"), var(--harvest-pattern);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 108px 100px, 340px 300px;
+  background-position: center 610px, left top;
+}
+.thanksgiving-theme .site-footer {
+  padding-bottom: 106px;
+  background-image: url("/images/thanksgiving-pumpkin-cream.svg"), var(--harvest-pattern);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100px 92px, 340px 300px;
+  background-position: right 22px bottom 8px, left top;
+}
+@media (max-width: 760px) {
+  .thanksgiving-theme .sidebar { background-image: var(--harvest-pattern); background-size: 340px 300px; }
+  .thanksgiving-theme .site-footer {
+    background-image: url("/images/thanksgiving-pumpkin-orange.svg"), url("/images/thanksgiving-pumpkin-cream.svg"), var(--harvest-pattern);
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: 82px 76px, 78px 76px, 340px 300px;
+    background-position: left 20px bottom 8px, right 20px bottom 8px, left top;
+  }
+}
+@media print {
+  .thanksgiving-theme .sidebar,
+  .thanksgiving-theme .site-footer { background-image: none; }
+}
+
+/* Cuisine filters use the same pumpkin and maple colors as the seasonal theme. */
+.thanksgiving-theme .signature-filters button {
+  background: #fff7e9;
+  border-color: #d8b18c;
+  color: #754121;
+}
+.thanksgiving-theme .signature-filters button:hover,
+.thanksgiving-theme .signature-filters button:focus-visible {
+  background: #f5d8b5;
+  border-color: #ad5126;
+  color: #713416;
+}
+.thanksgiving-theme .signature-filters button[aria-pressed="true"] {
+  background: #bc4906;
+  border-color: #bc4906;
+  color: #fff8ed;
+}
+.thanksgiving-theme .signature-filters button[aria-pressed="true"]:hover,
+.thanksgiving-theme .signature-filters button[aria-pressed="true"]:focus-visible {
+  background: #923505;
+  border-color: #923505;
+  color: #fff8ed;
+}
+
+/* Cream, maple orange, and soft cards drawn from the supplied Thanksgiving reference. */
+.thanksgiving-theme .page-shell { grid-template-columns: 220px minmax(0, 1fr); }
+.thanksgiving-theme .sidebar { border-right: 1px solid #6a3b22; padding-inline: 14px; }
+.thanksgiving-theme .sidebar header { padding: 6px 22px 12px; }
+.thanksgiving-theme .sidebar .brand-logo { width: 150px; }
+.thanksgiving-theme .side-nav { gap: 9px; }
+.thanksgiving-theme .side-nav a,
+.thanksgiving-theme .side-nav button { font-size: 13px; min-height: 48px; border-radius: 10px; color: #ffead1; }
+.thanksgiving-theme .side-nav a:hover,
+.thanksgiving-theme .side-nav button:hover { background: #633017; color: #fff3e3; }
+.thanksgiving-theme .side-nav .nav-active { background: #a5571b; color: #fff8ed; box-shadow: inset 0 0 0 1px #bd6c29; }
+.thanksgiving-theme .side-nav .nav-active svg { color: #fff8ed; }
+.thanksgiving-theme .hero { min-height: 560px; }
+.thanksgiving-theme .hero::after { background: linear-gradient(90deg, #35190ee8, #35190e9c 56%, #35190e24); }
+.thanksgiving-theme .hero-copy { width: 100%; max-width: 900px; margin-inline: auto; padding: 32px 30px; text-align: center; z-index: 3; }
+.thanksgiving-theme .hero-copy::before {
+  content: ""; display: block; width: 42px; height: 45px; margin: 0 auto 12px;
+  background: url("/images/thanksgiving-maple.svg") center / contain no-repeat;
+}
+.thanksgiving-theme .hero .eyebrow { color: #ffdaa4; letter-spacing: 3px; font-size: 10px; }
+.thanksgiving-theme .hero .gold-rule { margin: 12px auto; width: 55px; height: 1px; }
+.thanksgiving-theme .hero h1 { font-size: clamp(46px, 5.6vw, 84px); line-height: 1.03; letter-spacing: -2px; margin-bottom: 16px; color: #fff5e6; }
+.thanksgiving-theme .hero h1 span { color: #fff5e6; }
+.hero-harvest-ribbon { display: inline-block; padding: 11px 28px; margin-bottom: 18px; background: #efb66c; color: #48220d; font-size: 12px; letter-spacing: 1.6px; font-weight: 600; }
+.thanksgiving-theme .hero-copy > p:not(.eyebrow) { max-width: 620px; margin-inline: auto; color: #fff1de; font-size: 15px; line-height: 1.5; }
+.thanksgiving-theme .hero-menu-search { width: 600px; margin: 18px auto 0; padding: 2px; background: #fffdfa; border: 1px solid #fff4e5; border-radius: 40px; }
+.hero-menu-search button { flex: 0 0 46px; width: 46px; min-width: 46px; padding: 0; border-radius: 50%; }
+.thanksgiving-theme .search-examples { justify-content: center; }
+.thanksgiving-theme .hero-packages-link { background: #bc4906; padding: 11px 22px; margin-top: 18px; }
+.thanksgiving-theme .occasion-section { padding-block: 38px; }
+.thanksgiving-theme .occasion-card { border-radius: 12px; border-color: #e5d4bf; background: #fff; box-shadow: 0 7px 13px #58321c18; text-align: left; }
+.thanksgiving-theme .occasion-card-body { align-items: flex-start; padding: 18px 16px 16px; }
+.thanksgiving-theme .occasion-name { color: var(--ink); font-weight: 500; }
+.thanksgiving-theme .occasion-description { color: var(--ink); }
+.thanksgiving-theme .occasion-icon { display: none; }
+.thanksgiving-theme .card-arrow { align-self: flex-end; color: #fff9ef; border-color: #c3540c; background: #c3540c; }
+.thanksgiving-theme .occasion-card:hover .card-arrow,
+.thanksgiving-theme .occasion-card:focus-visible .card-arrow { background: #913004; color: white; }
+.thanksgiving-theme .signature-card,
+.thanksgiving-theme .about-cuisine,
+.thanksgiving-theme .package-card,
+.thanksgiving-theme .contact-card,
+.thanksgiving-theme .planner-card { border-radius: 16px; box-shadow: 0 5px 14px #58321c0c; }
+.thanksgiving-theme .signature-card h3,
+.thanksgiving-theme .signature-serving summary { color: #602a17; }
+.thanksgiving-theme .site-footer { background-color: #3b2014; }
+@media (max-width: 1150px) and (min-width: 761px) {
+  .thanksgiving-theme .page-shell { grid-template-columns: 190px minmax(0, 1fr); }
+  .thanksgiving-theme .sidebar header { padding-inline: 12px; }
+  .thanksgiving-theme .side-nav a { font-size: 12px; }
+  .thanksgiving-theme .hero h1 { font-size: 64px; }
+}
+@media (max-width: 760px) {
+  .thanksgiving-theme .page-shell { display: block; }
+  .thanksgiving-theme .sidebar { border-right: 0; padding-inline: 0; }
+  .thanksgiving-theme .sidebar header { padding: 0 20px; }
+  .thanksgiving-theme .sidebar .brand-logo { width: 88px; }
+  .thanksgiving-theme .side-nav a { min-height: 40px; font-size: 11px; }
+  .thanksgiving-theme .hero { min-height: 540px; }
+  .thanksgiving-theme .hero-copy { padding: 28px 20px; }
+  .thanksgiving-theme .hero h1 { font-size: clamp(38px, 9.5vw, 64px); letter-spacing: -1px; }
+  .thanksgiving-theme .hero .eyebrow { font-size: 9px; letter-spacing: 1.5px; }
+  .thanksgiving-theme .hero-copy > p:not(.eyebrow) { font-size: 13px; }
+  .hero-harvest-ribbon { padding: 10px 16px; letter-spacing: 1px; font-size: 10px; }
+  .hero-menu-search button { min-width: 46px; padding: 0; }
+  .thanksgiving-theme .hero-menu-search input { padding-inline: 12px; font-size: 14px; }
+  .thanksgiving-theme .occasion-card-body { padding: 15px 12px; }
+  .thanksgiving-theme .occasion-name { font-size: 20px; }
+}
+
+/* Ivory navigation with one pumpkin at the lower edge. */
+.thanksgiving-theme .page-shell { background: #faf8f3; }
+.thanksgiving-theme .sidebar {
+  background: #faf8f3 url("/images/thanksgiving-pumpkin-orange.svg") no-repeat center 650px / 110px 102px;
+  border-color: #e6decf;
+}
+.thanksgiving-theme .sidebar .brand-logo { padding: 0; background: transparent; border-radius: 0; }
+.thanksgiving-theme .sidebar-note { color: #78644d; }
+.thanksgiving-theme .sidebar-note span { background: #b48c4d; }
+.thanksgiving-theme .side-nav a,
+.thanksgiving-theme .side-nav button { color: #523b2c; }
+.thanksgiving-theme .side-nav a:hover,
+.thanksgiving-theme .side-nav button:hover { background: #f1e9dc; color: #704522; }
+.thanksgiving-theme .side-nav .nav-active { background: #eee3cf; color: #69441e; box-shadow: none; }
+.thanksgiving-theme .side-nav .nav-active svg { color: #9a6c29; }
+.thanksgiving-theme .hero { isolation: isolate; }
+.thanksgiving-theme .hero::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  z-index: 2;
+  pointer-events: none;
+  border: 1px solid #eac89755;
+  border-radius: 8px;
+  background-image: url("/images/thanksgiving-maple.svg"), url("/images/thanksgiving-maple.svg"), url("/images/thanksgiving-maple.svg"), url("/images/thanksgiving-maple.svg");
+  background-repeat: no-repeat;
+  background-position: left 8px top 8px, right 8px top 8px, left 8px bottom 8px, right 8px bottom 8px;
+  background-size: 26px 28px;
+  opacity: .8;
+}
+.thanksgiving-theme .hero-copy::before { display: none; }
+.thanksgiving-theme .hero h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: normal; font-weight: 400; line-height: 1.04;
+  text-shadow: 0 2px 18px #2d130b77;
+}
+.thanksgiving-theme .hero-harvest-ribbon { background: #f4c790; padding: 6px 14px; margin-bottom: 14px; border-radius: 5px; color: #512609; font-weight: 600; box-shadow: 0 2px 12px #28120820; }
+.thanksgiving-theme .occasion-card-body { background: #fff; }
+.thanksgiving-theme .occasion-name { font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; font-size: 18px; line-height: 1.3; }
+.thanksgiving-theme .card-arrow { border: 0; background: transparent; color: #ae430c; }
+.thanksgiving-theme .occasion-card:hover .card-arrow,
+.thanksgiving-theme .occasion-card:focus-visible .card-arrow { background: #ae430c; color: #fff8ed; }
+@media (max-width: 760px) {
+  .thanksgiving-theme .sidebar { background-image: none; }
+  .thanksgiving-theme .hero::before { inset: 10px; background-size: 18px 20px; }
+  .thanksgiving-theme .sidebar .brand-logo { padding: 0; border-radius: 0; }
+  .thanksgiving-theme .occasion-name { font-size: 16px; }
+}
+@media print { .thanksgiving-theme .hero::before { display: none; } }
+
+/* Compact hero controls, with the established layout and colors preserved. */
+.thanksgiving-theme .hero-menu-search input { padding: 10px 14px; }
+.thanksgiving-theme .hero-menu-search button { flex: 0 0 42px; width: 42px; min-width: 42px; height: 42px; margin: 0; }
+.thanksgiving-theme .hero-copy > p.hero-search-hint { font-size: 12px; margin-top: 7px; margin-bottom: 6px; line-height: 1.4; }
+
+/* Keep all seven occasion tiles together when desktop space allows. */
+@media (min-width: 1280px) and (max-width: 1599px) {
+  .thanksgiving-theme .occasion-card-body { padding: 12px 10px; }
+  .thanksgiving-theme .occasion-name { font-size: 15px; }
+  .thanksgiving-theme .occasion-description { font-size: 12px; line-height: 1.45; }
+  .thanksgiving-theme .occasion-photo { height: 112px; }
+}

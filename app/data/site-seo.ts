@@ -9,11 +9,11 @@ if (configuredUrl.protocol !== "https:" || configuredUrl.username || configuredU
 export const siteUrl = configuredUrl.origin;
 export const siteName = "Srivari Catering";
 export const homeTitle = "Indian Vegetarian Catering in Pleasanton | Srivari Catering";
-export const homeDescription = "Plan Indian vegetarian catering in Pleasanton: wedding thalis, corporate meals, live dosa and Diwali menus. Explore à la carte trays or order on ezCater.";
+export const homeDescription = "Plan Indian vegetarian catering in Pleasanton: wedding thalis, corporate meals, live dosa and traditional menus. Explore à la carte trays or order on ezCater.";
 export const contactTitle = "Catering Enquiries in Pleasanton | Srivari Catering";
 export const contactDescription = "Request a vegetarian catering quote for weddings, office meals or live dosa events. Contact Srivari at 3180 Santa Rita Rd, Pleasanton, CA 94566.";
 export const faqTitle = "Catering FAQs: Menus, Trays & ezCater | Srivari Pleasanton";
-export const faqDescription = "Answers about Srivari vegetarian catering in Pleasanton: guest minimums, tray sizes, Jain requests, live dosa, Diwali packages and ordering on ezCater.";
+export const faqDescription = "Answers about Srivari vegetarian catering in Pleasanton: guest minimums, tray sizes, Jain requests, live dosa and ordering on ezCater.";
 
 export const indexedPaths = ["/", "/contact", "/faq"] as const;
 export type SitePath = typeof indexedPaths[number];
@@ -106,7 +106,7 @@ export function pageStructuredData(title: string, description: string, path: Sit
         "@id": `${siteUrl}/#catering-service`,
         name: "Indian vegetarian catering in Pleasanton",
         description: homeDescription,
-        serviceType: ["Wedding catering", "Corporate catering", "Traditional vegetarian meals", "Live dosa catering", "Diwali catering", "À la carte catering trays"],
+        serviceType: ["Wedding catering", "Corporate catering", "Traditional vegetarian meals", "Live dosa catering", "À la carte catering trays"],
         provider: { "@id": `${siteUrl}/#business` },
         areaServed: { "@type": "City", name: "Pleasanton" },
         url: `${siteUrl}/#occasions`,
