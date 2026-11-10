@@ -32,7 +32,7 @@ On **srivaripleasanton.com**:
 
 The banner renders immediately before its script tag. Its width follows the surrounding column and its height adjusts to its content. Use a normal full-width section or sidebar with automatic height, rather than a fixed-height ad slot. The main button opens a new tab, and the phone link calls (408) 893-0438.
 
-For a homepage placement, put it after the introductory content or before the footer. The existing Diwali promotion already leads the catering homepage; a second Diwali banner is better suited to the restaurant homepage or a smaller secondary placement.
+For a homepage placement, put it after the introductory content or before the footer. Existing Diwali campaign tags now show the Thanksgiving harvest promotion.
 
 ## Diwali placement
 
@@ -46,9 +46,41 @@ For a homepage placement, put it after the introductory content or before the fo
 <noscript><a href="https://srivaricatering.com/#diwali">Explore Srivari Diwali catering</a></noscript>
 ```
 
-The compact Diwali banner reads **Diwali Festive Catering Quotes**, with a **Diwali celebrations** label, one prominent animated diya beside the logo, and curved gold string-light borders along the top and bottom matching the supplied reference. Each border has six warm circular bulbs with soft halos; their fixed size keeps them legible in narrow placements. The lamp stays in the brand column, and reserved edge spacing keeps the border clear of text and buttons. There is no pause button or visible new-tab label. The footer reads **Explore Srivari Catering**. Reduced-motion and print settings display a still lamp. No additional artwork request or tracking code is needed.
+`data-campaign="diwali"` is now a compatibility alias for `thanksgiving`. Both render the same harvest design, copy, and Thanksgiving offer link, and use `utm_campaign=srivari-thanksgiving`. Existing partner script tags, including versioned script URLs, continue to work without any changes on the partner website. Explicit theme, destination, source, and placement settings are preserved; the default theme is ivory.
 
-The **Get Diwali quote** button opens the existing `#diwali` bookmark and Diwali package choices. Prices are not repeated in the creative, so menu enquiries and any future price changes remain on the destination page. Preview this version directly at `/embeds/demo?campaign=diwali`; campaign, theme, destination, and width settings are shareable in the preview URL. The placement tag itself does not change. The demo and stylesheet use versioned asset URLs to avoid mixing the redesigned markup with an older cached stylesheet.
+Preview the existing partner configuration at `/embeds/demo.html?campaign=diwali&theme=light`. Deploy the updated shared assets on srivaricatering.com for partner websites to receive the replacement on reload. JavaScript-disabled visitors still see the partner page's existing `noscript` fallback, which cannot be changed by the shared script.
+
+## Navarathri placement
+
+The Navarathri campaign retains its animated lamp, gold string-light borders, and responsive layout. It defaults to ivory and links to the catering contact page for quotes. Preview it locally at `http://localhost:3000/embeds/demo.html?campaign=navarathri&theme=light`.
+
+```html
+<script async
+  src="https://srivaricatering.com/embeds/srivari-catering.js"
+  data-campaign="navarathri"
+  data-theme="light"
+  data-placement="restaurant-navarathri-banner">
+</script>
+<noscript><a href="https://srivaricatering.com/contact">Enquire about Srivari Navarathri catering</a></noscript>
+```
+
+Publish the updated embed assets before using this tag on another website.
+
+## Thanksgiving placement
+
+The Thanksgiving campaign uses an ivory harvest design with hanging autumn flowers, leafy garlands, and orange and cream pumpkins framing the banner. It has no diya or string lights. Decorations stay outside the copy and buttons, including narrow placements. Its button opens the homepage Thanksgiving offer section. Preview it at `http://localhost:3000/embeds/demo.html?campaign=thanksgiving&theme=light`.
+
+```html
+<script async
+  src="https://srivaricatering.com/embeds/srivari-catering.js"
+  data-campaign="thanksgiving"
+  data-theme="light"
+  data-placement="restaurant-thanksgiving-banner">
+</script>
+<noscript><a href="https://srivaricatering.com/#thanksgiving-offer">Explore Srivari Thanksgiving catering</a></noscript>
+```
+
+Publish the updated embed assets before using this tag on another website. The campaign does not repeat the time-limited discount or its code; those details remain on the destination page.
 
 ## ezCater placement
 
@@ -69,8 +101,8 @@ This uses the supplied ezCater URL including its fulfillment parameter. No websi
 
 | Attribute | Values / behaviour |
 | --- | --- |
-| `data-campaign` | `catering` (default), `diwali`, or `corporate`. Corporate enquiries link to `/contact`. |
-| `data-theme` | `dark` (default teal) or `light` (ivory). |
+| `data-campaign` | `catering` (default), `diwali`, `navarathri`, `thanksgiving`, or `corporate`. Navarathri and corporate enquiries link to `/contact`; Diwali and Thanksgiving both link to `/#thanksgiving-offer`. |
+| `data-theme` | `dark` (teal) or `light` (ivory). Defaults to teal, or ivory for Diwali (Thanksgiving alias), Navarathri, and Thanksgiving. |
 | `data-destination` | `website` (default) or `ezcater`. |
 | `data-placement` | A short placement label such as `restaurant-home-banner`; letters, numbers, underscores, and hyphens only. |
 | `data-source` | Optional source label; defaults to the embedding website’s hostname. Letters, numbers, periods, and hyphens only. |

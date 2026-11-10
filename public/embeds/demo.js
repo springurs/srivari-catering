@@ -13,6 +13,7 @@
     const value = initial.get(control.id);
     if (Array.from(control.options).some(option => option.value === value)) control.value = value;
   }
+  if (["diwali", "navarathri", "thanksgiving"].includes(campaign.value) && !initial.has("theme")) theme.value = "light";
   const initialWidth = Number(initial.get("width"));
   if (initial.has("width") && Number.isFinite(initialWidth)) width.value = String(Math.max(160, Math.min(1440, initialWidth)));
   function render() {
@@ -21,7 +22,7 @@
     preview.replaceChildren();
     const script = document.createElement("script");
     script.async = true;
-    script.src = new URL("srivari-catering.js?v=diwali-string-lights-1", location.href).href;
+    script.src = new URL("srivari-catering.js?v=thanksgiving-compact-4", location.href).href;
     script.dataset.campaign = campaign.value;
     script.dataset.theme = theme.value;
     script.dataset.destination = destination.value;
@@ -35,7 +36,10 @@
     history.replaceState(null, "", url);
   }
   controls.addEventListener("submit", event => event.preventDefault());
-  controls.addEventListener("change", render);
+  controls.addEventListener("change", event => {
+    if (event.target === campaign && ["diwali", "navarathri", "thanksgiving"].includes(campaign.value)) theme.value = "light";
+    render();
+  });
   width.addEventListener("input", () => {
     preview.style.width = `${width.value}px`;
     document.getElementById("width-label").textContent = `${width.value} px`;

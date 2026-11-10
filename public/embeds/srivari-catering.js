@@ -15,12 +15,21 @@
       cta: "Explore catering", path: "/", hash: "occasions",
       image: "/images/occasion-traditional.webp", alt: "A vegetarian thali with rice, chapati, curries and appalam",
     },
-    diwali: {
-      label: "Diwali celebrations",
-      headline: "Diwali Festive Catering Quotes",
-      description: "Vegetarian feasts for family gatherings, poojas and office celebrations.",
-      cta: "Get Diwali quote", path: "/", hash: "diwali",
-      image: "/images/occasion-diwali.webp", alt: "A festive vegetarian spread beside glowing Diwali lamps",
+    navarathri: {
+      festive: true, defaultTheme: "light",
+      label: "Navarathri celebrations",
+      headline: "Navarathri Festive Catering",
+      description: "Vegetarian feasts for Golu gatherings, poojas and family celebrations.",
+      cta: "Get Navarathri quote", path: "/contact", hash: "",
+      image: "/images/occasion-traditional.webp", alt: "A traditional vegetarian feast for a festive gathering",
+    },
+    thanksgiving: {
+      festive: true, defaultTheme: "light",
+      label: "Thanksgiving celebrations",
+      headline: "A Thanksgiving Feast, Catered with Tradition.",
+      description: "Gather your loved ones over authentic Indian vegetarian flavours, freshly prepared by Srivari.",
+      cta: "Explore Thanksgiving", path: "/", hash: "thanksgiving-offer",
+      image: "/images/south-indian-feast.png", alt: "A traditional South Indian vegetarian feast for a family gathering",
     },
     corporate: {
       label: "Vegetarian catering for work",
@@ -30,7 +39,9 @@
       image: "/images/package-power-lunch.webp", alt: "A vegetarian rice bowl prepared for an office lunch",
     },
   };
-  const campaignName = Object.hasOwn(campaigns, script.dataset.campaign || "") ? script.dataset.campaign : "catering";
+  // Keep installed partner tags working as the seasonal promotion changes.
+  const requestedCampaign = script.dataset.campaign === "diwali" ? "thanksgiving" : script.dataset.campaign;
+  const campaignName = Object.hasOwn(campaigns, requestedCampaign || "") ? requestedCampaign : "catering";
   const campaign = campaigns[campaignName];
   const isEzCater = script.dataset.destination === "ezcater";
   const source = /^[a-z0-9.-]{1,80}$/i.test(script.dataset.source || "") ? script.dataset.source.toLowerCase() : location.hostname;
@@ -48,11 +59,11 @@
 
   const assetOrigin = new URL(script.src).origin;
   const host = document.createElement("srivari-catering-placement");
-  host.dataset.theme = script.dataset.theme === "light" ? "light" : "dark";
+  host.dataset.theme = ["light", "dark"].includes(script.dataset.theme) ? script.dataset.theme : campaign.defaultTheme || "dark";
   const shadow = host.attachShadow({ mode: "open" });
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
-  stylesheet.href = new URL("srivari-catering.css?v=diwali-string-lights-1", script.src).href;
+  stylesheet.href = new URL("srivari-catering.css?v=thanksgiving-compact-4", script.src).href;
   shadow.append(stylesheet);
 
   const element = (tag, className, text) => {
@@ -61,10 +72,24 @@
     if (text) node.textContent = text;
     return node;
   };
-  const banner = element("section", campaignName === "diwali" ? "banner banner--diwali" : "banner");
+  const banner = element("section", campaign.festive ? `banner banner--festive banner--${campaignName}` : "banner");
   banner.setAttribute("aria-label", "Srivari catering promotion");
   const brand = element("div", "brand");
-  if (campaignName === "diwali") {
+  if (campaignName === "thanksgiving") {
+    const decorations = element("div", "harvest-decor");
+    decorations.setAttribute("aria-hidden", "true");
+    for (const edge of ["top", "bottom"]) {
+      decorations.append(element("div", `harvest-garland harvest-garland--${edge}`));
+    }
+    for (const [side, colour] of [["left", "orange"], ["right", "cream"]]) {
+      const pumpkin = element("img", `harvest-pumpkin harvest-pumpkin--${side}`);
+      pumpkin.src = `${assetOrigin}/images/thanksgiving-pumpkin-${colour}.svg`;
+      pumpkin.alt = "";
+      pumpkin.width = 128; pumpkin.height = 112;
+      decorations.append(pumpkin);
+    }
+    banner.append(decorations);
+  } else if (campaign.festive) {
     const svgNode = (tag, attributes) => {
       const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
       Object.entries(attributes).forEach(([name, value]) => node.setAttribute(name, value));
