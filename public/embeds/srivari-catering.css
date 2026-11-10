@@ -157,43 +157,78 @@ a:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
   .banner--festive .call { font-size: 12px; }
 }
 /* Thanksgiving gets its own harvest frame, separate from the lamp campaigns. */
-:host([data-theme="light"]) .banner--thanksgiving {
-  --background: #fff9ed;
-  --text: #563322;
-  --muted: #79604b;
-  --gold: #9d5a29;
-  --line: #c59a6380;
-  --button: #a84b26;
-  --button-text: #fff8eb;
+.banner--thanksgiving {
+  --background: #153b32;
+  --text: #fff1da;
+  --muted: #dbc4a8;
+  --gold: #edb971;
+  --line: #c59a6370;
+  --button: #cb7435;
+  --button-text: #172c22;
 }
 .banner--thanksgiving {
-  padding: 60px 30px 54px;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  padding: 24px 26px;
   border-radius: 18px;
   background: radial-gradient(ellipse at 50% 0, #eab86d1c, transparent 70%), var(--background);
 }
-.banner--thanksgiving::after { content: ""; position: absolute; inset: 9px; border: 1px solid var(--line); border-radius: 12px; pointer-events: none; z-index: 0; }
+.banner--thanksgiving::after { content: ""; position: absolute; inset: 5px; border-inline: 1px solid var(--line); border-radius: 12px; pointer-events: none; z-index: 0; }
 .banner--thanksgiving > .harvest-decor { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.harvest-garland { position: absolute; left: 0; right: 0; height: 56px; background: url("thanksgiving-floral-garland.svg") repeat-x center top / 400px 56px; }
-.harvest-garland--top { top: -3px; }
-.harvest-garland--bottom { bottom: -8px; height: 38px; background-size: 320px 44px; transform: rotate(180deg); opacity: .8; }
-.harvest-pumpkin { position: absolute; bottom: 5px; width: 56px; height: 49px; object-fit: contain; }
-.harvest-pumpkin--left { left: 14px; transform: rotate(-8deg); }
-.harvest-pumpkin--right { right: 14px; transform: rotate(9deg); }
+.harvest-border { position: absolute; left: 18px; right: 18px; height: 12px; background: url("thanksgiving-harvest-border.svg") repeat-x center / 180px 12px; filter: brightness(1.5); opacity: .85; }
+.harvest-border--top { top: 3px; }
+.harvest-border--bottom { bottom: 3px; transform: rotate(180deg); }
 .banner--thanksgiving .brand { align-self: center; }
+.harvest-brand-pumpkin { display: block; width: 58px; height: 44px; object-fit: contain; margin-top: 4px; filter: saturate(1.2) brightness(1.15); }
 .banner--thanksgiving .headline { font-size: 34px; line-height: 1.15; }
-.banner--thanksgiving .cta { border-radius: 9px; }
+.banner--thanksgiving .actions { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px 14px; margin-top: 12px; }
+.banner--thanksgiving .cta { width: auto; min-height: 34px; padding: 7px 12px; border-radius: 7px; font-size: 12px; gap: 8px; }
+.banner--thanksgiving .call { min-height: 34px; font-size: 12px; }
+.banner--thanksgiving .destination-note { display: none; }
+.harvest-scratch-offer { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-column: 2; justify-self: end; align-self: center; align-items: center; gap: 5px 10px; width: 100%; max-width: 360px; padding: 10px 12px; border: 1px solid #ffe1a0; border-radius: 14px; background: linear-gradient(135deg, #fff0ce, #f4ce8d 65%, #efbb6c); color: #4b2918; box-shadow: 0 0 0 1px #efbc6144, 0 0 24px #f4bc4826, 0 8px 20px #0003; }
+.harvest-scratch-offer::before, .harvest-scratch-offer::after { content: ""; position: absolute; top: 68%; width: 14px; height: 14px; border-radius: 50%; background: var(--background); pointer-events: none; }
+.harvest-scratch-offer::before { left: -8px; }
+.harvest-scratch-offer::after { right: -8px; }
+.harvest-ticket-header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; color: #65401f; font-size: 8px; letter-spacing: 1.2px; }
+.harvest-ticket-expiry { padding: 3px 5px; border: 1px solid #96612380; border-radius: 4px; white-space: nowrap; }
+.harvest-ticket-amount { grid-column: 1; display: flex; align-items: baseline; justify-content: flex-start; gap: 7px; margin-top: 0; line-height: 1; }
+.harvest-ticket-amount strong { color: #a4481b; font: 400 44px/1 Georgia, "Times New Roman", serif; letter-spacing: -3px; }
+.harvest-ticket-amount strong > span { font-size: .55em; letter-spacing: -1px; }
+.harvest-ticket-amount > span { color: #4b2918; font-size: 13px; letter-spacing: 1.5px; }
+.harvest-ticket-threshold { grid-column: 2; max-width: 74px; margin: 0; text-align: right; color: #65401f; font-size: 11px; }
+.harvest-ticket-label { display: none; grid-column: 1 / -1; padding-top: 12px; border-top: 1px dashed #c39a6688; color: #d8b893; font-size: 8px; letter-spacing: 1.5px; line-height: 1.5; }
+.harvest-scratch-offer .harvest-scratch-surface { width: 100%; }
+.harvest-scratch-offer .harvest-scratch-status { grid-column: 1 / -1; min-height: 24px; }
+.harvest-scratch-surface { position: relative; display: grid; place-items: center; min-width: 0; height: 36px; overflow: hidden; border: 1px solid #b67b30; border-radius: 6px; background: #fff5da; box-shadow: inset 0 1px 0 #fff8; }
+.harvest-offer-code { color: #4b2918; font: 700 19px/1.2 monospace; letter-spacing: 2px; user-select: none; }
+.harvest-scratch-surface.is-revealed .harvest-offer-code { user-select: all; }
+.harvest-scratch-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.harvest-scratch-hint { position: absolute; inset: 0; display: grid; place-items: center; color: #563322; font: 16px Georgia, serif; pointer-events: none; }
+.harvest-scratch-button { min-height: 36px; max-width: 100%; padding: 8px 10px; border: 1px solid #66381e; border-radius: 6px; background: #66381e; color: #fff3d9; font: 10px/1.4 Arial, sans-serif; cursor: pointer; }
+.harvest-scratch-button:hover { background: #80502f; }
+.harvest-scratch-button:focus-visible { outline: 3px solid #f7c47c; outline-offset: 3px; }
+.harvest-scratch-status { color: #65401f; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
+@container srivari-placement (min-width: 800px) {
+  .banner--thanksgiving { grid-template-columns: 64px minmax(0, 1fr) 320px; }
+  .banner--thanksgiving > .harvest-scratch-offer { grid-column: 3; }
+  .banner--thanksgiving.banner--without-offer { grid-template-columns: 64px minmax(0, 1fr); }
+}
 @container srivari-placement (max-width: 599px) {
-  .banner--thanksgiving { padding: 58px 22px 54px; }
+  .banner--thanksgiving { grid-template-columns: 52px minmax(0, 1fr); padding: 22px 18px; }
+  .banner--thanksgiving > .harvest-scratch-offer { grid-column: 1 / -1; }
   .banner--thanksgiving .headline { font-size: 28px; }
-  .harvest-garland--top { background-size: 360px 56px; }
 }
 @container srivari-placement (max-width: 249px) {
-  .banner--thanksgiving { padding: 56px 16px 52px; }
+  .banner--thanksgiving { grid-template-columns: minmax(0, 1fr); padding: 20px 14px; }
   .banner--thanksgiving .brand { justify-content: center; }
   .banner--thanksgiving .headline { font-size: 24px; }
-  .harvest-pumpkin { width: 52px; height: 46px; }
-  .harvest-pumpkin--left { left: 4px; }
-  .harvest-pumpkin--right { right: 4px; }
+  .harvest-scratch-surface { flex-basis: 100%; width: 100%; }
+  .harvest-scratch-offer { grid-template-columns: minmax(0, 1fr); padding: 10px; }
+  .harvest-ticket-amount { gap: 4px; }
+  .harvest-ticket-amount strong { font-size: 36px; }
+  .harvest-ticket-threshold { grid-column: 1; max-width: none; text-align: left; }
+  .harvest-ticket-amount > span { font-size: 12px; letter-spacing: 1px; }
+  .harvest-offer-code { font-size: 14px; letter-spacing: 1px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cta { transition: none; }

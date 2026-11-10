@@ -59,11 +59,12 @@
 
   const assetOrigin = new URL(script.src).origin;
   const host = document.createElement("srivari-catering-placement");
-  host.dataset.theme = ["light", "dark"].includes(script.dataset.theme) ? script.dataset.theme : campaign.defaultTheme || "dark";
+  // Keep the partner's light theme name; this campaign's CSS supplies its harvest palette.
+  host.dataset.theme = campaignName === "thanksgiving" ? "light" : ["light", "dark"].includes(script.dataset.theme) ? script.dataset.theme : campaign.defaultTheme || "dark";
   const shadow = host.attachShadow({ mode: "open" });
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
-  stylesheet.href = new URL("srivari-catering.css?v=thanksgiving-compact-4", script.src).href;
+  stylesheet.href = new URL("srivari-catering.css?v=thanksgiving-light-name-12", script.src).href;
   shadow.append(stylesheet);
 
   const element = (tag, className, text) => {
@@ -79,16 +80,15 @@
     const decorations = element("div", "harvest-decor");
     decorations.setAttribute("aria-hidden", "true");
     for (const edge of ["top", "bottom"]) {
-      decorations.append(element("div", `harvest-garland harvest-garland--${edge}`));
-    }
-    for (const [side, colour] of [["left", "orange"], ["right", "cream"]]) {
-      const pumpkin = element("img", `harvest-pumpkin harvest-pumpkin--${side}`);
-      pumpkin.src = `${assetOrigin}/images/thanksgiving-pumpkin-${colour}.svg`;
-      pumpkin.alt = "";
-      pumpkin.width = 128; pumpkin.height = 112;
-      decorations.append(pumpkin);
+      decorations.append(element("div", `harvest-border harvest-border--${edge}`));
     }
     banner.append(decorations);
+    const pumpkin = element("img", "harvest-brand-pumpkin");
+    pumpkin.src = `${assetOrigin}/images/thanksgiving-pumpkin-orange.svg`;
+    pumpkin.alt = "";
+    pumpkin.setAttribute("aria-hidden", "true");
+    pumpkin.width = 64; pumpkin.height = 50;
+    brand.append(pumpkin);
   } else if (campaign.festive) {
     const svgNode = (tag, attributes) => {
       const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -133,8 +133,120 @@
   copy.append(element("p", "eyebrow", campaign.label), element("h2", "headline", campaign.headline), element("p", "description", campaign.description));
   const details = element("p", "details", "100% vegetarian · Jain & no-onion, no-garlic options on request");
   copy.append(details);
+  // Keep terms in sync with app/data/thanksgiving-offer.ts. This offer is for
+  // direct catering enquiries, rather than an external ordering marketplace.
+  const offerEndsAt = Date.parse("2026-11-27T00:00:00-08:00");
+  let seasonalOffer = null;
+  if (campaignName === "thanksgiving" && !isEzCater && Date.now() < offerEndsAt) {
+    const offer = element("div", "harvest-scratch-offer");
+    const header = element("div", "harvest-ticket-header");
+    header.append(element("span", "", "THANKSGIVING OFFERS"), element("span", "harvest-ticket-expiry", "ENDS 11/26"));
+    const amount = element("p", "harvest-ticket-amount");
+    const percentage = element("strong", "", "10");
+    percentage.append(element("span", "", "%"));
+    amount.append(percentage, element("span", "", "OFF"));
+    const threshold = element("p", "harvest-ticket-threshold", "on orders over $40");
+    const label = element("p", "harvest-ticket-label", "A LITTLE SURPRISE FOR YOU");
+    const surface = element("div", "harvest-scratch-surface");
+    const code = element("code", "harvest-offer-code", "THANKS10");
+    code.setAttribute("aria-hidden", "true");
+    const canvas = element("canvas", "harvest-scratch-canvas");
+    canvas.width = 480; canvas.height = 120;
+    canvas.setAttribute("aria-hidden", "true");
+    const hint = element("span", "harvest-scratch-hint", "✦ Scratch here ✦");
+    hint.setAttribute("aria-hidden", "true");
+    const button = element("button", "harvest-scratch-button", "Reveal code");
+    button.type = "button";
+    const status = element("p", "harvest-scratch-status", "Scratch with your finger or mouse, or select Reveal code.");
+    status.setAttribute("role", "status");
+    surface.append(code, canvas, hint);
+    offer.append(header, amount, threshold, label, surface, button, status);
+    seasonalOffer = offer;
+    let revealed = false;
+    let stroke = null;
+    const context = canvas.getContext("2d");
+    if (context) {
+      const coating = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+      coating.addColorStop(0, "#fff6d6"); coating.addColorStop(.5, "#e8bd68"); coating.addColorStop(1, "#fff0be");
+      context.fillStyle = coating;
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = "#80502f33";
+      for (let x = 0; x < canvas.width; x += 14) {
+        for (let y = 0; y < canvas.height; y += 14) context.fillRect(x, y, 2, 2);
+      }
+    }
+    function removeOffer() {
+      offer.remove();
+      banner.classList.add("banner--without-offer");
+    }
+    function reveal() {
+      if (Date.now() >= offerEndsAt) { removeOffer(); return; }
+      revealed = true;
+      stroke = null;
+      canvas.remove(); hint.remove();
+      surface.classList.add("is-revealed");
+      code.removeAttribute("aria-hidden");
+      label.textContent = "YOUR OFFER CODE";
+      button.textContent = "Copy code";
+      status.textContent = "Your code is THANKS10. Mention it with your catering enquiry.";
+    }
+    function checkCoverage() {
+      if (!context || revealed) return;
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      let cleared = 0; let total = 0;
+      for (let i = 3; i < pixels.length; i += 64) {
+        total++;
+        if (pixels[i] < 128) cleared++;
+      }
+      if (cleared / total >= .35) reveal();
+    }
+    function scratch(event, start = false) {
+      if (revealed || (start && event.button !== 0)) return;
+      if (!context) { reveal(); return; }
+      const bounds = canvas.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) * canvas.width / bounds.width;
+      const y = (event.clientY - bounds.top) * canvas.height / bounds.height;
+      if (start) {
+        canvas.setPointerCapture(event.pointerId);
+        stroke = { pointerId: event.pointerId, x, y, moves: 0 };
+        hint.remove();
+      }
+      if (!stroke || stroke.pointerId !== event.pointerId) return;
+      context.globalCompositeOperation = "destination-out";
+      context.lineWidth = 42; context.lineCap = "round";
+      context.beginPath(); context.moveTo(stroke.x, stroke.y); context.lineTo(x + .01, y); context.stroke();
+      stroke = { pointerId: event.pointerId, x, y, moves: stroke.moves + 1 };
+      if (stroke.moves % 6 === 0) checkCoverage();
+    }
+    canvas.addEventListener("pointerdown", event => scratch(event, true));
+    canvas.addEventListener("pointermove", event => scratch(event));
+    for (const name of ["pointerup", "pointercancel", "lostpointercapture"]) {
+      canvas.addEventListener(name, event => {
+        if (stroke?.pointerId !== event.pointerId) return;
+        stroke = null;
+        checkCoverage();
+      });
+    }
+    button.addEventListener("click", async () => {
+      if (Date.now() >= offerEndsAt) { removeOffer(); return; }
+      if (!revealed) { reveal(); return; }
+      try {
+        await navigator.clipboard.writeText("THANKS10");
+        status.textContent = "Code copied — mention THANKS10 with your catering enquiry.";
+      } catch {
+        status.textContent = "Use code THANKS10 when placing your catering enquiry.";
+      }
+    });
+    function expireOffer() {
+      if (!offer.isConnected) return;
+      if (Date.now() >= offerEndsAt) removeOffer();
+      else setTimeout(expireOffer, Math.min(offerEndsAt - Date.now(), 2_147_483_647));
+    }
+    setTimeout(expireOffer, Math.min(offerEndsAt - Date.now(), 2_147_483_647));
+  }
   const actions = element("div", "actions");
-  const cta = element("a", "cta", isEzCater ? "Order on ezCater" : campaign.cta);
+  const cta = element("a", "cta", isEzCater ? "Order on ezCater" : campaignName === "thanksgiving" ? "Explore" : campaign.cta);
+  if (campaignName === "thanksgiving" && !isEzCater) cta.setAttribute("aria-label", "Explore Thanksgiving catering (opens in a new tab)");
   cta.href = destination.href;
   cta.target = "_blank"; cta.rel = "noopener noreferrer";
   cta.append(element("span", "arrow", "↗"), element("span", "sr-only", " (opens in a new tab)"));
@@ -145,7 +257,12 @@
   const photo = element("img", "photo");
   photo.src = `${assetOrigin}${campaign.image}`;
   photo.alt = campaign.alt; photo.width = 256; photo.height = 256; photo.loading = "lazy"; photo.decoding = "async";
-  banner.append(brand, copy, actions, photo);
+  if (campaignName === "thanksgiving") {
+    copy.append(actions);
+    banner.append(brand, copy);
+    if (seasonalOffer) banner.append(seasonalOffer);
+    else banner.classList.add("banner--without-offer");
+  } else banner.append(brand, copy, actions, photo);
   shadow.append(banner);
   if (container === script.parentElement) container.insertBefore(host, script);
   else container.append(host);

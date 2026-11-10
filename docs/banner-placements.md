@@ -46,7 +46,7 @@ For a homepage placement, put it after the introductory content or before the fo
 <noscript><a href="https://srivaricatering.com/#diwali">Explore Srivari Diwali catering</a></noscript>
 ```
 
-`data-campaign="diwali"` is now a compatibility alias for `thanksgiving`. Both render the same harvest design, copy, and Thanksgiving offer link, and use `utm_campaign=srivari-thanksgiving`. Existing partner script tags, including versioned script URLs, continue to work without any changes on the partner website. Explicit theme, destination, source, and placement settings are preserved; the default theme is ivory.
+`data-campaign="diwali"` is now a compatibility alias for `thanksgiving`. Both render the same harvest design, copy, and Thanksgiving offer link, and use `utm_campaign=srivari-thanksgiving`. Existing partner script tags, including versioned script URLs, continue to work without any changes on the partner website. Destination, source, and placement settings are preserved. Thanksgiving uses the theme name `light` with its own forest green harvest palette; no partner configuration changes are needed. Other campaigns retain the standard ivory palette for `light`.
 
 Preview the existing partner configuration at `/embeds/demo.html?campaign=diwali&theme=light`. Deploy the updated shared assets on srivaricatering.com for partner websites to receive the replacement on reload. JavaScript-disabled visitors still see the partner page's existing `noscript` fallback, which cannot be changed by the shared script.
 
@@ -68,7 +68,7 @@ Publish the updated embed assets before using this tag on another website.
 
 ## Thanksgiving placement
 
-The Thanksgiving campaign uses an ivory harvest design with hanging autumn flowers, leafy garlands, and orange and cream pumpkins framing the banner. It has no diya or string lights. Decorations stay outside the copy and buttons, including narrow placements. Its button opens the homepage Thanksgiving offer section. Preview it at `http://localhost:3000/embeds/demo.html?campaign=thanksgiving&theme=light`.
+The Thanksgiving campaign uses a compact deep forest green harvest design with thin engraved wheat-and-pumpkin borders and a visible orange pumpkin below the logo. It retains `data-theme="light"` for partner compatibility, with campaign-specific colors that keep this forest green design. Other ivory campaigns are unchanged. It has no hanging flowers, large corner decorations, diya, or string lights. The border stays outside the copy and buttons, including narrow placements. Its button opens the homepage Thanksgiving offer section. Preview it at `http://localhost:3000/embeds/demo.html?campaign=thanksgiving&theme=light`.
 
 ```html
 <script async
@@ -80,7 +80,9 @@ The Thanksgiving campaign uses an ivory harvest design with hanging autumn flowe
 <noscript><a href="https://srivaricatering.com/#thanksgiving-offer">Explore Srivari Thanksgiving catering</a></noscript>
 ```
 
-Publish the updated embed assets before using this tag on another website. The campaign does not repeat the time-limited discount or its code; those details remain on the destination page.
+The banner includes a compact scratch-to-reveal offer: **10% off orders over $40**, with code **THANKS10**, through November 26, 2026 (Pacific time). Visitors can scratch with a mouse or finger, or use the keyboard-accessible Reveal code button, then copy the code to mention with their catering enquiry. The existing Diwali tag shows the same offer. The offer is hidden after expiry and for ezCater destinations; it does not apply a discount automatically or transfer a code to an external cart. Keep the embed terms synchronized with `app/data/thanksgiving-offer.ts` if the promotion changes.
+
+On wide placements, the scratch card sits in the right column, with a small Explore button below the copy on the left. It uses a bright gold ticket with a burnt-orange 10% OFF heading, expiry badge, ticket notches, and pale-gold scratch panel, contrasting with the forest green harvest banner. Narrow placements stack the card below the text. Publish the updated shared assets on srivaricatering.com for existing partner tags to receive the scratch card.
 
 ## ezCater placement
 
@@ -102,7 +104,7 @@ This uses the supplied ezCater URL including its fulfillment parameter. No websi
 | Attribute | Values / behaviour |
 | --- | --- |
 | `data-campaign` | `catering` (default), `diwali`, `navarathri`, `thanksgiving`, or `corporate`. Navarathri and corporate enquiries link to `/contact`; Diwali and Thanksgiving both link to `/#thanksgiving-offer`. |
-| `data-theme` | `dark` (teal) or `light` (ivory). Defaults to teal, or ivory for Diwali (Thanksgiving alias), Navarathri, and Thanksgiving. |
+| `data-theme` | `dark` (teal) or `light` (ivory). Defaults to teal, or ivory for Navarathri. Diwali and Thanksgiving use the `light` name with their own forest green harvest palette. |
 | `data-destination` | `website` (default) or `ezcater`. |
 | `data-placement` | A short placement label such as `restaurant-home-banner`; letters, numbers, underscores, and hyphens only. |
 | `data-source` | Optional source label; defaults to the embedding website’s hostname. Letters, numbers, periods, and hyphens only. |
