@@ -26,6 +26,13 @@
 .harvest-offer-code-row code { display: block; margin-top: 6px; color: #fff5e5; font: 600 25px/1.2 var(--font-geist-mono), monospace; letter-spacing: 3px; user-select: all; }
 .harvest-offer-code-row button { min-height: 40px; padding: 9px 12px; border: 1px solid #d4b17c88; border-radius: 6px; color: #f7e1be; background: transparent; font-size: 11px; }
 .harvest-offer-code-row button:hover { background: #80502f; }
+.harvest-scratch-code { flex: 1; min-width: 0; }
+.harvest-scratch-surface { position: relative; display: grid; place-items: center; height: 64px; margin-top: 8px; overflow: hidden; border: 1px solid #d4b17c88; border-radius: 7px; background: #3d2013; }
+.harvest-offer-code-row .harvest-scratch-surface code { margin-top: 0; font-size: clamp(16px, 2vw, 25px); letter-spacing: 2px; user-select: none; }
+.harvest-offer-code-row .harvest-scratch-surface.is-revealed code { user-select: all; }
+.harvest-scratch-surface canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.harvest-scratch-hint { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; color: #4b2918; font: 18px Georgia, "Times New Roman", serif; }
+.harvest-offer-code-row > button { flex-shrink: 0; }
 .harvest-offer-status { min-height: 28px; margin-top: 12px; color: #ddc19b; font-size: 10px; line-height: 1.5; }
 .planner-offer-note { margin-bottom: 20px; padding: 12px 14px; border: 1px dashed #c38a4c; border-radius: 7px; background: #fff1d9; color: #6d3a17; font-size: 12px; line-height: 1.5; }
 @media (max-width: 1100px) { .harvest-offer { gap: 24px; padding: 32px 24px; } .harvest-offer-ticket { padding-inline: 22px; } }
