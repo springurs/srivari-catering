@@ -66,9 +66,9 @@ export function CateringHome() {
         <div className="hero-copy">
           <p className="eyebrow">{thanksgiving ? "SRIVARI · PURE INDIAN VEGETARIAN" : "GOOD FOOD BRINGS PEOPLE TOGETHER"}</p>
           <span className="gold-rule" aria-hidden="true" />
-          <h1 id="hero-title">{thanksgiving ? <>Thanksgiving<br /><span>Catering Options</span></> : <>Your occasion,<br /><span>our tradition.</span></>}</h1>
+          <h1 id="hero-title">{thanksgiving ? <>A Thanksgiving Feast,<br /><span>Catered with Tradition.</span></> : <>Your occasion,<br /><span>our tradition.</span></>}</h1>
           {thanksgiving && <div className="hero-harvest-ribbon">GOOD FOOD. GRATEFUL HEARTS.</div>}
-          <p>Indian vegetarian catering from our Pleasanton kitchen. From family poojas to office gatherings, bring everyone together over authentic flavours and food made to share.</p>
+          <p>{thanksgiving ? "Gather your loved ones over authentic Indian vegetarian flavours, freshly prepared by Srivari." : "Indian vegetarian catering from our Pleasanton kitchen. From family poojas to office gatherings, bring everyone together over authentic flavours and food made to share."}</p>
           <form className="hero-menu-search" role="search" aria-label="Menu search" onSubmit={searchMenus}>
             <input type="search" name="menu_query" value={query} maxLength={1000} placeholder="Explore your menu" aria-label="Search catering and restaurant menus" aria-controls="menu-search-results" aria-describedby="menu-search-hint" onChange={(event) => {
               setQuery(event.currentTarget.value);
