@@ -299,11 +299,3 @@
 .thanksgiving-theme .hero-menu-search input { padding: 10px 14px; }
 .thanksgiving-theme .hero-menu-search button { flex: 0 0 42px; width: 42px; min-width: 42px; height: 42px; margin: 0; }
 .thanksgiving-theme .hero-copy > p.hero-search-hint { font-size: 12px; margin-top: 7px; margin-bottom: 6px; line-height: 1.4; }
-
-/* Keep all seven occasion tiles together when desktop space allows. */
-@media (min-width: 1280px) and (max-width: 1599px) {
-  .thanksgiving-theme .occasion-card-body { padding: 12px 10px; }
-  .thanksgiving-theme .occasion-name { font-size: 15px; }
-  .thanksgiving-theme .occasion-description { font-size: 12px; line-height: 1.45; }
-  .thanksgiving-theme .occasion-photo { height: 112px; }
-}

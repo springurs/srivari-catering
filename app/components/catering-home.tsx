@@ -79,7 +79,7 @@ export function CateringHome() {
           </form>
           <p id="menu-search-hint" className="hero-search-hint">Search by dish, cuisine, or occasion.</p>
           <div className="search-examples" aria-label="Try a menu search">
-            {[thanksgiving ? "Thanksgiving feast" : "Wedding thali", "Live dosa", "Office lunch"].map((example) => <button type="button" key={example} onClick={() => { setQuery(example); void runSearch(example); }}>{example}</button>)}
+            {["Wedding thali", "Live dosa", "Office lunch"].map((example) => <button type="button" key={example} onClick={() => { setQuery(example); void runSearch(example); }}>{example}</button>)}
           </div>
           <a className="button hero-packages-link" href="#occasions">Browse catering packages</a>
         </div>

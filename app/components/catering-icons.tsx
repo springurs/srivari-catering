@@ -1,6 +1,11 @@
-export type IconName = "home" | "people" | "menu" | "calendar" | "gallery" | "mail" | "rings" | "cake" | "office" | "lotus" | "pin" | "arrow" | "search" | "flame" | "question";
+export type IconName = "home" | "people" | "menu" | "calendar" | "gallery" | "mail" | "rings" | "cake" | "office" | "lotus" | "pin" | "arrow" | "search" | "flame" | "question" | "cart" | "edit" | "close" | "check" | "clock";
 
 const paths: Record<IconName, React.ReactNode> = {
+  check: <path d="m5 12 4 4L20 5"/>,
+  clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
+  edit: <><path d="m15 4 5 5M4 20l5-1L21 7a2.1 2.1 0 0 0-5-5L4 14l-1 7 6-2"/></>,
+  close: <path d="m6 6 12 12M6 18 18 6"/>,
+  cart: <><path d="M2 3h3l3 12h11l3-9H6M8 15l-1 3h13"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></>,
   home: <><path d="m3 10 9-7 9 7M6 8v13h12V8"/><path d="M10 21v-8h4v8"/></>,
   people: <><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3H3ZM16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v2"/></>,
   menu: <><path d="M4 3v6a3 3 0 0 0 6 0V3M7 3v18M20 3c-4 0-5 6-5 10h5M20 3v18"/></>,

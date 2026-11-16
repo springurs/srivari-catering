@@ -2,16 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { aLaCarteCategories, aLaCarteItemCount, formatTrayPrice, type ALaCarteItem } from "../data/a-la-carte-menu";
+import { aLaCarteCategories, aLaCarteItemCount, formatTrayPrice } from "../data/a-la-carte-menu";
+import { traySizes, traySizeFractions } from "../data/checkout-menu";
 import { Icon } from "./catering-icons";
-
-const traySizes = [{ key: "quarter", label: "Quarter tray" }, { key: "half", label: "Half tray" }, { key: "threeQuarter", label: "¾ tray" }, { key: "full", label: "Full tray" }] as const;
-
-function orderPricingLabel(items: ALaCarteItem[]) {
-  if (items.some((item) => item.pack)) return items.every((item) => item.orderUnit === "volume") ? "Prices by volume" : "Prices per pack";
-  if (items.some((item) => item.perPiecePrice !== undefined)) return "Prices per piece";
-  return "Pricing on enquiry";
-}
+import { ALaCarteCartControls } from "./a-la-carte-cart-controls";
 
 export function ALaCarteSection() {
   const [query, setQuery] = useState("");
@@ -52,19 +46,12 @@ export function ALaCarteSection() {
             </summary>
             {category.onRequest && <p className="a-la-carte-availability">Please enquire about availability and tray pricing for these additional dishes.</p>}
             {category.note && <p className="a-la-carte-availability">{category.note}{category.sourceUrl && <> <a href={category.sourceUrl}>View restaurant menu <span aria-hidden="true">↗</span></a></>}</p>}
-            {category.items.some((item) => !item.orderUnit)
-              ? <div className="a-la-carte-column-headings" aria-hidden="true"><span>Dish</span>{traySizes.map((size) => <span key={size.key}>{size.label}</span>)}</div>
-              : <p className="a-la-carte-order-heading">Count / volume orders · {orderPricingLabel(category.items)}</p>}
             <ul className="a-la-carte-items">
               {category.items.map((item) => (
-                <li className="a-la-carte-item" key={item.id}>
+                <li className={`a-la-carte-item${!item.orderUnit ? " has-tray-prices" : ""}`} key={item.id}>
                   <div className="a-la-carte-dish"><h4>{item.name}</h4>{item.note && <p>{item.note}</p>}</div>
-                  {item.orderUnit ? <dl className="a-la-carte-unit-pricing">
-                    <div><dt>{item.pack ? item.orderUnit === "volume" ? "Volume" : "Pack size" : "Order by"}</dt><dd>{item.pack ? `${item.pack.quantity} ${item.pack.unit}` : item.orderUnit === "piece" ? "Count (pieces)" : "Volume"}</dd></div>
-                    <div><dt>{item.pack ? item.orderUnit === "volume" ? "Price" : "Pack price" : item.perPiecePrice !== undefined ? "Price per piece" : "Price"}</dt><dd>{item.pack ? formatTrayPrice(item.pack.price) : item.perPiecePrice !== undefined ? `${formatTrayPrice(item.perPiecePrice)} each` : "Enquire"}</dd></div>
-                  </dl> : <dl className="a-la-carte-prices">
-                    {traySizes.map((size) => <div key={size.key}><dt>{size.label}</dt><dd className={item.prices[size.key] === null ? "is-enquiry" : undefined}>{formatTrayPrice(item.prices[size.key])}</dd></div>)}
-                  </dl>}
+                  {!item.orderUnit && <dl className="a-la-carte-prices" aria-label={`Tray prices for ${item.name}`}>{traySizes.map(size => <div key={size.key}><dt>{traySizeFractions[size.key]} tray</dt><dd>{formatTrayPrice(item.prices[size.key])}</dd></div>)}</dl>}
+                  <ALaCarteCartControls item={item} />
                 </li>
               ))}
             </ul>

@@ -34,6 +34,10 @@
     ]
   },
   "vars": {
+    "CHECKOUT_ORIGIN": "https://srivaricatering.com",
+    "STRIPE_MODE": "live",
+    "STRIPE_ACCOUNT_ID": "acct_1UbGMnPnTtncdfto",
+    "SANDBOX_ALLOW_NO_TAX": "false",
     "REPORTS_ENABLED": "true",
     "REPORT_EMAIL_FROM": "reports@srivaricatering.com",
     "REPORT_EMAIL_TO": "srivaripleasanton@gmail.com"

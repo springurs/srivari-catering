@@ -15,8 +15,8 @@ type SignatureTrayConcept = {
   quarterPrice: number;
 };
 
-// Original menu concepts for the owner's kitchen review, not established restaurant offerings.
-// Quarter prices are draft estimates; all four tray sizes use the owner's existing pricing rule.
+// Signature Tray prices approved by the owner on November 13, 2026.
+// All four tray sizes use the owner's existing pricing rule.
 const concepts: SignatureTrayConcept[] = [
   {
     id: "gongura-corn-pesarattu-rolls", region: "Telugu", name: "Gongura Corn Pesarattu Rolls", course: "Small plates",

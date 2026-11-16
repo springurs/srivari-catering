@@ -5,6 +5,7 @@ import { useState } from "react";
 import { formatTrayPrice } from "../data/a-la-carte-menu";
 import { signatureRegions, signatureTrays, type SignatureRegion } from "../data/signature-trays";
 import { Icon } from "./catering-icons";
+import { TrayOrderButton } from "./tray-order-button";
 
 const sizes = [{ key: "quarter", label: "Quarter" }, { key: "half", label: "Half" }, { key: "threeQuarter", label: "¾ tray" }, { key: "full", label: "Full" }] as const;
 
@@ -38,13 +39,14 @@ export function SignatureTraysSection() {
             <p className="signature-description">{dish.description}</p>
             <ul className="signature-ingredients" aria-label={`Key ingredients for ${dish.name}`}>{dish.ingredients.map((ingredient) => <li key={ingredient}>{ingredient}</li>)}</ul>
             <div className="signature-character"><span>THE SRIVARI TWIST</span><p>{dish.signature}</p></div>
-            <div className="signature-pricing"><p>Indicative price per tray</p><dl>{sizes.map((size) => <div key={size.key}><dt>{size.label}</dt><dd>{formatTrayPrice(dish.prices[size.key])}</dd></div>)}</dl></div>
+            <div className="signature-pricing"><p>Price per tray</p><dl>{sizes.map((size) => <div key={size.key}><dt>{size.label}</dt><dd>{formatTrayPrice(dish.prices[size.key])}</dd></div>)}</dl></div>
             <details className="signature-serving"><summary>How it’s served <span aria-hidden="true">+</span></summary><p>{dish.service}</p><p><strong>Pairs well with:</strong> {dish.pairWith}.</p></details>
+            <TrayOrderButton trayId={dish.id} name={dish.name} />
           </article>
         ))}
       </div>
 
-      <div className="signature-bottom-note"><Icon name="menu" /><p>Each dish is a separate tray selection. Prices are indicative; confirm the recipe, tray portions, dietary requirements, and final quote with our team.</p><a href="tel:+14088930438">Call (408) 893-0438</a></div>
+      <div className="signature-bottom-note"><Icon name="menu" /><p>Each dish is a separate tray selection. Pickup is free; delivery requires a location-based quote. Contact our team to confirm portions, dietary requirements, and pickup timing.</p><a href="tel:+14088930438">Call (408) 893-0438</a></div>
     </section>
   );
 }

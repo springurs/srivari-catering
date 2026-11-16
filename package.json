@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev:live": "npm run build && wrangler dev --port 8787 --var STRIPE_MODE:live --var SANDBOX_ALLOW_NO_TAX:false --var CHECKOUT_ORIGIN:http://localhost:8787 --var CHECKOUT_MOCK:false --var REPORTS_ENABLED:false",
+    "dev:mock": "npm run build && wrangler dev --port 8787 --var STRIPE_MODE:sandbox --var SANDBOX_ALLOW_NO_TAX:true --var CHECKOUT_ORIGIN:http://localhost:8787 --var CHECKOUT_MOCK:true --var REPORTS_ENABLED:false",
+    "test:checkout": "node scripts/test-checkout.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -13,12 +16,14 @@
     "test:plan": "node scripts/test-catering-plan.mjs",
     "test:reports": "node scripts/test-daily-reports.mjs",
     "test:diwali": "node scripts/test-diwali-menu.mjs",
-    "test:trays": "node scripts/test-a-la-carte-menu.mjs"
+    "test:trays": "node scripts/test-a-la-carte-menu.mjs",
+    "dev:sandbox": "npm run build && wrangler dev --port 8787 --var STRIPE_MODE:sandbox --var SANDBOX_ALLOW_NO_TAX:true --var CHECKOUT_ORIGIN:http://localhost:8787 --var CHECKOUT_MOCK:false --var REPORTS_ENABLED:false"
   },
   "dependencies": {
     "next": "16.3.8",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "stripe": "^23.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

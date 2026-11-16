@@ -1,9 +1,11 @@
 import Image from "next/image";
+import { Suspense } from "react";
 import { ThanksgivingSeason } from "./thanksgiving-season";
 import Link from "next/link";
 import { Icon } from "./catering-icons";
 import { SiteNavigation, type SitePage } from "./site-navigation";
 import { ezCaterOrderingUrl } from "../data/ordering-partners";
+import { FloatingCart } from "./tray-order-button";
 
 function BrandLogo() {
   return (
@@ -24,6 +26,7 @@ export function SiteFrame({ children, currentPage = "home" }: { children: React.
           <div className="sidebar-note">GOOD FOOD<br />BRINGS PEOPLE<br />TOGETHER<span /></div>
         </aside>
         <main id="main" className={`main-content${currentPage === "contact" ? " contact-page" : ""}`}>
+          <Suspense fallback={null}><FloatingCart /></Suspense>
           {children}
         </main>
       </div>

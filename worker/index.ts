@@ -1,6 +1,7 @@
 import { keywordDishes, keywordPackages, type SearchReply } from "../app/data/menu-search";
 import { fetchRestaurantMenu, readLimited } from "./restaurant-menu";
 import { handleSiteActivity, sendDailyReport, type ReportEnv } from "./daily-reports";
+import { handleCheckout, type CheckoutEnv } from "./checkout";
 
 export type SearchEnv = {
   ASSETS: { fetch: typeof fetch };
@@ -28,7 +29,8 @@ export async function handleSearch(request: Request, env: SearchEnv, fetcher: ty
 }
 
 const worker = {
-  async fetch(request: Request, env: SearchEnv & ReportEnv) {
+  async fetch(request: Request, env: SearchEnv & ReportEnv & CheckoutEnv) {
+    if (new URL(request.url).pathname.startsWith("/api/checkout/") || new URL(request.url).pathname === "/api/stripe/webhook") return handleCheckout(request, env);
     if (new URL(request.url).pathname === "/api/site-activity") return handleSiteActivity(request, env);
     if (new URL(request.url).pathname === "/api/catering-search") {
       const cache = (globalThis.caches as CacheStorage & { default?: Cache } | undefined)?.default;

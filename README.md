@@ -1,5 +1,7 @@
 # Srivari Catering
 
+Signature Trays now include an order cart and `/checkout` with Stripe-hosted payments, free pickup, and location-based delivery enquiries. See [Stripe checkout setup and test flow](docs/stripe-checkout.md). Live payments require a matching live key, live webhook, confirmed tax rate and deployment. Local development stays in sandbox mode; the plugin connection alone does not activate website payments.
+
 The homepage uses the regular Srivari branding and a South Indian vegetarian feast hero. Diwali Catering remains a category under Choose Your Occasion, with Classic Feast, Signature Celebration, and Live Dosa Celebration packages and their menu choices. The separate Diwali promotion banner and seasonal page decorations are removed.
 
 A responsive catering website built with Next.js, React, TypeScript, and Tailwind CSS. The homepage follows the supplied mockup with a left navigation sidebar, wide buffet hero, six occasion cards, and the Pleasanton address in the footer.
@@ -121,5 +123,4 @@ The homepage, Contact Us, and Catering FAQs (`/faq`) have distinct titles, descr
 
 The production origin defaults to the verified public domain `https://srivaricatering.com`. Cloudflare also serves the site at its `workers.dev` address, with canonical links pointing to the public domain. If changing the public domain, set `NEXT_PUBLIC_SITE_URL` to that HTTPS origin in the Next.js build environment before running `npm run build` or deploying. This updates canonical links, social URLs, structured data, robots, and sitemap together. Because this site is a static export, changing a runtime Worker variable does not update the built metadata. After publishing, submit `/sitemap.xml` in Google Search Console and inspect the homepage, contact, and FAQ URLs to request indexing. Metadata and sitemaps help Google understand the site; indexing and rankings are determined by Google.
 
-
-Thanksgiving Family under Choose Your Occasion offers the owner-supplied Harvest Family Feast ($119 per package, serves 5–6), Signature Thanksgiving Celebration ($229, serves 10–12; recommended bestseller), and Royal Harvest Banquet ($499, serves 20–25). Full menus and fixed package pricing carry through search, the planner, and the enquiry email. Harvest Family Feast requires a choice of Poori or Chapati. These family packages do not inherit the 25-person wedding/combo minimum.
+The Thanksgiving Family occasion and its three package menus have been removed. The “Skip the Thanksgiving cooking!” offer banner remains; its button opens the remaining occasion choices, and the offer can still be included in a package enquiry.

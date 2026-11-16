@@ -107,7 +107,7 @@ export function ThanksgivingOffer({ onChoose }: { onChoose: () => void }) {
       <h2 id="harvest-offer-title">Skip the Thanksgiving<br /><em>cooking!</em></h2>
       <p className="harvest-offer-description">More time with your people. A feast made for sharing.<br />Choose any package and let Srivari take care of the food.</p>
       <div className="harvest-offer-actions">
-        <button className="button" type="button" onClick={onChoose} aria-controls="occasion-packages">Use offer &amp; choose a package <Icon name="arrow" /></button>
+        <button className="button" type="button" onClick={onChoose} aria-controls="occasions">Use offer &amp; choose a package <Icon name="arrow" /></button>
         <a className="harvest-offer-call" href="tel:+14088930438">Or call <strong>+1 (408) 893-0438</strong></a>
       </div>
       <a className="harvest-offer-visit" href="https://www.google.com/maps/search/?api=1&query=3180%20Santa%20Rita%20Rd%2C%20Pleasanton%2C%20CA%2094566" target="_blank" rel="noopener noreferrer">

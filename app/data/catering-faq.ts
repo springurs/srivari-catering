@@ -15,7 +15,7 @@ export const faqCategories: FaqCategory[] = [
     items: [
       {
         id: "occasions", question: "What occasions does Srivari cater for?",
-        answer: "Explore vegetarian menus for weddings, traditional gatherings, corporate events, tiffin and meal combos, Thanksgiving family feasts, and live dosa catering. Share your event date, guest count, location, and menu preferences so our team can confirm availability and a suitable package.",
+        answer: "Explore vegetarian menus for weddings, traditional gatherings, corporate events, tiffin and meal combos, and live dosa catering. Share your event date, guest count, location, and menu preferences so our team can confirm availability and a suitable package.",
         links: [{ label: "Explore catering packages", href: "/#occasions" }],
       },
       {
@@ -25,7 +25,7 @@ export const faqCategories: FaqCategory[] = [
       },
       {
         id: "minimum-guests", question: "What is the minimum guest count for catering?",
-        answer: "Thanksgiving family packages serve 5–6, 10–12, or 20–25 people at $119, $229, or $499 per package. Wedding, traditional, and combo packages require at least 25 guests. Standard Live Dosa Catering starts at 30 guests. Check the selected package for its minimum; ezCater orders follow the requirements displayed on ezCater.",
+        answer: "Wedding, traditional, and combo packages require at least 25 guests. Standard Live Dosa Catering starts at 30 guests. Check the selected package for its minimum; ezCater orders follow the requirements displayed on ezCater.",
         links: [{ label: "Choose a catering package", href: "/#occasions" }],
       },
       {

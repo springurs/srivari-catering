@@ -8,7 +8,9 @@ import { reportSiteActivity } from "../lib/site-activity";
 type FieldName = "name" | "phone" | "email" | "description";
 type FormErrors = Partial<Record<FieldName, string>>;
 
-export function ContactForm({ cateringRequest }: {
+export function ContactForm({ cateringRequest, initialDescription = "", initialContact }: {
+  initialDescription?: string;
+  initialContact?: { name: string; email: string; phone: string };
   cateringRequest?: { preview: string; packageName: string; people: string; staff: string; cutlery: boolean; date: string; time: string; dietaryRequests: string[]; includeServiceExtras?: boolean; includedService?: { style: string; staffing: string } };
 } = {}) {
   const id = useId();
@@ -106,7 +108,7 @@ export function ContactForm({ cateringRequest }: {
         <fieldset className="contact-form-fields" disabled={isSubmitting || isSent}>
           <div>
             <label htmlFor={fieldId("name")}>Name <span className="contact-required">(required)</span></label>
-            <input id={fieldId("name")} name="name" autoComplete="name" required aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? fieldId("name-error") : undefined} />
+            <input id={fieldId("name")} name="name" autoComplete="name" required defaultValue={initialContact?.name} aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? fieldId("name-error") : undefined} />
             {errors.name && <p className="contact-form-error" id={fieldId("name-error")}>{errors.name}</p>}
           </div>
           <fieldset className="contact-reply-fields">
@@ -114,11 +116,11 @@ export function ContactForm({ cateringRequest }: {
             <div className="contact-reply-grid">
               <div>
                 <label htmlFor={fieldId("phone")}>Phone</label>
-                <input id={fieldId("phone")} name="phone" type="tel" autoComplete="tel" aria-invalid={Boolean(errors.phone)} aria-describedby={errors.phone ? fieldId("phone-error") : undefined} />
+                <input id={fieldId("phone")} name="phone" type="tel" autoComplete="tel" defaultValue={initialContact?.phone} aria-invalid={Boolean(errors.phone)} aria-describedby={errors.phone ? fieldId("phone-error") : undefined} />
               </div>
               <div>
                 <label htmlFor={fieldId("email")}>Email</label>
-                <input id={fieldId("email")} name="email" type="email" autoComplete="email" aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? fieldId("email-error") : undefined} />
+                <input id={fieldId("email")} name="email" type="email" autoComplete="email" defaultValue={initialContact?.email} aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? fieldId("email-error") : undefined} />
               </div>
             </div>
             {errors.phone && <p className="contact-form-error" id={fieldId("phone-error")}>{errors.phone}</p>}
@@ -126,7 +128,7 @@ export function ContactForm({ cateringRequest }: {
           </fieldset>
           <div>
             <label htmlFor={fieldId("description")}>{cateringRequest ? "Special requests / Description" : "Description"} <span className="contact-required">(required)</span></label>
-            <textarea id={fieldId("description")} name="description" rows={4} required placeholder={cateringRequest ? "Tell us which dishes or how many guests need Jain or no-onion, no-garlic preparation, plus any venue or menu preferences." : "How can we help? Include any Jain or no-onion, no-garlic requests."} aria-invalid={Boolean(errors.description)} aria-describedby={errors.description ? fieldId("description-error") : undefined} />
+            <textarea id={fieldId("description")} name="description" rows={4} required defaultValue={initialDescription} placeholder={cateringRequest ? "Tell us which dishes or how many guests need Jain or no-onion, no-garlic preparation, plus any venue or menu preferences." : "How can we help? Include any Jain or no-onion, no-garlic requests."} aria-invalid={Boolean(errors.description)} aria-describedby={errors.description ? fieldId("description-error") : undefined} />
             {errors.description && <p className="contact-form-error" id={fieldId("description-error")}>{errors.description}</p>}
           </div>
         </fieldset>

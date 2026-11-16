@@ -17,7 +17,6 @@ const executiveMealIndex = menus.indexOf(executiveMeal);
 const weddingMenuIndices = [2, 16, 15];
 
 const occasions: { name: string; formValue: string; description: string; icon: IconName; image: string; menuIndices: number[] }[] = [
-  { name: "Thanksgiving Family", formValue: "Thanksgiving family gathering", description: "Three harvest feasts for family gatherings, serving 5–6, 10–12, or 20–25.", icon: "people", image: "/images/south-indian-feast.png", menuIndices: menus.flatMap((menu, index) => menu.theme === "thanksgiving" ? [index] : []) },
   { name: "Weddings", formValue: "Wedding or reception", description: "Wedding thalis, premium Andhra banana leaf dining, and elegant buffet service.", icon: "rings", image: "/images/occasion-weddings.webp", menuIndices: weddingMenuIndices },
   { name: "Traditional Package", formValue: "Traditional Package", description: "Celebrate with an Andhra, Tamil, or North Indian thali feast.", icon: "menu", image: "/images/occasion-traditional.webp", menuIndices: [1, 3, 7] },
   { name: "Corporate Events", formValue: "Corporate event", description: "Indian bowls, signature sliders, and creative meeting bites for your team.", icon: "office", image: "/images/occasion-corporate.webp", menuIndices: [11, 12, 13, executiveMealIndex] },
@@ -149,6 +148,7 @@ function OccasionPackagesContent({ searchRequest, initialPlan, browserReady }: {
   const [guestCount, setGuestCount] = useState(initialPlan?.guestCount ?? "");
   const [choicesByMenu, setChoicesByMenu] = useState<ChoicesByMenu>(() => initialPlan ? { [initialPlan.menuName]: initialPlan.choices } : {});
   const [menuResetCount, setMenuResetCount] = useState(0);
+  const occasionsHeading = useRef<HTMLHeadingElement>(null);
   const packagesHeading = useRef<HTMLHeadingElement>(null);
   const detailsHeading = useRef<HTMLHeadingElement>(null);
   const choicesHeading = useRef<HTMLHeadingElement>(null);
@@ -226,10 +226,10 @@ function OccasionPackagesContent({ searchRequest, initialPlan, browserReady }: {
     <>
     {offerActive && <ThanksgivingOffer onChoose={() => {
       setOfferSelected(true);
-      setSelectedOccasion(occasions.findIndex((item) => item.name === "Thanksgiving Family"));
+      setSelectedOccasion(null);
       setSelectedMenu(null);
       setShowPlanner(false);
-      requestAnimationFrame(() => reveal(packagesHeading.current));
+      requestAnimationFrame(() => reveal(occasionsHeading.current));
     }} />}
     <section className="occasion-section" id="occasions" aria-labelledby="occasions-title">
       <div id="menu-search-results" className="menu-search-results" key={searchRequest?.id ?? "empty"} hidden={!searchRequest} aria-busy={searchRequest?.pending ?? false}>
@@ -270,7 +270,7 @@ function OccasionPackagesContent({ searchRequest, initialPlan, browserReady }: {
       </div>
       <div className="occasion-heading">
         <p className="eyebrow">PLAN YOUR PERFECT EVENT</p>
-        <h2 id="occasions-title">Choose Your Occasion</h2>
+        <h2 id="occasions-title" ref={occasionsHeading} tabIndex={-1}>Choose Your Occasion</h2>
         <p className="occasion-subtitle"><span aria-hidden="true" />Explore the perfect package<span aria-hidden="true" /></p>
         <p className="occasion-dietary-note">{dietaryAvailability}</p>
       </div>
@@ -301,7 +301,7 @@ function OccasionPackagesContent({ searchRequest, initialPlan, browserReady }: {
       </div>}
       <div id="occasion-packages" className="packages-region" hidden={!occasion}>
         {occasion && <>
-          <div className="package-heading"><div><p className="eyebrow">YOUR OCCASION / {occasion.name.toUpperCase()}</p><h3 ref={packagesHeading} tabIndex={-1}>{occasion.name === "Thanksgiving Family" ? "Thanksgiving family packages" : occasion.name === "Combos" ? "Explore our combos" : occasion.name === "Traditional Package" ? "Explore our traditional packages" : occasion.name === "Diwali Catering" ? "Choose Your Diwali Feast" : occasion.name === "Weddings" ? "Explore wedding packages" : occasion.name === "Live Catering" ? "Live Dosa Catering" : "Fresh ideas for your workday"}</h3></div><p>{occasion.name === "Thanksgiving Family" ? "Choose a harvest feast for a small family dinner, a gathering at home, or a larger celebration." : occasion.name === "Combos" ? "Choose a meal or tiffin combo to explore its complete menu." : occasion.name === "Traditional Package" ? "Choose a thali to explore its complete menu." : occasion.name === "Diwali Catering" ? "Choose Classic Feast, Signature Celebration, or a two-hour Live Dosa Celebration for your event." : occasion.name === "Weddings" ? "Choose a wedding thali, traditional banana leaf dining, or a premium Andhra and North Indian buffet." : occasion.name === "Live Catering" ? "Unlimited dosas, your choice of appetiser, rice or biryani, and dessert — for 30 guests or more." : "Choose an everyday lunch, a celebration spread, a meeting break, or our Executive Feast."}</p></div>
+          <div className="package-heading"><div><p className="eyebrow">YOUR OCCASION / {occasion.name.toUpperCase()}</p><h3 ref={packagesHeading} tabIndex={-1}>{occasion.name === "Combos" ? "Explore our combos" : occasion.name === "Traditional Package" ? "Explore our traditional packages" : occasion.name === "Diwali Catering" ? "Choose Your Diwali Feast" : occasion.name === "Weddings" ? "Explore wedding packages" : occasion.name === "Live Catering" ? "Live Dosa Catering" : "Fresh ideas for your workday"}</h3></div><p>{occasion.name === "Combos" ? "Choose a meal or tiffin combo to explore its complete menu." : occasion.name === "Traditional Package" ? "Choose a thali to explore its complete menu." : occasion.name === "Diwali Catering" ? "Choose Classic Feast, Signature Celebration, or a two-hour Live Dosa Celebration for your event." : occasion.name === "Weddings" ? "Choose a wedding thali, traditional banana leaf dining, or a premium Andhra and North Indian buffet." : occasion.name === "Live Catering" ? "Unlimited dosas, your choice of appetiser, rice or biryani, and dessert — for 30 guests or more." : "Choose an everyday lunch, a celebration spread, a meeting break, or our Executive Feast."}</p></div>
           {occasion.menuIndices.length === 0 && <div className="package-empty"><p>Contact our team to discuss corporate catering menus and arrangements.</p><a className="button" href="tel:+14088930438">Call +1 (408) 893-0438 <Icon name="arrow" /></a></div>}
           <div className="package-grid">
             {occasion.menuIndices.map((menuIndex, position) => {
@@ -312,11 +312,10 @@ function OccasionPackagesContent({ searchRequest, initialPlan, browserReady }: {
                   <div className="package-card-heading">
                     <Image className="package-image-icon" src={option.image} alt="" width={80} height={80} sizes="80px" />
                     <div>
-                      <p className="eyebrow">{option.theme === "thanksgiving" ? `THANKSGIVING FAMILY / PACKAGE ${position + 1}` : option === executiveMeal ? "EXECUTIVE MEALS" : option.includedService ? "PREMIUM ANDHRA WEDDING" : occasion.name === "Traditional Package" ? "TRADITIONAL PACKAGE" : occasion.name === "Corporate Events" ? "CORPORATE PACKAGE" : occasion.name === "Live Catering" ? "LIVE CATERING" : option.isTiffin ? "TIFFIN COMBO" : option.isCombo ? "VEGETARIAN COMBO" : "CATERING PACKAGE"}</p>
+                      <p className="eyebrow">{option === executiveMeal ? "EXECUTIVE MEALS" : option.includedService ? "PREMIUM ANDHRA WEDDING" : occasion.name === "Traditional Package" ? "TRADITIONAL PACKAGE" : occasion.name === "Corporate Events" ? "CORPORATE PACKAGE" : occasion.name === "Live Catering" ? "LIVE CATERING" : option.isTiffin ? "TIFFIN COMBO" : option.isCombo ? "VEGETARIAN COMBO" : "CATERING PACKAGE"}</p>
                       <h4>{option.name}</h4>
                     </div>
                   </div>
-                  {option.badge && <span className="package-badge">{option.badge}</span>}
                   <p>{option.intro}</p>
                   {option.includedService && <p className="package-included-service">Delivery, setup &amp; service staff included.</p>}
                   <div className="package-pricing"><span className="package-price">{packagePricing(option)}</span>{option.serviceDuration && <span className="package-minimum">{option.serviceDuration}</span>}{option.serves && <span className="package-minimum">Serves {option.serves}</span>}{option.minimumGuests && <span className="package-minimum">Minimum order: {option.minimumGuests} guests</span>}</div>
@@ -325,7 +324,7 @@ function OccasionPackagesContent({ searchRequest, initialPlan, browserReady }: {
               </Fragment>;
             })}
           </div>
-          <p className="package-note">{occasion.name === "Thanksgiving Family" ? "Prices are per package, with the serving sizes shown above. For larger groups, discuss additional packages with our team." : occasion.name === "Combos" ? "Menu selections may be combined across South Indian, Andhra, and North Indian favourites, subject to availability." : occasion.name === "Traditional Package" ? "Menu selections and presentation can be tailored to your event." : occasion.name === "Diwali Catering" ? "Classic Feast and Signature Celebration require at least 25 guests. Live Dosa Celebration requires 35 guests and includes a two-hour service. Delivery, tax and additional services are extra." : occasion.name === "Weddings" ? "Menu selections and presentation can be tailored to your wedding." : occasion.name === "Live Catering" ? "Looking for more dosa additions? Share your preferences, date, time, and venue details in your enquiry. Our team will confirm availability, setup, and pricing." : "Suggested vegetarian menus, ready to tailor to your team. Confirm dishes, availability, pricing, packaging, and dietary arrangements before booking."}</p>
+          <p className="package-note">{occasion.name === "Combos" ? "Menu selections may be combined across South Indian, Andhra, and North Indian favourites, subject to availability." : occasion.name === "Traditional Package" ? "Menu selections and presentation can be tailored to your event." : occasion.name === "Diwali Catering" ? "Classic Feast and Signature Celebration require at least 25 guests. Live Dosa Celebration requires 35 guests and includes a two-hour service. Delivery, tax and additional services are extra." : occasion.name === "Weddings" ? "Menu selections and presentation can be tailored to your wedding." : occasion.name === "Live Catering" ? "Looking for more dosa additions? Share your preferences, date, time, and venue details in your enquiry. Our team will confirm availability, setup, and pricing." : "Suggested vegetarian menus, ready to tailor to your team. Confirm dishes, availability, pricing, packaging, and dietary arrangements before booking."}</p>
         </>}
       </div>
       <div id="package-details" hidden={!menu}>
