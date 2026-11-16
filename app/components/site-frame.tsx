@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { ThanksgivingSeason } from "./thanksgiving-season";
 import Link from "next/link";
 import { Icon } from "./catering-icons";
-import { SiteNavigation, type SitePage } from "./site-navigation";
+import { SiteNavigation, SiteNavigationFallback, type SitePage } from "./site-navigation";
 import { ezCaterOrderingUrl } from "../data/ordering-partners";
 import { FloatingCart } from "./tray-order-button";
 
@@ -22,7 +22,7 @@ export function SiteFrame({ children, currentPage = "home" }: { children: React.
       <div className="page-shell" id="home">
         <aside className="sidebar" aria-label="Site sidebar">
           <header><BrandLogo /></header>
-          <SiteNavigation currentPage={currentPage} />
+          <Suspense fallback={<SiteNavigationFallback currentPage={currentPage} />}><SiteNavigation currentPage={currentPage} /></Suspense>
           <div className="sidebar-note">GOOD FOOD<br />BRINGS PEOPLE<br />TOGETHER<span /></div>
         </aside>
         <main id="main" className={`main-content${currentPage === "contact" ? " contact-page" : ""}`}>

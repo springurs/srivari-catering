@@ -5,5 +5,5 @@ import "./checkout.css";
 
 export const metadata = { title: "Checkout | Srivari Catering", robots: { index: false, follow: false } };
 export default function CheckoutPage() {
-  return <SiteFrame><section className="checkout-section"><Suspense fallback={<p role="status">Loading your order…</p>}><Checkout /></Suspense></section></SiteFrame>;
+  return <SiteFrame currentPage="checkout"><section className="checkout-section"><Suspense fallback={<p role="status">Loading your order…</p>}><Checkout /></Suspense></section></SiteFrame>;
 }
