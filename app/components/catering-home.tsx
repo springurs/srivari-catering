@@ -81,7 +81,10 @@ export function CateringHome() {
           <div className="search-examples" aria-label="Try a menu search">
             {["Wedding thali", "Live dosa", "Office lunch"].map((example) => <button type="button" key={example} onClick={() => { setQuery(example); void runSearch(example); }}>{example}</button>)}
           </div>
-          <a className="button hero-packages-link" href="#occasions">Browse catering packages</a>
+          <div className="hero-actions">
+            <a className="button hero-packages-link" href="#occasions">Browse catering packages</a>
+            <a className="button hero-order-link" href="#a-la-carte">Order now <Icon name="cart" /></a>
+          </div>
         </div>
       </section>
       <OccasionPackages searchRequest={searchRequest} />

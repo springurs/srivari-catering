@@ -203,7 +203,8 @@
 .thanksgiving-theme .hero-menu-search { width: 600px; margin: 18px auto 0; padding: 2px; background: #fffdfa; border: 1px solid #fff4e5; border-radius: 40px; }
 .hero-menu-search button { flex: 0 0 46px; width: 46px; min-width: 46px; padding: 0; border-radius: 50%; }
 .thanksgiving-theme .search-examples { justify-content: center; }
-.thanksgiving-theme .hero-packages-link { background: #bc4906; padding: 11px 22px; margin-top: 18px; }
+.thanksgiving-theme .hero-actions { justify-content: center; margin-top: 18px; }
+.thanksgiving-theme .hero-packages-link { background: #bc4906; padding: 11px 22px; margin-top: 0; }
 .thanksgiving-theme .occasion-section { padding-block: 38px; }
 .thanksgiving-theme .occasion-card { border-radius: 12px; border-color: #e5d4bf; background: #fff; box-shadow: 0 7px 13px #58321c18; text-align: left; }
 .thanksgiving-theme .occasion-card-body { align-items: flex-start; padding: 18px 16px 16px; }

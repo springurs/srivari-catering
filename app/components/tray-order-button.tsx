@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { addTray, useCart } from "../lib/checkout-cart";
-import { traySizes, type TraySize } from "../data/checkout-menu";
+import { getCartOptions, type TraySize } from "../data/checkout-menu";
 import Link from "next/link";
 import { cartLines, formatMoney } from "../data/checkout-menu";
 import { Icon } from "./catering-icons";
@@ -9,14 +9,18 @@ import { useLocalSandboxFlag } from "../lib/local-checkout-mode";
 import { withSandboxFlag } from "../data/local-checkout-mode";
 
 export function TrayOrderButton({ trayId, name }: { trayId: string; name: string }) {
-  const [size, setSize] = useState<TraySize>("quarter");
-  const [notice, setNotice] = useState("");
+  const [size, setSize] = useState<TraySize | "">("");
+  const [added, setAdded] = useState(0);
+  const options = getCartOptions(trayId);
+  const selected = options.find(option => option.key === size);
+  const labels = { quarter: "1/4 tray", half: "1/2 tray", threeQuarter: "3/4 tray", full: "1 full tray" };
   return <div className="tray-order-controls">
     <div className="tray-order-row">
-      <label><span>Tray size</span><span className="tray-size-select"><select value={size} onChange={e => { setSize(e.target.value as TraySize); setNotice(""); }} aria-label={`Tray size for ${name}`}>{traySizes.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></label>
-      <button type="button" className="button tray-add-button" onClick={() => { addTray(trayId, size); setNotice("Added to cart"); }} aria-label={`Add ${name} to cart`}><span aria-hidden="true">+</span> Add to cart</button>
+      <label><span className="sr-only">Tray size</span><span className="tray-size-select"><select value={size} onChange={e => { setSize(e.target.value as TraySize | ""); setAdded(0); }} aria-label={`Tray size for ${name}`}><option value="">Select Tray Size</option>{options.map(option => <option key={option.key} value={option.key}>{labels[option.key as TraySize]}</option>)}</select><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></label>
+      {selected && <span className="tray-selected-price" aria-label={`Price per selected tray: ${formatMoney(selected.unitCents)}`}>{formatMoney(selected.unitCents)}</span>}
+      <button type="button" className="button tray-add-button" disabled={!selected} onClick={() => { if (!size || !selected) return; addTray(trayId, size); setAdded(value => value + 1); }} aria-label={size ? `Add ${labels[size]} of ${name} to cart` : `Choose a tray size for ${name} before adding to cart`} title={size ? `Add ${labels[size]} to cart` : "Select a size first"}><Icon name={added ? "check" : "cart"} /><span className="cart-action-caption" aria-hidden="true">Add to cart</span></button>
     </div>
-    <span className="tray-order-notice" role="status" aria-atomic="true">{notice}</span>
+    <span className="tray-order-notice" role="status" aria-atomic="true">{added ? `${added} added to cart` : ""}</span>
   </div>;
 }
 export function FloatingCart() {
