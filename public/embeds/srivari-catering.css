@@ -237,3 +237,61 @@ a:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
 @media print {
   .diya-flame, .diya-glow { animation: none; }
 }
+
+/* Full-banner artwork with a translucent fade behind the online offer. */
+.online-banner { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.1fr) 230px; gap: 18px; min-height: 300px; padding: 16px; overflow: hidden; border: 1px solid #c59a43; border-radius: 16px; background: #ffe39a; color: #48223f; font: 14px/1.5 Arial, Helvetica, sans-serif; }
+.online-banner > * { min-width: 0; }
+.online-banner::before { content: ""; position: absolute; z-index: 1; inset: 0; background: radial-gradient(ellipse at 88% 8%, #ffe16bdd, transparent 58%), linear-gradient(90deg, transparent 22%, #fff0a940 35%, #fff3c9d6 55%, #ffdf85eb 82%, #fbd16ee8 100%); pointer-events: none; }
+.online-banner:not(:has(.online-ticket)) { grid-template-columns: minmax(0, .85fr) minmax(0, 1.6fr); }
+.online-visual { position: absolute; inset: 0; z-index: 0; }
+.online-catering-pattern { position: absolute; z-index: 1; inset: 0; background: url("catering-line-pattern.svg") repeat; background-size: 400px 200px; opacity: .09; pointer-events: none; }
+.online-corner-logo { position: absolute; z-index: 3; top: 12px; left: 12px; width: 24px; height: 24px; object-fit: contain; padding: 2px; border: 1px solid #d1af62; border-radius: 50%; background: #fffaf0ee; box-shadow: 0 2px 8px #59352715; }
+.online-photo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.online-copy { position: relative; z-index: 2; grid-column: 2; grid-row: 1; align-self: center; min-width: 0; padding: 14px; border-left: 3px solid #8b4b6f; border-radius: 0 12px 12px 0; background: linear-gradient(115deg, #fff9e1e0, #fff1b84d); }
+.online-watermark { position: absolute; z-index: 1; top: 50%; right: 260px; width: 190px; height: 190px; object-fit: contain; opacity: .07; transform: translateY(-50%) rotate(-12deg); pointer-events: none; }
+.online-brand-name { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; color: #784454; font-size: 9px; font-weight: 800; line-height: 1.5; letter-spacing: 1.5px; }
+.online-title { color: #4b2348; font: 800 25px/1.12 "SrivariBannerManrope", Arial, Helvetica, sans-serif; letter-spacing: -1px; text-wrap: balance; overflow-wrap: anywhere; }
+.online-title-highlight { display: block; margin-top: 5px; color: #8c482c; font: italic 700 40px/1.02 "SrivariBannerCormorant", Georgia, serif; letter-spacing: -1.1px; text-decoration: underline; text-decoration-color: #c58a4080; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.online-description { margin: 11px 0 14px; color: #594044; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.online-actions { display: flex; align-items: flex-start; justify-content: flex-start; flex-wrap: wrap; gap: 4px 16px; }
+.online-cta { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 10px 20px; border: 1px solid #542442; border-radius: 10px; background: linear-gradient(125deg, #4b234e, #852f58); color: #fff5d6; font: 800 18px/1.25 "SrivariBannerManrope", Arial, sans-serif; box-shadow: 0 6px 16px #57214335, inset 0 1px 0 #ffffff26; }
+.online-order-group { display: flex; flex-direction: column; align-items: stretch; gap: 5px; min-width: 0; max-width: 100%; }
+.online-order-label { min-width: 0; letter-spacing: .4px; }
+.online-order-caption { margin: 0; color: #633247; font: 800 10.5px/1.4 "SrivariBannerManrope", Arial, sans-serif; text-align: center; }
+.online-offer-order-group { width: 100%; margin-top: 10px; }
+.online-cta:hover { background: linear-gradient(125deg, #602957, #9a3861); box-shadow: 0 7px 20px #57214345; }
+.online-call { display: inline-flex; align-items: center; min-height: 44px; color: #65334e; font-size: 11px; text-decoration: underline; text-underline-offset: 4px; }
+.online-ticket { position: relative; z-index: 2; display: flex; align-self: center; flex-direction: column; align-items: center; justify-content: center; grid-column: 3; grid-row: 1; margin: 0; padding: 18px 14px 12px; border: 1px solid #c49235; border-radius: 14px; background: radial-gradient(circle at 12% 0%, #fffce2c9, transparent 60%), repeating-linear-gradient(125deg, #ffffff09 0 8px, transparent 8px 16px), linear-gradient(145deg, #fff0b7, #ffdd83 55%, #edbc55); box-shadow: 0 10px 25px #75462a30, inset 0 0 0 4px #fff8d966; text-align: left; }
+.online-price-tag { position: absolute; top: -12px; right: -8px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 80px; height: 56px; padding-left: 10px; clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%); background: linear-gradient(130deg, #4b234e, #852f58); color: #fff0b6; transform: rotate(5deg); filter: drop-shadow(0 3px 3px #0002); }
+.online-price-tag::before { content: ''; position: absolute; left: 8px; top: 25px; width: 5px; height: 5px; border-radius: 50%; background: #ffe39a; }
+.online-price-tag strong { font: 700 23px/1 Georgia, serif; }
+.online-price-tag > span { margin-top: 3px; font: 700 10px/1 Arial, sans-serif; letter-spacing: 1.5px; }
+.online-ticket-eyebrow { align-self: flex-start; max-width: calc(100% - 65px); margin-bottom: 8px; color: #774450; font-size: 8px; line-height: 1.5; letter-spacing: 1.4px; }
+.online-offer-heading { align-self: stretch; margin: 0; color: #4b2348; font: 800 19px/1.12 "SrivariBannerManrope", Arial, Helvetica, sans-serif; letter-spacing: -.7px; white-space: pre-line; }
+.online-offer-order { display: flex; align-items: center; justify-content: center; width: 100%; gap: 7px; min-height: 46px; margin-top: 0; padding: 10px; border-radius: 9px; border: 1px solid #542442; background: linear-gradient(125deg, #4b234e, #852f58); color: #fff5d6; font: 800 17px/1.25 "SrivariBannerManrope", Arial, sans-serif; box-shadow: 0 5px 12px #57214330, inset 0 1px 0 #ffffff26; text-align: center; }
+.online-offer-order:hover { background: linear-gradient(125deg, #602957, #9a3861); }
+.online-offer-order:focus-visible { outline: 3px solid #6c2855; outline-offset: 3px; }
+.online-ticket-message { align-self: stretch; margin-top: 8px; color: #5c3a42; font-size: 12px; line-height: 1.45; }
+.online-ticket-terms { align-self: stretch; margin-top: 7px; color: #6c493a; font-size: 9px; line-height: 1.6; }
+.online-reveal { width: 100%; max-width: 210px; min-height: 44px; margin-top: 6px; padding: 9px 8px; border: 2px solid #925272; border-radius: 9px; background: linear-gradient(120deg, #fffdf0, #fff1c5); color: #602c50; box-shadow: 0 0 0 3px #fff7d866, 0 4px 10px #7b4d2520; font: 800 13px/1.4 "SrivariBannerManrope", Arial, sans-serif; cursor: pointer; }
+.online-reveal:hover { background: #fffdf3; box-shadow: 0 0 0 4px #fff7d8aa, 0 4px 12px #7b4d2530; }
+.online-reveal:focus-visible { outline: 3px solid #6c2855; outline-offset: 3px; }
+.online-ticket-code { margin-top: 10px; padding: 7px 12px; border: 1px dashed #8a4b6b; color: #602c50; font: 700 18px/1.2 monospace; letter-spacing: 3px; user-select: all; }
+.online-ticket-status { align-self: stretch; min-height: 14px; margin-top: 5px; color: #6c493a; font-size: 9px; line-height: 1.5; text-align: center; }
+.online-ticket.is-revealed .online-reveal { margin-top: 10px; }
+@container srivari-placement (max-width: 900px) { .online-banner { grid-template-columns: minmax(0, 1fr) 210px; min-height: 290px; padding: 16px; gap: 14px; } .online-banner::before { background: radial-gradient(ellipse at right top, #ffe07bcc, transparent 70%), linear-gradient(90deg, #fff4c7d6, #ffdf88ed); } .online-copy { grid-column: 1; } .online-ticket { grid-column: 2; padding: 16px 12px; } .online-title { font-size: 24px; } .online-title-highlight { font-size: 36px; } .online-watermark { right: 225px; width: 180px; height: 180px; } }
+@container srivari-placement (max-width: 540px) { .online-banner, .online-banner:not(:has(.online-ticket)) { grid-template-columns: minmax(0, 1fr); min-height: 0; padding: 16px; gap: 12px; } .online-banner::before { background: radial-gradient(ellipse at right top, #ffe07bcc, transparent 65%), linear-gradient(180deg, #fff4c7c9, #ffe9a6ef 45%, #ffd77bf0); } .online-photo { object-position: left center; } .online-copy { grid-column: 1; grid-row: 1; padding: 30px 10px 10px; } .online-watermark { top: 100px; right: 0; width: 190px; max-width: calc(100% - 24px); height: auto; aspect-ratio: 1; opacity: .06; transform: translateY(-50%); } .online-ticket { grid-column: 1; grid-row: 2; padding: 14px; } .online-ticket-message { max-width: 260px; } }
+@container srivari-placement (max-width: 250px) { .online-banner { padding: 12px; gap: 12px; } .online-title { font-size: 20px; letter-spacing: -.7px; } .online-title-highlight { font-size: 30px; letter-spacing: -.7px; } .online-brand-name { gap: 6px; font-size: 8px; letter-spacing: 1px; } .online-actions { gap: 6px; } .online-order-group { width: 100%; } .online-cta, .online-offer-order { width: 100%; gap: 6px; padding-inline: 8px; font-size: 17px; } .online-order-caption { font-size: 10px; } .online-ticket { padding: 14px 10px; } .online-ticket-code { padding: 8px; font-size: 16px; letter-spacing: 2px; } .online-price-tag { width: 73px; right: -4px; height: 54px; } .online-price-tag strong { font-size: 22px; } .online-price-tag::before { top: 24px; left: 5px; width: 4px; height: 4px; } .online-ticket-eyebrow { max-width: calc(100% - 55px); font-size: 7px; letter-spacing: .7px; } .online-offer-heading { font-size: 18px; overflow-wrap: anywhere; } }
+
+/* Only the left photo changes; each catering image gets a three-second turn. */
+.online-slideshow { position: absolute; inset: 0 auto 0 0; width: 44%; overflow: hidden; pointer-events: none; mask-image: linear-gradient(90deg, #000 0%, #000 76%, transparent 100%); }
+.online-slide { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; animation: srivari-catering-crossfade 9s linear infinite; }
+.online-slide--0 { object-position: left center; animation-delay: 0s; }
+.online-slide--1 { object-position: 48% center; animation-delay: 3s; }
+.online-slide--2 { object-position: 58% center; animation-delay: 6s; }
+@keyframes srivari-catering-crossfade { 0% { opacity: 0; } 7.778%, 33.333% { opacity: 1; } 41.111%, 100% { opacity: 0; } }
+.is-slideshow-paused .online-slide { animation-play-state: paused; }
+.online-slideshow-toggle { position: absolute; z-index: 3; top: 12px; left: 42px; display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 1px solid #d1af62; border-radius: 50%; background: #fffaf0ee; color: #633247; font: 700 12px/1 Arial, sans-serif; cursor: pointer; }
+.online-slideshow-toggle:hover { background: #fff2ba; }
+.online-slideshow-toggle:focus-visible { outline: 2px solid #6c2855; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .online-slide { animation: none; opacity: 0; } .online-slide:first-child { opacity: 1; } .online-slideshow-toggle { display: none; } }

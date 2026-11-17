@@ -32,7 +32,7 @@ On **srivaripleasanton.com**:
 
 The banner renders immediately before its script tag. Its width follows the surrounding column and its height adjusts to its content. Use a normal full-width section or sidebar with automatic height, rather than a fixed-height ad slot. The main button opens a new tab, and the phone link calls (408) 893-0438.
 
-For a homepage placement, put it after the introductory content or before the footer. Existing Diwali campaign tags now show the Thanksgiving harvest promotion.
+For a homepage placement, put it after the introductory content or before the footer. Existing `data-campaign="diwali"` tags now show the light online catering creative: a catering photo, Srivari invitation and a revealable offer ticket. The primary link goes to À La Carte ordering, carrying `promo=THANKS10` while the offer is active. The floating cart carries that code into checkout. The preview defaults to this creative; other campaigns remain selectable.
 
 ## Diwali placement
 
@@ -80,7 +80,7 @@ The Thanksgiving campaign uses a compact deep forest green harvest design with t
 <noscript><a href="https://srivaricatering.com/#thanksgiving-offer">Explore Srivari Thanksgiving catering</a></noscript>
 ```
 
-The banner includes a compact scratch-to-reveal offer: **10% off orders over $40**, with code **THANKS10**, through November 26, 2026 (Pacific time). Visitors can scratch with a mouse or finger, or use the keyboard-accessible Reveal code button, then copy the code to mention with their catering enquiry. The existing Diwali tag shows the same offer. The offer is hidden after expiry and for ezCater destinations; it does not apply a discount automatically or transfer a code to an external cart. Keep the embed terms synchronized with `app/data/thanksgiving-offer.ts` if the promotion changes.
+The Thanksgiving banner retains its scratch-to-reveal enquiry offer. The Diwali tag uses a keyboard-accessible Reveal your offer button and a copyable **THANKS10** code: **10% off orders over $40**, through November 26, 2026 (Pacific time). The offer is hidden after expiry and for ezCater destinations. For direct online pickup orders, checkout validates THANKS10 and discounts the taxable item prices sent to Stripe; the code is not transferred to an external marketplace cart. Keep the embed terms synchronized with `app/data/thanksgiving-offer.ts` if the promotion changes.
 
 On wide placements, the scratch card sits in the right column, with a small Explore button below the copy on the left. It uses a bright gold ticket with a burnt-orange 10% OFF heading, expiry badge, ticket notches, and pale-gold scratch panel, contrasting with the forest green harvest banner. Narrow placements stack the card below the text. Publish the updated shared assets on srivaricatering.com for existing partner tags to receive the scratch card.
 

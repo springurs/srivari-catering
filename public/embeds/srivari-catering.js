@@ -8,6 +8,14 @@
   script.dataset.srivariMounted = "true";
 
   const campaigns = {
+    diwali: {
+      defaultTheme: "light",
+      label: "SRIVARI · PURE INDIAN VEGETARIAN",
+      headline: "Make your next gathering delicious.",
+      description: "Big celebrations. Little get-togethers. Bring everyone to the table with freshly prepared Indian vegetarian catering.",
+      cta: "Place an online order", path: "/", hash: "a-la-carte",
+      image: "/images/srivari-catering-wide-background.png", alt: "A platter of vegetarian paneer skewers and chaat appetizers, presented for a celebration",
+    },
     catering: {
       label: "Vegetarian catering · Pleasanton",
       headline: "A feast for every occasion.",
@@ -39,8 +47,8 @@
       image: "/images/package-power-lunch.webp", alt: "A vegetarian rice bowl prepared for an office lunch",
     },
   };
-  // Keep installed partner tags working as the seasonal promotion changes.
-  const requestedCampaign = script.dataset.campaign === "diwali" ? "thanksgiving" : script.dataset.campaign;
+  // Retain the installed Diwali tag for the new online catering creative.
+  const requestedCampaign = script.dataset.campaign;
   const campaignName = Object.hasOwn(campaigns, requestedCampaign || "") ? requestedCampaign : "catering";
   const campaign = campaigns[campaignName];
   const isEzCater = script.dataset.destination === "ezcater";
@@ -55,6 +63,7 @@
     destination.searchParams.set("utm_medium", "referral");
     destination.searchParams.set("utm_campaign", `srivari-${campaignName}`);
     destination.searchParams.set("utm_content", placement);
+    if (campaignName === "diwali" && Date.now() < Date.parse("2026-11-27T00:00:00-08:00")) destination.searchParams.set("promo", "THANKS10");
   }
 
   const assetOrigin = new URL(script.src).origin;
@@ -64,7 +73,7 @@
   const shadow = host.attachShadow({ mode: "open" });
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
-  stylesheet.href = new URL("srivari-catering.css?v=thanksgiving-light-name-12", script.src).href;
+  stylesheet.href = new URL("srivari-catering.css?v=online-catering-compact-24", script.src).href;
   shadow.append(stylesheet);
 
   const element = (tag, className, text) => {
@@ -73,6 +82,120 @@
     if (text) node.textContent = text;
     return node;
   };
+  if (campaignName === "diwali") {
+    host.dataset.theme = "light";
+    // Document-level font faces are also available inside the isolated shadow root.
+    if (!document.head.querySelector("link[data-srivari-banner-fonts]")) {
+      const fonts = element("link", "");
+      fonts.rel = "stylesheet";
+      fonts.href = new URL("srivari-catering-fonts.css?v=1", script.src).href;
+      fonts.dataset.srivariBannerFonts = "true";
+      document.head.append(fonts);
+    }
+    const endsAt = Date.parse("2026-11-27T00:00:00-08:00");
+    const promotionActive = !isEzCater && Date.now() < endsAt;
+    const banner = element("section", "online-banner");
+    banner.setAttribute("aria-label", "Srivari online catering promotion");
+    const visual = element("div", "online-visual");
+    const photo = element("img", "online-photo");
+    photo.src = `${assetOrigin}${campaign.image}`;
+    photo.alt = campaign.alt;
+    photo.width = 2172; photo.height = 724; photo.loading = "lazy";
+    visual.append(photo);
+    const slideshow = element("div", "online-slideshow");
+    slideshow.setAttribute("aria-hidden", "true");
+    for (const [index, image] of [campaign.image, "/images/occasion-live-catering.webp", "/images/south-indian-feast.png"].entries()) {
+      const slide = element("img", `online-slide online-slide--${index}`);
+      slide.src = `${assetOrigin}${image}`;
+      slide.alt = ""; slide.loading = "lazy"; slide.decoding = "async";
+      slideshow.append(slide);
+    }
+    visual.append(slideshow);
+    const pauseSlideshow = element("button", "online-slideshow-toggle", "Ⅱ");
+    pauseSlideshow.type = "button";
+    pauseSlideshow.setAttribute("aria-label", "Pause catering slideshow");
+    pauseSlideshow.setAttribute("aria-pressed", "false");
+    pauseSlideshow.title = "Pause catering slideshow";
+    pauseSlideshow.addEventListener("click", () => {
+      const paused = banner.classList.toggle("is-slideshow-paused");
+      pauseSlideshow.textContent = paused ? "▶" : "Ⅱ";
+      pauseSlideshow.setAttribute("aria-pressed", String(paused));
+      pauseSlideshow.setAttribute("aria-label", paused ? "Resume catering slideshow" : "Pause catering slideshow");
+      pauseSlideshow.title = paused ? "Resume catering slideshow" : "Pause catering slideshow";
+    });
+    const pattern = element("div", "online-catering-pattern");
+    pattern.setAttribute("aria-hidden", "true");
+    const cornerLogo = element("img", "online-corner-logo");
+    cornerLogo.src = `${assetOrigin}/icon.png`;
+    cornerLogo.alt = "Srivari"; cornerLogo.width = 28; cornerLogo.height = 28;
+    const watermark = element("img", "online-watermark");
+    watermark.src = `${assetOrigin}/images/srivari-logo.png`;
+    watermark.alt = ""; watermark.setAttribute("aria-hidden", "true");
+    const copy = element("div", "online-copy");
+    const brand = element("div", "online-brand-name");
+    brand.append(element("span", "", "SRIVARI CATERING"));
+    const title = element("h2", "online-title", "Great gatherings.");
+    title.append(element("span", "online-title-highlight", "Exceptional catering."));
+    copy.append(brand, title, element("p", "online-description", "From wedding feasts to office lunches and family celebrations, serve something worth gathering for. Fresh. Vegetarian. Unmistakably Srivari."));
+    const actions = element("div", "online-actions");
+    const orderGroup = element("div", "online-order-group");
+    const cta = element("a", "online-cta");
+    cta.append(element("span", "online-order-label", isEzCater ? "Order on ezCater" : "ORDER NOW"));
+    cta.href = destination.href; cta.target = "_blank"; cta.rel = "noopener noreferrer";
+    cta.append(element("span", "", " ↗"), element("span", "sr-only", " (opens in a new tab)"));
+    orderGroup.append(cta);
+    if (promotionActive) orderGroup.append(element("p", "online-order-caption", "Save 10% when you order online"));
+    const call = element("a", "online-call", "Let’s talk catering");
+    call.href = "tel:+14088930438"; call.setAttribute("aria-label", "Call Srivari catering at (408) 893-0438");
+    actions.append(orderGroup, call);
+    copy.append(actions);
+    banner.append(visual, pattern, watermark, cornerLogo, pauseSlideshow, copy);
+    if (promotionActive) {
+      const ticket = element("aside", "online-ticket");
+      ticket.setAttribute("aria-label", "Online catering offer");
+      const priceTag = element("div", "online-price-tag");
+      priceTag.append(element("strong", "", "10%"), element("span", "", "OFF"));
+      ticket.append(priceTag, element("span", "online-ticket-eyebrow", "ONLINE-ONLY SAVINGS"), element("h3", "online-offer-heading", "Great catering.\nExtra savings."));
+      const offerOrderGroup = element("div", "online-order-group online-offer-order-group");
+      const orderLink = element("a", "online-offer-order");
+      orderLink.append(element("span", "online-order-label", "ORDER NOW"), element("span", "", "↗"));
+      orderLink.href = destination.href; orderLink.target = "_blank"; orderLink.rel = "noopener noreferrer";
+      orderLink.append(element("span", "sr-only", " (opens in a new tab)"));
+      offerOrderGroup.append(orderLink, element("p", "online-order-caption", "Save 10% when you order online"));
+      const reveal = element("button", "online-reveal", "Reveal your offer ✦");
+      reveal.type = "button"; reveal.setAttribute("aria-expanded", "false");
+      const code = element("code", "online-ticket-code", "THANKS10");
+      code.hidden = true;
+      const status = element("p", "online-ticket-status", "Reveal your code. Save on your feast.");
+      status.setAttribute("role", "status");
+      let revealed = false;
+      reveal.addEventListener("click", async () => {
+        if (Date.now() >= endsAt) { ticket.remove(); return; }
+        if (!revealed) {
+          revealed = true; code.hidden = false;
+          reveal.textContent = "Copy offer code";
+          reveal.setAttribute("aria-expanded", "true");
+          ticket.classList.add("is-revealed");
+          status.textContent = "Your offer code: THANKS10.";
+        } else {
+          try { await navigator.clipboard.writeText("THANKS10"); status.textContent = "Copied! Your code is THANKS10."; }
+          catch { status.textContent = "Your code is THANKS10. Select the code to copy it."; }
+        }
+      });
+      ticket.append(element("p", "online-ticket-message", "Your catering favourites, 10% off when you place your order online."), element("p", "online-ticket-terms", "Orders over $40 · Ends Nov 26, 2026"), offerOrderGroup, code, reveal, status);
+      banner.append(ticket);
+      function expireOffer() {
+        if (!ticket.isConnected) return;
+        if (Date.now() >= endsAt) ticket.remove();
+        else setTimeout(expireOffer, Math.min(endsAt - Date.now(), 2_147_483_647));
+      }
+      setTimeout(expireOffer, Math.min(endsAt - Date.now(), 2_147_483_647));
+    }
+    shadow.append(banner);
+    if (container === script.parentElement) container.insertBefore(host, script);
+    else container.append(host);
+    return;
+  }
   const banner = element("section", campaign.festive ? `banner banner--festive banner--${campaignName}` : "banner");
   banner.setAttribute("aria-label", "Srivari catering promotion");
   const brand = element("div", "brand");

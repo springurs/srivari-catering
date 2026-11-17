@@ -3,6 +3,7 @@ import { useState } from "react";
 import { addTray, useCart } from "../lib/checkout-cart";
 import { getCartOptions, type TraySize } from "../data/checkout-menu";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { cartLines, formatMoney } from "../data/checkout-menu";
 import { Icon } from "./catering-icons";
 import { useLocalSandboxFlag } from "../lib/local-checkout-mode";
@@ -26,11 +27,13 @@ export function TrayOrderButton({ trayId, name }: { trayId: string; name: string
 export function FloatingCart() {
   const cart = useCart();
   const sandbox = useLocalSandboxFlag();
+  const params = useSearchParams();
+  const checkoutPath = params.get("promo") === "THANKS10" ? "/checkout?promo=THANKS10" : "/checkout";
   const count = cart.reduce((n, item) => n + item.quantity, 0);
   if (!count) return null;
   const total = cartLines(cart).reduce((sum, item) => sum + item.unitCents * item.quantity, 0);
   return <div className="cart-dock">
-    <Link href={withSandboxFlag("/checkout", sandbox)} className="floating-cart" aria-label={`View cart, ${count} ${count === 1 ? "item" : "items"}, ${formatMoney(total)}`}>
+    <Link href={withSandboxFlag(checkoutPath, sandbox)} className="floating-cart" aria-label={`View cart, ${count} ${count === 1 ? "item" : "items"}, ${formatMoney(total)}`}>
       <span className="floating-cart-icon"><Icon name="cart" /><span className="floating-cart-count">{count}</span></span>
       <span className="floating-cart-copy"><strong>Your cart</strong><span>{count} {count === 1 ? "item" : "items"} · {formatMoney(total)}</span></span>
       <span className="floating-cart-action">View cart <Icon name="arrow" /></span>

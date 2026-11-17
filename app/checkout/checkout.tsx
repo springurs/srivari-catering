@@ -9,6 +9,7 @@ import { validateCheckoutContact } from "../data/checkout-contact";
 import { Icon } from "../components/catering-icons";
 import { useLocalSandboxFlag } from "../lib/local-checkout-mode";
 import { withSandboxFlag } from "../data/local-checkout-mode";
+import { promotionError, discountedUnitCents } from "../data/checkout-promotion";
 type CheckoutConfig = { mode: "sandbox" | "live"; mock: boolean };
 
 export function Checkout() {
@@ -95,6 +96,7 @@ function PaymentStatus({ sessionId, mode, sandbox }: { sessionId: string; mode: 
   </div>;
 }
 function OrderForm({ canceled, mode, mock, sandbox }: { canceled: boolean; mode: CheckoutConfig["mode"]; mock: boolean; sandbox: boolean }) {
+  const params = useSearchParams();
   const cart = useCart();
   const lines = cartLines(cart);
   const subtotal = lines.reduce((n, item) => n + item.unitCents * item.quantity, 0);
@@ -103,6 +105,10 @@ function OrderForm({ canceled, mode, mock, sandbox }: { canceled: boolean; mode:
   const [time, setTime] = useState("");
   const [address, setAddress] = useState("");
   const [contactDetails, setContactDetails] = useState({ name: "", email: "", phone: "" });
+  const [promotionCode, setPromotionCode] = useState(params.get("promo") === "THANKS10" ? "THANKS10" : "");
+  const offerCode = promotionCode.trim().toUpperCase();
+  const offerError = promotionError(offerCode, subtotal);
+  const discount = offerCode && !offerError && fulfillment === "pickup" ? lines.reduce((sum, line) => sum + (line.unitCents - discountedUnitCents(line.unitCents)) * line.quantity, 0) : 0;
   const [quote, setQuote] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -110,7 +116,7 @@ function OrderForm({ canceled, mode, mock, sandbox }: { canceled: boolean; mode:
   const [itemDraft, setItemDraft] = useState<{ size: OrderSize; quantity: string }>({ size: "quarter", quantity: "1" });
   const [itemError, setItemError] = useState("");
   const contact = validateCheckoutContact(contactDetails);
-  const payload = JSON.stringify({ cart, date, time, fulfillment, mode, contact });
+  const payload = JSON.stringify({ cart, date, time, fulfillment, mode, contact, promotionCode: offerCode });
   const pending = useRef(false);
   const attempt = useRef({ payload: "", id: "" });
   function invalidate() { setQuote(""); setError(""); }
@@ -156,6 +162,10 @@ function OrderForm({ canceled, mode, mock, sandbox }: { canceled: boolean; mode:
         if (pending.current) return;
         if (editingItem) { setError("Save or close your item changes before continuing."); return; }
         setError("");
+        if (fulfillment === "pickup") {
+          const message = promotionError(offerCode, subtotal);
+          if (message) { setError(message); return; }
+        }
         if (!contact) {
           setError("Enter your full name and a valid email address or phone number. Check any contact details you have provided.");
           const field = contactDetails.name.trim().length < 2 ? "customerName" : contactDetails.email.trim() ? "customerEmail" : "customerPhone";
@@ -176,7 +186,7 @@ function OrderForm({ canceled, mode, mock, sandbox }: { canceled: boolean; mode:
         }
         pending.current = true; setBusy(true);
         try {
-          const response = await fetch(withSandboxFlag("/api/checkout/session", sandbox), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cart, date, time, fulfillment, contact, orderId: attempt.current.id }) });
+          const response = await fetch(withSandboxFlag("/api/checkout/session", sandbox), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cart, date, time, fulfillment, contact, ...(offerCode ? { promotionCode: offerCode } : {}), orderId: attempt.current.id }) });
           const data = await response.json();
           if (!response.ok || !data.url) {
             if (data.closed) { attempt.current = { payload: "", id: "" }; try { sessionStorage.removeItem("srivari-checkout-attempt"); } catch { /* Memory retry remains available. */ } }
@@ -222,7 +232,13 @@ function OrderForm({ canceled, mode, mock, sandbox }: { canceled: boolean; mode:
         <div><dt>Time</dt><dd>{time ? `${new Intl.DateTimeFormat("en-US", { timeStyle: "short", timeZone: "UTC" }).format(new Date(`2000-01-01T${time}:00Z`))} PT` : "Choose a time"}</dd></div>
         <div><dt>{fulfillment === "pickup" ? "Pickup location" : "Delivery address"}</dt><dd>{fulfillment === "pickup" ? "3180 Santa Rita Rd, Pleasanton, CA 94566" : address.trim() || "Add delivery address"}</dd></div>
       </dl>
+      {fulfillment === "pickup" && <div className="checkout-promotion">
+        <label htmlFor="checkout-promotion">Offer code</label>
+        <input id="checkout-promotion" name="promotionCode" form="checkout-order-form" maxLength={32} placeholder="Enter offer code" autoComplete="off" spellCheck={false} disabled={busy} value={promotionCode} onChange={event => { setPromotionCode(event.target.value); invalidate(); }} aria-describedby="checkout-promotion-status" aria-invalid={Boolean(offerError)} />
+        <p id="checkout-promotion-status" role="status">{offerError || (discount ? "THANKS10 applied · 10% off before tax." : "Have an offer code? Add it before payment.")}</p>
+      </div>}
       <dl className="checkout-totals"><div><dt>Tray subtotal</dt><dd>{formatMoney(subtotal)}</dd></div><div><dt>{fulfillment === "pickup" ? "Pickup fee" : "Delivery fee"}</dt><dd>{fulfillment === "pickup" ? "Free" : "Location-based quote"}</dd></div><div><dt>Tax</dt><dd>{fulfillment === "pickup" ? mock ? "Not charged in local mock" : mode === "live" ? "Shown at checkout" : "Shown in Stripe; omitted if sandbox tax is not set" : "Confirmed with final quote"}</dd></div></dl>
+      {discount > 0 && <dl className="checkout-totals checkout-discount"><div><dt>THANKS10 · 10% off</dt><dd>−{formatMoney(discount)}</dd></div><div><dt>Subtotal after discount</dt><dd>{formatMoney(subtotal - discount)}</dd></div></dl>}
       <p className="checkout-help">{fulfillment === "delivery" ? "Our team confirms availability, delivery fee and the final total before arranging payment. No payment is collected here." : mock ? "Complete a simulated payment to preview the success screen. No Stripe call, charge or food order is made." : mode === "live" ? "Continue to Stripe to review the final total and pay securely." : "Continue to Stripe to review the final test total. This sandbox does not place real food orders."}</p>
       <button className="button checkout-payment-button" type="submit" form="checkout-order-form" disabled={busy || Boolean(editingItem)}>{fulfillment === "delivery" ? "Request delivery quote" : busy ? "Opening checkout…" : mock ? "Complete mock checkout" : "Make my payment"}<Icon name="arrow" /></button>
       {editingItem && <p className="checkout-payment-caption" role="status">Save or close your item changes to continue.</p>}

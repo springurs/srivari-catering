@@ -1,0 +1,16 @@
+/* Self-hosted Google Fonts, distributed under the SIL Open Font License.
+   License files are included in /fonts/OFL-Manrope.txt and /fonts/OFL-CormorantGaramond.txt. */
+@font-face {
+  font-family: "SrivariBannerManrope";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("../fonts/manrope-bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "SrivariBannerCormorant";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/cormorant-garamond-italic.woff2") format("woff2");
+}

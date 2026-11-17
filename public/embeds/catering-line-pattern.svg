@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="260" viewBox="0 0 520 260" fill="none" stroke="#6d3655" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <g transform="translate(34 28) rotate(-8 32 28)">
+    <path d="M5 43h62M10 39a26 26 0 0 1 52 0H10ZM31 10a5 5 0 0 1 10 0M36 5V2M0 48h72"/>
+  </g>
+  <g transform="translate(210 26) rotate(13 18 28)">
+    <path d="M4 0v17a7 7 0 0 0 14 0V0M11 0v58M38 58V0c-11 8-12 25 0 28"/>
+  </g>
+  <g transform="translate(375 36) rotate(-9 34 22)">
+    <path d="M2 23h66M7 26c4 20 14 26 28 26s24-6 28-26M24 52v5h22v-5M23 14c-8-8 8-10 0-18M37 13c-8-8 8-10 0-18M51 14c-8-8 8-10 0-18"/>
+  </g>
+  <g transform="translate(70 166) rotate(12 25 22)">
+    <path d="M2 47C-1 16 17 2 48 0c2 27-10 47-39 47M3 54 39 10M17 34l-1-14M27 23l13 1"/>
+  </g>
+  <g transform="translate(225 163) rotate(-6 34 20)">
+    <rect x="4" y="4" width="68" height="38" rx="5"/>
+    <path d="M13 12h50v22H13zM0 19h4M72 19h4M17 42l-4 10M59 42l4 10M25 4V0h25v4"/>
+  </g>
+  <g transform="translate(422 159) rotate(9 20 24)">
+    <path d="M0 21h48v26a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6V21ZM-5 29H0M48 29h5M-3 16h54M19 16v-5h10v5M13 6c-5-5 5-7 0-12M35 6c-5-5 5-7 0-12"/>
+  </g>
+</svg>

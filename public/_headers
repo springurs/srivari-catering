@@ -9,3 +9,9 @@
   X-Content-Type-Options: nosniff
   Cross-Origin-Resource-Policy: cross-origin
   Cache-Control: public, max-age=0, must-revalidate
+
+/fonts/*
+  Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=604800

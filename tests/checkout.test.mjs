@@ -7,11 +7,13 @@ import { cartLines, validateCart, aLaCarteCartId, getCartOptions } from "../app/
 import { aLaCarteCategories } from "../app/data/a-la-carte-menu";
 import { handleCheckout, handleStripeWebhook, stripeClient, mockCheckoutEnabled, checkoutEnvForRequest } from "../worker/checkout";
 import { withSandboxFlag } from "../app/data/local-checkout-mode";
+import { promotionError, discountedUnitCents, onlineOffer } from "../app/data/checkout-promotion";
 
 const origin = "https://srivaricatering.com";
 const cart = [{ trayId: "gongura-corn-pesarattu-rolls", size: "quarter", quantity: 2 }];
 const date = "2099-12-20";
 const contact = { name: "Test Customer", email: "customer@example.com", phone: "" };
+const offerNow = Date.parse("2026-11-16T12:00:00-08:00");
 function setup() {
   const db = new DatabaseSync(":memory:");
   db.exec(readFileSync("migrations/0002_checkout_orders.sql", "utf8"));
@@ -27,6 +29,63 @@ function setup() {
   const body = { orderId: crypto.randomUUID(), cart, date, time: "13:30", fulfillment: "pickup", contact };
   return { db, env, calls, stripe, sessions, request, body };
 }
+test("THANKS10 enforces its code, strict $40 minimum and Pacific expiry boundary", () => {
+  assert.equal(promotionError("THANKS10", 4000, offerNow), "THANKS10 applies to orders over $40 before tax.");
+  assert.equal(promotionError("THANKS10", 4001, onlineOffer.endsAt - 1), null);
+  assert.match(promotionError("THANKS10", 9000, onlineOffer.endsAt), /expired/);
+  assert.match(promotionError("FAKE", 9000, offerNow), /not recognised/);
+  assert.equal(promotionError("", 9000, onlineOffer.endsAt), null);
+  assert.equal(discountedUnitCents(150), 135);
+});
+test("THANKS10 discounts server prices, persists the code and keeps retries pinned", async t => {
+  t.mock.method(Date, "now", () => offerNow);
+  const f = setup();
+  const body = { ...f.body, promotionCode: " thanks10 ", discount: 99, unitCents: 1 };
+  assert.equal((await handleCheckout(f.request(body), f.env, f.stripe)).status, 200);
+  assert.equal(f.calls[0].params.line_items[0].price_data.unit_amount, 4050);
+  assert.match(f.calls[0].params.line_items[0].price_data.product_data.name, /THANKS10 \(10% off\)/);
+  assert.equal(f.calls[0].params.metadata.promotion_code, "THANKS10");
+  assert.match(f.calls[0].params.cancel_url, /promo=THANKS10/);
+  const order = f.db.prepare("SELECT payload_json, lines_json FROM checkout_orders").get();
+  assert.equal(JSON.parse(order.payload_json).promotionCode, "THANKS10");
+  assert.equal(JSON.parse(order.lines_json)[0].unitCents, 4500);
+  assert.equal((await handleCheckout(f.request(body), f.env, f.stripe)).status, 200);
+  assert.equal(f.calls.length, 1);
+  assert.equal((await handleCheckout(f.request(f.body), f.env, f.stripe)).status, 409);
+  f.db.close();
+});
+test("invalid, expired and below-minimum promotions create no order or Stripe session", async t => {
+  let now = offerNow;
+  t.mock.method(Date, "now", () => now);
+  const f = setup();
+  const small = [{ trayId: aLaCarteCartId(aLaCarteItem("Gulab Jamun").id), size: "piece", quantity: 1 }];
+  for (const override of [{ promotionCode: "FAKE" }, { promotionCode: "THANKS10", cart: small }, { promotionCode: 10 }, { promotionCode: "x".repeat(33) }]) {
+    assert.equal((await handleCheckout(f.request({ ...f.body, ...override }), f.env, f.stripe)).status, 400);
+  }
+  now = onlineOffer.endsAt;
+  assert.equal((await handleCheckout(f.request({ ...f.body, promotionCode: "THANKS10" }), f.env, f.stripe)).status, 400);
+  assert.equal(f.calls.length, 0);
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM checkout_orders").get().n, 0);
+  f.db.close();
+});
+test("signed discounted payments must match their pinned subtotal, including with tax", async t => {
+  t.mock.method(Date, "now", () => offerNow);
+  const f = setup(); enableLive(f);
+  assert.equal((await handleCheckout(f.request({ ...f.body, promotionCode: "THANKS10" }), f.env, f.stripe)).status, 200);
+  const sessionId = f.db.prepare("SELECT session_id FROM checkout_orders").get().session_id;
+  const stripe = new Stripe("rk_live_fixture");
+  async function send(subtotal) {
+    const payload = JSON.stringify({ id: crypto.randomUUID(), type: "checkout.session.completed", livemode: true, data: { object: { id: sessionId, client_reference_id: f.body.orderId, metadata: { order_id: f.body.orderId }, currency: "usd", amount_subtotal: subtotal, amount_total: 8748, payment_status: "paid" } } });
+    const signature = await stripe.webhooks.generateTestHeaderStringAsync({ payload, secret: f.env.STRIPE_WEBHOOK_SECRET, cryptoProvider: Stripe.createSubtleCryptoProvider() });
+    return handleStripeWebhook(new Request(origin + "/api/stripe/webhook", { method: "POST", headers: { "stripe-signature": signature }, body: payload }), f.env, stripe);
+  }
+  assert.equal((await send(1)).status, 400);
+  assert.equal(f.db.prepare("SELECT status FROM checkout_orders").get().status, "pending");
+  assert.equal((await send(undefined)).status, 400);
+  assert.equal((await send(8100)).status, 200);
+  assert.equal(f.db.prepare("SELECT status FROM checkout_orders").get().status, "paid");
+  f.db.close();
+});
 test("cart validation rejects bad catalog IDs, sizes, quantities, duplicates and empty carts", () => {
   assert.deepEqual(validateCart(cart), cart);
   for (const invalid of [null, [], [...cart, ...cart], [{ ...cart[0], trayId: "bad" }], [{ ...cart[0], size: "bad" }], [{ ...cart[0], quantity: 0 }], [{ ...cart[0], quantity: 1.5 }], [{ ...cart[0], quantity: 100 }]]) assert.equal(validateCart(invalid), null);

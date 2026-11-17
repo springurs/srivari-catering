@@ -4,6 +4,7 @@ import type { ReportDatabase } from "./daily-reports";
 import { readLimited } from "./restaurant-menu";
 import { validateCheckoutContact } from "../app/data/checkout-contact";
 import { isLoopbackHost } from "../app/data/local-checkout-mode";
+import { promotionError, discountedUnitCents } from "../app/data/checkout-promotion";
 
 export type CheckoutEnv = {
   REPORT_DB?: ReportDatabase;
@@ -58,7 +59,9 @@ export function validOrder(input: unknown) {
     || !/^\d{4}-\d{2}-\d{2}$/.test(body.date) || !Number.isFinite(Date.parse(body.date))
     || new Date(body.date).toISOString().slice(0, 10) !== body.date
     || body.date < new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date())) return null;
-  return { orderId: body.orderId, cart, date: body.date, time: body.time, fulfillment: "pickup" as const, contact };
+  if (body.promotionCode !== undefined && (typeof body.promotionCode !== "string" || body.promotionCode.length > 32)) return null;
+  const promotionCode = typeof body.promotionCode === "string" ? body.promotionCode.trim().toUpperCase() : "";
+  return { orderId: body.orderId, cart, date: body.date, time: body.time, fulfillment: "pickup" as const, contact, promotionCode };
 }
 async function findOrder(env: CheckoutEnv, id: string) {
   const { results } = await env.REPORT_DB!.prepare("SELECT * FROM checkout_orders WHERE id = ?1").bind(id).all<Order>();
@@ -96,11 +99,14 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, stripe?
     if (path !== "/api/checkout/session") return json({ error: "Not found." }, 404);
     const input = validOrder(body);
     if (!input) return json({ error: "Enter your full name and a valid email or phone number, and choose valid trays and a pickup date and time. Delivery needs a location-based quote before payment." }, 400);
+    const currentLines = cartLines(input.cart);
+    const offerError = promotionError(input.promotionCode, currentLines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0));
+    if (offerError) return json({ error: offerError }, 400);
     const taxRate = mock ? "" : env.PICKUP_TAX_RATE_ID ?? "";
     if (!mock && ((!taxRate && (live || env.SANDBOX_ALLOW_NO_TAX !== "true")) || (taxRate && !/^txr_[a-zA-Z0-9]+$/.test(taxRate)))) return json({ error: "Checkout is waiting for tax configuration." }, 503);
     if (!mock) stripe ??= stripeClient(env);
-    const payload = JSON.stringify({ cart: input.cart, date: input.date, time: input.time, fulfillment: input.fulfillment, contact: input.contact });
-    const lines = JSON.stringify(cartLines(input.cart));
+    const payload = JSON.stringify({ cart: input.cart, date: input.date, time: input.time, fulfillment: input.fulfillment, contact: input.contact, ...(input.promotionCode ? { promotionCode: input.promotionCode } : {}) });
+    const lines = JSON.stringify(currentLines);
     // Pin prices, tax rate and expiry before Stripe; retries use exactly the same parameters.
     await env.REPORT_DB.prepare("INSERT OR IGNORE INTO checkout_orders (id, payload_json, lines_json, tax_rate, expires_at, stripe_mode) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
       .bind(input.orderId, payload, lines, taxRate, Math.floor(Date.now() / 1000) + 23 * 3600, mode).run();
@@ -128,14 +134,15 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, stripe?
       session = await stripe!.checkout.sessions.create({
         mode: "payment", integration_identifier: "srivari_checkout_xbqkrtmn", client_reference_id: order.id,
         ...(input.contact.email ? { customer_email: input.contact.email } : {}),
-        metadata: { order_id: order.id, fulfillment: "pickup", date: input.date, pickup_time: input.time, pickup_timezone: "America/Los_Angeles" },
+        metadata: { order_id: order.id, fulfillment: "pickup", date: input.date, pickup_time: input.time, pickup_timezone: "America/Los_Angeles", ...(input.promotionCode ? { promotion_code: input.promotionCode } : {}) },
         payment_intent_data: { metadata: { order_id: order.id, date: input.date, pickup_time: input.time, pickup_timezone: "America/Los_Angeles" }, description: `Srivari pickup requested ${input.date} at ${input.time} Pacific time — 3180 Santa Rita Rd, Pleasanton` },
-        line_items: (JSON.parse(order.lines_json) as ReturnType<typeof cartLines>).map(line => ({ quantity: line.quantity, price_data: { currency: "usd", unit_amount: line.unitCents, product_data: { name: line.name } }, ...(order.tax_rate ? { tax_rates: [order.tax_rate] } : {}) })),
+        // Apply the server-approved offer to taxable unit prices. No extra Stripe coupon permissions are required.
+        line_items: (JSON.parse(order.lines_json) as ReturnType<typeof cartLines>).map(line => ({ quantity: line.quantity, price_data: { currency: "usd", unit_amount: input.promotionCode ? discountedUnitCents(line.unitCents) : line.unitCents, product_data: { name: `${line.name}${input.promotionCode ? " · THANKS10 (10% off)" : ""}` } }, ...(order.tax_rate ? { tax_rates: [order.tax_rate] } : {}) })),
         phone_number_collection: { enabled: true },
         shipping_options: [{ shipping_rate_data: { type: "fixed_amount", display_name: "Free pickup — Pleasanton", fixed_amount: { amount: 0, currency: "usd" } } }],
         custom_text: { submit: { message: live ? `Pickup at 3180 Santa Rita Rd, Pleasanton, CA 94566. Requested: ${input.date} at ${input.time} Pacific time. Tax is shown in the total. Our team will confirm pickup timing.` : `Sandbox test only. Pickup at 3180 Santa Rita Rd, Pleasanton, CA 94566. Requested: ${input.date} at ${input.time} Pacific time. ${order.tax_rate ? "Tax shown in total." : "Tax is omitted for this sandbox test."} This is not a real food order.` } },
         success_url: `${env.CHECKOUT_ORIGIN}/checkout?${localSandbox ? "flag=sandbox&" : ""}session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${env.CHECKOUT_ORIGIN}/checkout?${localSandbox ? "flag=sandbox&" : ""}canceled=1`, expires_at: order.expires_at,
+        cancel_url: `${env.CHECKOUT_ORIGIN}/checkout?${localSandbox ? "flag=sandbox&" : ""}${input.promotionCode ? `promo=${input.promotionCode}&` : ""}canceled=1`, expires_at: order.expires_at,
       }, { idempotencyKey: `srivari-checkout-${order.id}` });
       if (session.livemode !== live) throw new Error("Unexpected payment mode.");
       await env.REPORT_DB.prepare("UPDATE checkout_orders SET session_id = ?1 WHERE id = ?2").bind(session.id, order.id).run();
@@ -163,7 +170,9 @@ export async function handleStripeWebhook(request: Request, env: CheckoutEnv, st
     if (!order) return json({ error: "Order unavailable; retry." }, 500);
     if (order.stripe_mode !== (isLive(env) ? "live" : "sandbox")) return json({ error: "Order payment mode does not match." }, 400);
     if (session.client_reference_id !== id || session.currency !== "usd" || (order.session_id && order.session_id !== session.id)) return json({ error: "Order does not match." }, 400);
-    const subtotal = (JSON.parse(order.lines_json) as ReturnType<typeof cartLines>).reduce((n, line) => n + line.unitCents * line.quantity, 0);
+    const promotionCode = JSON.parse(order.payload_json).promotionCode;
+    const subtotal = (JSON.parse(order.lines_json) as ReturnType<typeof cartLines>).reduce((n, line) => n + (promotionCode ? discountedUnitCents(line.unitCents) : line.unitCents) * line.quantity, 0);
+    if ((session.amount_subtotal != null || promotionCode) && session.amount_subtotal !== subtotal) return json({ error: "Payment subtotal does not match." }, 400);
     if (!order.tax_rate && session.amount_total !== subtotal) return json({ error: "Payment total does not match." }, 400);
     const paid = ["checkout.session.completed", "checkout.session.async_payment_succeeded"].includes(event.type) && session.payment_status === "paid";
     const state = paid ? "paid" : event.type === "checkout.session.expired" ? "expired" : event.type === "checkout.session.async_payment_failed" ? "failed" : "pending";
