@@ -73,7 +73,7 @@
   const shadow = host.attachShadow({ mode: "open" });
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
-  stylesheet.href = new URL("srivari-catering.css?v=online-catering-compact-24", script.src).href;
+  stylesheet.href = new URL("srivari-catering.css?v=online-catering-five-seconds-31", script.src).href;
   shadow.append(stylesheet);
 
   const element = (tag, className, text) => {
@@ -94,6 +94,12 @@
     }
     const endsAt = Date.parse("2026-11-27T00:00:00-08:00");
     const promotionActive = !isEzCater && Date.now() < endsAt;
+    const slideContent = [
+      { image: "/images/srivari-catering-event-spread.jpg", title: "Buffets, bites & drinks.", highlight: "Your celebration, catered.", description: "A welcoming buffet, beautifully presented bites and drinks for your guests. Bring every part of your celebration together with Srivari." },
+      { image: "/images/srivari-catering-dessert-display.jpg", title: "Dessert cups.", highlight: "Little treats. Big smiles.", description: "Give your celebration a sweet finishing touch with individual dessert cups, beautifully presented and ready for your guests to enjoy." },
+      { image: "/images/srivari-catering-dessert-trays.jpg", title: "Sweet treats, ready.", highlight: "Made for a crowd.", description: "Planning a bigger gathering? Add individually portioned desserts to your catering spread, so every guest gets a little sweetness." },
+      { image: "/images/occasion-live-catering.webp", title: "Live dosa catering.", highlight: "Fresh off the griddle.", description: "Bring the sizzle to your celebration with golden dosas prepared live. Crisp, warm and served fresh for your guests." },
+    ];
     const banner = element("section", "online-banner");
     banner.setAttribute("aria-label", "Srivari online catering promotion");
     const visual = element("div", "online-visual");
@@ -104,7 +110,7 @@
     visual.append(photo);
     const slideshow = element("div", "online-slideshow");
     slideshow.setAttribute("aria-hidden", "true");
-    for (const [index, image] of [campaign.image, "/images/occasion-live-catering.webp", "/images/south-indian-feast.png"].entries()) {
+    for (const [index, { image }] of slideContent.entries()) {
       const slide = element("img", `online-slide online-slide--${index}`);
       slide.src = `${assetOrigin}${image}`;
       slide.alt = ""; slide.loading = "lazy"; slide.decoding = "async";
@@ -134,9 +140,17 @@
     const copy = element("div", "online-copy");
     const brand = element("div", "online-brand-name");
     brand.append(element("span", "", "SRIVARI CATERING"));
-    const title = element("h2", "online-title", "Great gatherings.");
-    title.append(element("span", "online-title-highlight", "Exceptional catering."));
-    copy.append(brand, title, element("p", "online-description", "From wedding feasts to office lunches and family celebrations, serve something worth gathering for. Fresh. Vegetarian. Unmistakably Srivari."));
+    const messages = element("div", "online-messages");
+    messages.setAttribute("aria-live", "off");
+    for (const [index, content] of slideContent.entries()) {
+      const message = element("div", "online-slide-copy");
+      message.style.animationDelay = `${index * 5}s`;
+      const title = element("h2", "online-title", content.title);
+      title.append(element("span", "online-title-highlight", content.highlight));
+      message.append(title, element("p", "online-description", content.description));
+      messages.append(message);
+    }
+    copy.append(brand, messages);
     const actions = element("div", "online-actions");
     const orderGroup = element("div", "online-order-group");
     const cta = element("a", "online-cta");

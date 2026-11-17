@@ -25,7 +25,7 @@
     preview.replaceChildren();
     const script = document.createElement("script");
     script.async = true;
-    script.src = new URL("srivari-catering.js?v=online-catering-compact-24", location.href).href;
+    script.src = new URL("srivari-catering.js?v=online-catering-five-seconds-31", location.href).href;
     script.dataset.campaign = campaign.value;
     script.dataset.theme = theme.value;
     script.dataset.destination = destination.value;
